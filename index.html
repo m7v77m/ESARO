@@ -2796,8 +2796,20 @@ button#submitBtn.btn-primary {
                     </div>
                 </div>
                 <div class="filters">
-                    <div class="form-group"><label>📆 起始日期</label><input type="date" id="filterStartDate" onchange="renderData(true)"></div>
-                    <div class="form-group"><label>📆 結束日期</label><input type="date" id="filterEndDate" onchange="renderData(true)"></div>
+                    <div class="form-group date-filter-group">
+                        <label>📆 起始日期</label>
+                        <div class="date-with-today">
+                            <input type="date" id="filterStartDate" onchange="renderData(true)">
+                            <button type="button" class="today-btn" onclick="setTodayForDate('filterStartDate', true)" title="跳到今天">今天</button>
+                        </div>
+                    </div>
+                    <div class="form-group date-filter-group">
+                        <label>📆 結束日期</label>
+                        <div class="date-with-today">
+                            <input type="date" id="filterEndDate" onchange="renderData(true)">
+                            <button type="button" class="today-btn" onclick="setTodayForDate('filterEndDate', true)" title="跳到今天">今天</button>
+                        </div>
+                    </div>
                     <div class="form-group"><label>💰 收支類型</label>
                         <select id="filterType" onchange="renderData(true)">
                             <option value="">全部</option>
@@ -2849,7 +2861,13 @@ button#submitBtn.btn-primary {
                                 <label for="typeAsset" class="asset-label">資產</label>
                             </div>
 
-                            <div class="form-group"><label>📅 日期時間</label><input type="date" id="datetime" required></div>
+                            <div class="form-group date-form-group">
+                                <label>📅 日期時間</label>
+                                <div class="date-with-today">
+                                    <input type="date" id="datetime" required>
+                                    <button type="button" class="today-btn" onclick="setTodayForDate('datetime', false)" title="跳到今天">今天</button>
+                                </div>
+                            </div>
                             <div class="form-group"><label>🏦 帳戶支應</label><select id="account"></select></div>
                             <div class="form-group"><label>📂 類目名稱</label><select id="category" required></select></div>
                             <div class="form-group"><label>👥 成員對象</label><select id="target" required></select></div>
@@ -3500,6 +3518,20 @@ function loadLocalData() {
         }
 
         // ----- 表單 -----
+        // ----- 日期快速跳轉：今天 -----
+        function getTodayDateString() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            return now.toISOString().slice(0, 10);
+        }
+
+        function setTodayForDate(inputId, rerenderFilter) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.value = getTodayDateString();
+            if (rerenderFilter) renderData(true);
+        }
+
         function resetFormDateTime() {
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -5215,6 +5247,43 @@ async function saveData() {
     }
 
 
+/* 日期欄位：避免手機原生 date 控制項把外框撐爆，並提供「今天」快速跳轉 */
+.date-with-today {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+.date-with-today input[type="date"] {
+    flex: 1 1 auto;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+.today-btn {
+    flex: 0 0 auto;
+    width: auto !important;
+    min-width: 52px;
+    height: 34px;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    border: none;
+    border-radius: 999px;
+    background: #2196F3;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.78rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,.12);
+    -webkit-tap-highlight-color: transparent;
+}
+.today-btn:active {
+    transform: scale(.96);
+}
+
 /* =========================================================
    📱 GitHub Pages / 手機相容性整理版
    - 手機解除頂部 sticky，避免遮住內容
@@ -5432,6 +5501,44 @@ async function saveData() {
     #tab-item-analysis .table-container table,
     #tab-member-analysis .table-container table {
         min-width: 760px !important;
+    }
+
+    /* ★ 手機日期篩選：起始/結束各自獨立一行，避免 iOS 原生日期框互相擠壓 */
+    .filters .date-filter-group {
+        grid-column: 1 / -1 !important;
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    .filters .date-with-today {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    .filters .date-with-today input[type="date"] {
+        min-width: 0 !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+    .filters .today-btn {
+        min-width: 54px;
+        height: 34px;
+        padding: 0 11px !important;
+        font-size: 0.8rem;
+    }
+
+    /* ★ 新增紀錄日期：手機上也保持輸入框 + 今天按鈕不爆版 */
+    .date-form-group,
+    .date-form-group .date-with-today {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .date-form-group .date-with-today input[type="date"] {
+        min-width: 0 !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+    .date-form-group .today-btn {
+        min-width: 54px;
     }
 
     /* ★ 篩選區不要撐爆手機 */
