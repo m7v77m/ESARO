@@ -2729,7 +2729,7 @@ button#submitBtn.btn-primary {
                         <div class="dropdown">
                             <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importJSON(event)">
                             <a href="#" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-file-import"></i> 匯入全備份 JSON</a>
-                            <a href="#" onclick="exportJSON()"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
+                            <a href="#" onclick="exportJSON(event)"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
                             <div class="divider"></div>
                             <input type="file" id="importSettingsFile" accept=".json" style="display:none;" onchange="importSettingsJSON(event)">
                             <a href="#" onclick="document.getElementById('importSettingsFile').click()"><i class="fa-solid fa-upload"></i> 匯入設定</a>
@@ -4709,16 +4709,54 @@ async function saveData() {
   }
   })();
 }
-        function exportJSON() {
-            const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `家庭流水帳_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        async function exportJSON(event) {
+            if (event && typeof event.preventDefault === 'function') event.preventDefault();
+            try {
+                const filename = `家庭流水帳_${getTodayDateString()}.json`;
+                const json = JSON.stringify(state, null, 2);
+                const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+                const file = new File([blob], filename, { type: 'application/json' });
+
+                // 📱 iPhone / iPad：優先使用系統分享面板，避免 Safari 點了「匯出」卻沒有下載反應。
+                if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+                    try {
+                        await navigator.share({
+                            title: '時來運轉｜全備份',
+                            text: '時來運轉全備份 JSON',
+                            files: [file]
+                        });
+                        return;
+                    } catch (shareErr) {
+                        // 使用者按取消不視為錯誤；其他情況繼續走一般下載備援。
+                        if (shareErr && shareErr.name === 'AbortError') return;
+                    }
+                }
+
+                // 💻 桌機 / 不支援分享檔案的瀏覽器：正常下載。
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.rel = 'noopener';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    try { document.body.removeChild(a); } catch(e) {}
+                    URL.revokeObjectURL(url);
+                }, 500);
+            } catch (err) {
+                console.error('匯出全備份失敗:', err);
+                // 最後一道 iPhone 備援：直接開啟 JSON 內容，使用 Safari 分享鈕即可存到「檔案」。
+                try {
+                    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const win = window.open(url, '_blank');
+                    if (!win) alert('⚠️ 匯出視窗被瀏覽器擋住，請再按一次「匯出全備份」。');
+                    setTimeout(() => URL.revokeObjectURL(url), 60000);
+                } catch (fallbackErr) {
+                    alert('❌ 匯出失敗：' + (fallbackErr.message || err.message));
+                }
+            }
         }
 
                 function importJSON(event) {
@@ -5228,6 +5266,7 @@ async function saveData() {
     setInterval(createRilakkuma, 400);
 </script>
 <!-- 🐻 拉拉熊浪漫飄落特效結束 🐻 -->
+<!-- v2.3：手機匯出備份 + 篩選器兩欄排版修正 -->
 
 <!-- 🐾 拉拉熊游標隨從特效（黃金比例右下跟隨版） 🐾 -->
 <style>
@@ -5717,22 +5756,44 @@ async function saveData() {
 }
 
 @media (max-width: 900px) {
-    /* 篩選器：手機 / 小平板一律單欄，避免兩個日期框互撞 */
+    /* 📱 手機篩選器：
+       第一列：起始日期＋今天｜收支類型
+       第二列：結束日期＋今天｜類目名稱
+       其餘條件再往下排，避免右側控制項掉到日期區塊外。 */
     .filters {
-        grid-template-columns: 1fr !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr) !important;
+        grid-auto-flow: row !important;
+        gap: 10px 10px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        align-items: end !important;
+    }
+
+    .filters .date-filter-group {
+        grid-column: 1 !important;
         width: 100% !important;
         min-width: 0 !important;
     }
 
-    .filters .date-filter-group {
+    /* DOM 順序中收支類型排在兩個日期後面，這裡明確把它放到第一列右側 */
+    .filters .date-filter-group:nth-child(1) { grid-column: 1 !important; grid-row: 1 !important; }
+    .filters .date-filter-group:nth-child(2) { grid-column: 1 !important; grid-row: 2 !important; }
+    .filters .form-group:nth-child(3) { grid-column: 2 !important; grid-row: 1 !important; }
+    .filters .form-group:nth-child(5) { grid-column: 2 !important; grid-row: 2 !important; }
+
+    /* 帳戶、成員放到後面的完整欄位，保持整齊 */
+    .filters .form-group:nth-child(4) { grid-column: 1 / -1 !important; grid-row: 3 !important; }
+    .filters .form-group:nth-child(6) { grid-column: 1 / -1 !important; grid-row: 4 !important; }
+    .filters .form-group[style*="grid-column:span 2"] {
         grid-column: 1 / -1 !important;
-        width: 100% !important;
-        min-width: 0 !important;
+        grid-row: 5 !important;
     }
 
     .filters .date-with-today {
         display: grid !important;
         grid-template-columns: minmax(0, 1fr) 60px !important;
+        gap: 6px !important;
         width: 100% !important;
         min-width: 0 !important;
     }
@@ -5741,12 +5802,21 @@ async function saveData() {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
+        font-size: 0.78rem !important;
+        padding-left: 10px !important;
+        padding-right: 8px !important;
     }
 
     .filters .today-btn {
         width: 60px !important;
         min-width: 60px !important;
         max-width: 60px !important;
+        height: 36px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .filters .form-group label {
+        white-space: nowrap !important;
     }
 
     /* 新增紀錄日期 */
@@ -5835,5 +5905,26 @@ async function saveData() {
     }
 })();
 </script>
+
+/* ===== [FIX v2.3] 手機篩選器最終排版 =====
+   起始日期＋今天｜收支類型
+   結束日期＋今天｜類目名稱
+*/
+@media (max-width: 900px) {
+    .filters {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr) !important;
+        gap: 10px !important;
+        align-items: end !important;
+    }
+    .filters .date-filter-group:nth-child(1) { grid-column: 1 !important; grid-row: 1 !important; }
+    .filters .date-filter-group:nth-child(2) { grid-column: 1 !important; grid-row: 2 !important; }
+    .filters .form-group:nth-child(3) { grid-column: 2 !important; grid-row: 1 !important; }
+    .filters .form-group:nth-child(5) { grid-column: 2 !important; grid-row: 2 !important; }
+    .filters .form-group:nth-child(4) { grid-column: 1 / -1 !important; grid-row: 3 !important; }
+    .filters .form-group:nth-child(6) { grid-column: 1 / -1 !important; grid-row: 4 !important; }
+    .filters .form-group:nth-child(7) { grid-column: 1 / -1 !important; grid-row: 5 !important; }
+}
+
 </body>
 </html>
