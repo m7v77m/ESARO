@@ -2729,7 +2729,7 @@ button#submitBtn.btn-primary {
                         <div class="dropdown">
                             <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importJSON(event)">
                             <a href="#" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-file-import"></i> 匯入全備份 JSON</a>
-                            <a href="#" onclick="exportJSON()"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
+                            <a href="#" onclick="exportJSON(event)"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
                             <div class="divider"></div>
                             <input type="file" id="importSettingsFile" accept=".json" style="display:none;" onchange="importSettingsJSON(event)">
                             <a href="#" onclick="document.getElementById('importSettingsFile').click()"><i class="fa-solid fa-upload"></i> 匯入設定</a>
@@ -2765,9 +2765,9 @@ button#submitBtn.btn-primary {
                         </div>
                     </div>
                     <div class="actions-group">
-                        <button class="btn-danger" style="padding:6px 10px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
-                        <button class="btn-danger" style="padding:6px 10px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>
-                        <div class="selected-stats" style="padding:6px 10px !important;">
+                        <button class="btn-danger" style="padding:8px 13px !important;border-radius:var(--radius-full);border:none;font-weight:600;font-size:0.75rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn-danger" style="padding:8px 13px !important;border-radius:var(--radius-full);border:none;font-weight:600;font-size:0.75rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>&nbsp;&nbsp;&nbsp;
+                        <div class="selected-stats" style="padding:6px 13px !important;">
                             已勾選 <strong id="selectedCount">0</strong> 筆，小計: <strong id="selectedTotal">$0</strong>
                         </div>
                     </div>
@@ -2780,18 +2780,18 @@ button#submitBtn.btn-primary {
                     <select id="quickYear" onchange="handleYearChange()"></select>
                     <span>年</span>
                    <div class="month-links" id="monthLinks">&nbsp;
-                        <a href="#" onclick="setMonthFilter(1,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">1月</a>
-                        <a href="#" onclick="setMonthFilter(2,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">2月</a>
-                        <a href="#" onclick="setMonthFilter(3,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">3月</a>
-                        <a href="#" onclick="setMonthFilter(4,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">4月</a>
-                        <a href="#" onclick="setMonthFilter(5,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">5月</a>
-                        <a href="#" onclick="setMonthFilter(6,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">6月</a>
-                        <a href="#" onclick="setMonthFilter(7,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">7月</a>
-                        <a href="#" onclick="setMonthFilter(8,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">8月</a>
-                        <a href="#" onclick="setMonthFilter(9,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">9月</a>
-                        <a href="#" onclick="setMonthFilter(10,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">10月</a>
-                        <a href="#" onclick="setMonthFilter(11,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">11月</a>
-                        <a href="#" onclick="setMonthFilter(12,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">12月</a>
+                        <a href="#" onclick="setMonthFilter(1,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">1 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(2,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">2 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(3,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">3 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(4,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">4 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(5,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">5 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(6,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">6 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(7,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">7 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(8,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">8 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(9,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">9 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(10,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">10 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(11,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">11 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(12,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">12 月 .. </a>
                         <a href="#" onclick="clearDateFilter(event)" class="clear-link">清 除 ✕</a>
                     </div>
                 </div>
@@ -4709,16 +4709,50 @@ async function saveData() {
   }
   })();
 }
-        function exportJSON() {
-            const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `家庭流水帳_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        async function exportJSON(event) {
+            if (event && typeof event.preventDefault === 'function') event.preventDefault();
+            try {
+                const filename = `家庭流水帳_${getTodayDateString()}.json`;
+                const json = JSON.stringify(state, null, 2);
+                const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+
+                // iPhone / iPad：使用系統分享面板，讓使用者可直接「儲存到檔案」。
+                if (navigator.share && typeof File !== 'undefined') {
+                    const file = new File([blob], filename, { type: 'application/json' });
+                    let canShareFile = true;
+                    try {
+                        canShareFile = !navigator.canShare || navigator.canShare({ files: [file] });
+                    } catch (e) { canShareFile = false; }
+                    if (canShareFile) {
+                        try {
+                            await navigator.share({
+                                title: '時來運轉｜全備份',
+                                text: '時來運轉全備份 JSON',
+                                files: [file]
+                            });
+                            return;
+                        } catch (shareErr) {
+                            if (shareErr && shareErr.name === 'AbortError') return;
+                        }
+                    }
+                }
+
+                // 其他瀏覽器：正常下載。
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.rel = 'noopener';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    try { document.body.removeChild(a); } catch(e) {}
+                    URL.revokeObjectURL(url);
+                }, 500);
+            } catch (err) {
+                console.error('匯出全備份失敗:', err);
+                alert('❌ 匯出失敗：' + (err.message || err));
+            }
         }
 
                 function importJSON(event) {
@@ -5199,7 +5233,7 @@ async function saveData() {
 <script>
     // 建立飄落小熊的魔法陣
     function createRilakkuma() {
-        const icons = ['༘⋆🧸͙*ੈ','ִֶָ ࣪˖ ִֶָ💵͙⋆་༘𓍢ִ','🍓','✨']; // 飄落的拉拉熊、小黃雞、草莓小熊
+        const icons = ['🧸','𓍢ִ໋🌷͙֒','🍓','✨']; // 飄落的拉拉熊、小黃雞、草莓小熊
         const flake = document.createElement('div');
         
         flake.className = 'rilakkuma-flake';
@@ -5717,51 +5751,101 @@ async function saveData() {
 }
 
 @media (max-width: 900px) {
-    /* 篩選器：手機 / 小平板一律單欄，避免兩個日期框互撞 */
+    /* 📱 手機篩選器：兩欄整齊排版
+       左：起始日期＋今天 / 結束日期＋今天
+       右：收支類型 / 類目名稱
+       帳戶、成員、關鍵字再各自完整一行。 */
     .filters {
-        grid-template-columns: 1fr !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.55fr) minmax(118px, 0.85fr) !important;
+        grid-auto-flow: row !important;
+        gap: 10px 10px !important;
         width: 100% !important;
         min-width: 0 !important;
+        align-items: end !important;
     }
 
-    .filters .date-filter-group {
-        grid-column: 1 / -1 !important;
+    .filters .form-group {
         width: 100% !important;
         min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .filters .date-filter-group:nth-child(1) {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+    }
+    .filters .date-filter-group:nth-child(2) {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+    }
+    .filters .form-group:nth-child(3) {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+    }
+    .filters .form-group:nth-child(5) {
+        grid-column: 2 !important;
+        grid-row: 2 !important;
+    }
+    .filters .form-group:nth-child(4) {
+        grid-column: 1 / -1 !important;
+        grid-row: 3 !important;
+    }
+    .filters .form-group:nth-child(6) {
+        grid-column: 1 / -1 !important;
+        grid-row: 4 !important;
+    }
+    .filters .form-group:nth-child(7) {
+        grid-column: 1 / -1 !important;
+        grid-row: 5 !important;
     }
 
     .filters .date-with-today {
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) 60px !important;
+        grid-template-columns: minmax(0, 1fr) 58px !important;
+        gap: 6px !important;
         width: 100% !important;
         min-width: 0 !important;
+        box-sizing: border-box !important;
     }
 
     .filters .date-with-today input[type="date"] {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
+        box-sizing: border-box !important;
+        font-size: 0.78rem !important;
+        padding-left: 8px !important;
+        padding-right: 6px !important;
     }
 
     .filters .today-btn {
-        width: 60px !important;
-        min-width: 60px !important;
-        max-width: 60px !important;
+        width: 58px !important;
+        min-width: 58px !important;
+        max-width: 58px !important;
+        height: 36px !important;
+        padding: 0 4px !important;
+        font-size: 0.78rem !important;
+        box-sizing: border-box !important;
     }
 
-    /* 新增紀錄日期 */
+    .filters .form-group label {
+        white-space: nowrap !important;
+    }
+
+    /* 新增紀錄日期維持原本的「日期＋今天」版型，不受篩選器兩欄排版影響。 */
     .date-form-group,
     .date-form-group .date-with-today {
         width: 100% !important;
         min-width: 0 !important;
+        box-sizing: border-box !important;
     }
-
     .date-form-group .date-with-today input[type="date"] {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
     }
-
     .date-form-group .today-btn {
         width: 60px !important;
         min-width: 60px !important;
