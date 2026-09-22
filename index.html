@@ -5264,6 +5264,57 @@ async function saveData() {
         top: 0;
         transform: translate3d(0, 0, 0);
     }
+    /* ========================================================
+   📱 調皮老公特製：手機版 Safari 畫面不擋道優化
+   ======================================================== */
+@media screen and (max-width: 768px) {
+    
+    /* 1. 解除電腦版的「凍結列」！讓欄位在手機上不會死死卡在左邊擋畫面 */
+    .frozen-column, 
+    [style*="position: sticky"], 
+    th:first-child, 
+    td:first-child {
+        position: static !important; /* 強制恢復成一般排列 */
+        left: auto !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* 2. 讓原本很寬的表格在手機上可以「左右自由滑動」，絕對不超出螢幕 */
+    .stat-section table, 
+    table, 
+    .table-responsive {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important; /* 啟動左右滑動 */
+        -webkit-overflow-scrolling: touch; /* 讓 iPhone 滑起來超級順暢 */
+    }
+
+    /* 3. 修正被擋到的區塊，讓「檔案檢視」和「新增記錄」在手機上自動變成上下排列 */
+    .main-wrapper, 
+    .container, 
+    body {
+        display: flex !important;
+        flex-direction: column !important; /* 電腦版是左右，手機版自動變上下 */
+        padding: 8px !important;
+    }
+
+    /* 4. 讓側邊欄（新增紀錄、帳戶金額）在手機上自動伸展到 100% 寬度，不被擠壓 */
+    .sidebar, 
+    #tab-item-analysis, 
+    .tab-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* 5. 優化手機版導覽列與按鈕，避免重疊擋到下方的功能鍵 */
+    .navbar, .nav-menu {
+        flex-wrap: wrap !important;
+        gap: 5px !important;
+    }
+}
+
 </style>
 
 <div id="rilakkuma-follower">🐻</div> 
