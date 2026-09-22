@@ -5141,6 +5141,7 @@ async function saveData() {
             </div>
         </div>
     </div>
+ </div>
 <!-- 🐻 拉拉熊浪漫飄落特效開始 🐻 -->
 <style>
     /* 讓飄落的小圖示不會擋到妳原本按鈕的點擊 */
@@ -5163,173 +5164,51 @@ async function saveData() {
             opacity: 0.3;
         }
     }
-    /* ========================================================
-   📱 調皮老公特製：手機版 Safari 畫面不擋道優化
-   ======================================================== */
-@media screen and (max-width: 768px) {
-    
-    /* 1. 解除電腦版的「凍結列」！讓欄位在手機上不會死死卡在左邊擋畫面 */
-    .frozen-column, 
-    [style*="position: sticky"], 
-    th:first-child, 
-    td:first-child {
-        position: static !important; /* 強制恢復成一般排列 */
-        left: auto !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-    }
-
-    /* 2. 讓原本很寬的表格在手機上可以「左右自由滑動」，絕對不超出螢幕 */
-    .stat-section table, 
-    table, 
-    .table-responsive {
-        display: block !important;
-        width: 100% !important;
-        overflow-x: auto !important; /* 啟動左右滑動 */
-        -webkit-overflow-scrolling: touch; /* 讓 iPhone 滑起來超級順暢 */
-    }
-
-    /* 3. 修正被擋到的區塊，讓「檔案檢視」和「新增記錄」在手機上自動變成上下排列 */
-    .main-wrapper, 
-    .container, 
-    body {
-        display: flex !important;
-        flex-direction: column !important; /* 電腦版是左右，手機版自動變上下 */
-        padding: 8px !important;
-    }
-
-    /* 4. 讓側邊欄（新增紀錄、帳戶金額）在手機上自動伸展到 100% 寬度，不被擠壓 */
-    .sidebar, 
-    #tab-item-analysis, 
-    .tab-content {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-    
-    /* 5. 優化手機版導覽列與按鈕，避免重疊擋到下方的功能鍵 */
-    .navbar, .nav-menu {
-        flex-wrap: wrap !important;
-        gap: 5px !important;
-    }
-}
-
 </style>
 <script>
-    // 建立飄落小熊的魔法陣
     function createRilakkuma() {
-        const icons = ['༘⋆🧸͙*ੈ','ִֶָ ࣪˖ ִֶָ💵͙⋆་༘𓍢ִ','🍓','✨']; // 飄落的拉拉熊、小黃雞、草莓小熊
+        const icons = ['༘⋆🧸͙*ੈ','ִֶָ ࣪˖ ִֶָ💵͙⋆་༘𓍢ִ','🍓','✨']; 
         const flake = document.createElement('div');
-        
         flake.className = 'rilakkuma-flake';
         flake.innerText = icons[Math.floor(Math.random() * icons.length)];
-        
-        // 隨機讓每隻小熊的大小、位置、飄落速度都不一樣，才會自然漂亮
-        const size = Math.random() * 20 + 20; // 大小 20px ~ 40px
+        const size = Math.random() * 20 + 20; 
         flake.style.fontSize = size + 'px';
         flake.style.left = Math.random() * window.innerWidth + 'px';
-        
-        const duration = Math.random() * 4 + 4; // 飄落速度 4秒 ~ 8秒
+        const duration = Math.random() * 4 + 4; 
         flake.style.animationDuration = duration + 's';
-        
-        // 隨機微調透明度
         flake.style.opacity = Math.random() * 0.5 + 0.5;
-        
         document.body.appendChild(flake);
-        
-        // 飄到螢幕最下面後自動消失，網頁才不會卡卡
-        setTimeout(() => {
-            flake.remove();
-        }, duration * 1000);
+        setTimeout(() => { flake.remove(); }, duration * 1000);
     }
-
-    // 每 400 毫秒（約0.4秒）自動誕生一隻可愛的拉拉熊
     setInterval(createRilakkuma, 400);
 </script>
 <!-- 🐻 拉拉熊浪漫飄落特效結束 🐻 -->
 
-<!-- 🐾 拉拉熊游標隨從特效（黃金比例右下跟隨版） 🐾 -->
+<!-- 🐾 拉拉熊游標隨從特效 🐾 -->
 <style>
-    /* 設定小隨從的樣式 */
     #rilakkuma-follower {
         position: fixed;
-        font-size: 30px;          /* 隨從的大小 */
-        z-index: 9998;            /* 讓牠待在按鈕下面，不影響操作 */
-        pointer-events: none;     /* 點擊直接穿透，絕不卡住網頁 */
+        font-size: 30px;          
+        z-index: 9998;            
+        pointer-events: none;     
         user-select: none;
         will-change: transform;
-        /* 讓跟隨的動作有滑順的延遲感（像小碎步在後面追） */
         transition: transform 0.15s ease-out; 
         left: 0;
         top: 0;
         transform: translate3d(0, 0, 0);
     }
-    /* ========================================================
-   📱 調皮老公特製：手機版 Safari 畫面不擋道優化
-   ======================================================== */
-@media screen and (max-width: 768px) {
-    
-    /* 1. 解除電腦版的「凍結列」！讓欄位在手機上不會死死卡在左邊擋畫面 */
-    .frozen-column, 
-    [style*="position: sticky"], 
-    th:first-child, 
-    td:first-child {
-        position: static !important; /* 強制恢復成一般排列 */
-        left: auto !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-    }
-
-    /* 2. 讓原本很寬的表格在手機上可以「左右自由滑動」，絕對不超出螢幕 */
-    .stat-section table, 
-    table, 
-    .table-responsive {
-        display: block !important;
-        width: 100% !important;
-        overflow-x: auto !important; /* 啟動左右滑動 */
-        -webkit-overflow-scrolling: touch; /* 讓 iPhone 滑起來超級順暢 */
-    }
-
-    /* 3. 修正被擋到的區塊，讓「檔案檢視」和「新增記錄」在手機上自動變成上下排列 */
-    .main-wrapper, 
-    .container, 
-    body {
-        display: flex !important;
-        flex-direction: column !important; /* 電腦版是左右，手機版自動變上下 */
-        padding: 8px !important;
-    }
-
-    /* 4. 讓側邊欄（新增紀錄、帳戶金額）在手機上自動伸展到 100% 寬度，不被擠壓 */
-    .sidebar, 
-    #tab-item-analysis, 
-    .tab-content {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-    
-    /* 5. 優化手機版導覽列與按鈕，避免重疊擋到下方的功能鍵 */
-    .navbar, .nav-menu {
-        flex-wrap: wrap !important;
-        gap: 5px !important;
-    }
-}
-
 </style>
-
 <div id="rilakkuma-follower">🐻</div> 
-
 <script>
     const follower = document.getElementById('rilakkuma-follower');
-    
     window.addEventListener('mousemove', (e) => {
-        // 💡 黃金比例微調：改成 + 5，讓小熊緊緊貼在滑鼠指針的右下方，不留大空隙，又不會被遮到臉！
-        const x = e.clientX + 5;  // 往右挪 5 像素
-        const y = e.clientY + 5;  // 往下挪 5 像素
-        
+        const x = e.clientX + 5;  
+        const y = e.clientY + 5;  
         follower.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     });
 </script>
 <!-- 🐾 拉拉熊游標隨從特效結束 🐾 -->
+
 </body>
 </html>
