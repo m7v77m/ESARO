@@ -5668,6 +5668,107 @@ async function saveData() {
         z-index: auto !important;
     }
 }
+
+
+/* ===== [FIX v2.2] iPhone 日期框終極修正 =====
+   - 起始日期 / 結束日期一定各佔一行
+   - iOS 原生 date input 強制可縮，不再把框撐爆
+   - 「今天」按鈕固定顯示在日期框右側
+   - 新增紀錄日期同樣處理
+*/
+.date-with-today {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 60px !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+.date-with-today input[type="date"] {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+}
+.date-with-today .today-btn {
+    display: inline-flex !important;
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+    height: 36px !important;
+    margin: 0 !important;
+    padding: 0 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: #2196F3 !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+@media (max-width: 900px) {
+    /* 篩選器：手機 / 小平板一律單欄，避免兩個日期框互撞 */
+    .filters {
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .filters .date-filter-group {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .filters .date-with-today {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 60px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .filters .date-with-today input[type="date"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .filters .today-btn {
+        width: 60px !important;
+        min-width: 60px !important;
+        max-width: 60px !important;
+    }
+
+    /* 新增紀錄日期 */
+    .date-form-group,
+    .date-form-group .date-with-today {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .date-form-group .date-with-today input[type="date"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .date-form-group .today-btn {
+        width: 60px !important;
+        min-width: 60px !important;
+        max-width: 60px !important;
+    }
+}
+
 </style>
 
 <div id="rilakkuma-follower">🐻</div> 
