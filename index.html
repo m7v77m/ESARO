@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2280%22>🐻</text></svg>">    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>時來運轉 ₍ ^. .^ ₎ ⟆</title>
 
     <!-- 1. Font Awesome 圖示 -->
@@ -3061,7 +3061,7 @@ button#submitBtn.btn-primary {
 							    </table>
 							</div>
                             <div class="stat-section">
-                                <h4>🔍 每日類目統計（依目前篩選結果）</h4>
+                                <h4>🔍 每日項目統計（依目前篩選結果）</h4>
                                 <table>
                                     <thead>
                                         <tr>
@@ -3927,44 +3927,6 @@ function loadLocalData() {
         }
 
         // ----- 統計分析 -----
-        // ==========================================
-        // 統計用天數計算
-        // 有自訂日期範圍 → 計算該範圍與月份的實際重疊天數
-        // 沒有自訂日期範圍 → 本月算已經過天數，過去月份算整月
-        // ==========================================
-        function getStatisticsDays(year, month, startDate, endDate) {
-            const monthStart = new Date(year, month - 1, 1);
-            const monthEnd = new Date(year, month, 0);
-
-            // 有完整的自訂日期範圍
-            if (startDate && endDate) {
-                const rangeStart = new Date(startDate + 'T00:00:00');
-                const rangeEnd = new Date(endDate + 'T00:00:00');
-
-                // 計算兩個日期區間的重疊範圍
-                const overlapStart = rangeStart > monthStart ? rangeStart : monthStart;
-                const overlapEnd = rangeEnd < monthEnd ? rangeEnd : monthEnd;
-
-                if (overlapStart > overlapEnd) return 0;
-
-                const diffTime = overlapEnd - overlapStart;
-                return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-            }
-
-            // 沒有完整日期範圍時，沿用原本的統計方式
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            const currentMonth = now.getMonth() + 1;
-
-            // 本月：算到今天
-            if (year === currentYear && month === currentMonth) {
-                return now.getDate();
-            }
-
-            // 過去月份：算完整月份天數
-            return monthEnd.getDate();
-        }
-
         function renderStatistics(records) {
             if (records) window.lastFilteredRecords = records;
             const data = window.lastFilteredRecords || state.records || [];
@@ -3974,54 +3936,21 @@ function loadLocalData() {
             data.forEach(r => {
                 if (!r.datetime) return;
                 const m = r.datetime.substring(0, 7);
-
                 if (!monthly[m]) {
-                    // categories：維持原本「純支出」統計
-                    // categoryNet：新增「類目淨額」，支出 + 同類目收入
-                    monthly[m] = {
-                        income: 0,
-                        expense: 0,
-                        categories: {},
-                        categoryNet: {}
-                    };
-
-                    state.categories.forEach(cat => {
-                        monthly[m].categories[cat] = 0;
-                        monthly[m].categoryNet[cat] = 0;
-                    });
+                    // 移除寫死的 dietTotal，改為全類目動態追蹤
+                    monthly[m] = { income: 0, expense: 0, categories: {} };
+                    state.categories.forEach(cat => { monthly[m].categories[cat] = 0; });
                 }
-
                 const amt = parseFloat(r.price) || 0;
-
                 if (r.type === 'income') {
-                    // 總收入維持原本邏輯
                     monthly[m].income += amt;
-
-                    // 收入若有類目，加入該類目的「淨額」
-                    // 例如：飲食支出 -11,930 + 飲食收入 1,400 = -10,530
-                    if (r.category) {
-                        if (monthly[m].categoryNet[r.category] === undefined) {
-                            monthly[m].categoryNet[r.category] = 0;
-                        }
-                        monthly[m].categoryNet[r.category] += amt;
-                    }
                 } else if (r.type === 'expense') {
-                    // 總支出維持純支出，不把收入抵銷進來
                     monthly[m].expense += amt;
-
-                    if (r.category) {
-                        // 原本的類目支出統計維持不變
-                        if (monthly[m].categories[r.category] === undefined) {
-                            monthly[m].categories[r.category] = 0;
-                        }
-                        monthly[m].categories[r.category] += amt;
-
-                        // 同時建立類目淨額
-                        if (monthly[m].categoryNet[r.category] === undefined) {
-                            monthly[m].categoryNet[r.category] = 0;
-                        }
-                        monthly[m].categoryNet[r.category] += amt;
+                    // 確保即使是不在預設列表中的自訂類目也能被計算
+                    if (monthly[m].categories[r.category] === undefined) {
+                        monthly[m].categories[r.category] = 0;
                     }
+                    monthly[m].categories[r.category] += amt;
                 }
             });
 
@@ -4031,106 +3960,67 @@ function loadLocalData() {
             const balanceBody = document.getElementById('stat-monthly-balance-body');
             if (balanceBody) {
                 let totalInc = 0, totalExp = 0;
-                sorted.forEach(m => {
-                    totalInc += monthly[m].income;
-                    totalExp += monthly[m].expense;
-                });
-
+                sorted.forEach(m => { totalInc += monthly[m].income; totalExp += monthly[m].expense; });
                 const totalBal = totalInc + totalExp; // 支出為負，改相加
                 const cnt = sorted.length || 1;
-
                 let html = sorted.map(m => {
                     const d = monthly[m];
                     const bal = d.income + d.expense; // 支出為負
                     const col = bal >= 0 ? 'var(--income-color)' : 'var(--expense-color)';
-
                     return `<tr><td>${m}</td><td style="color:var(--income-color);">${d.income.toLocaleString()}</td><td style="color:var(--expense-color);">${d.expense.toLocaleString()}</td><td style="color:${col};font-weight:700;">${bal.toLocaleString()}</td></tr>`;
                 }).join('');
-
                 if (sorted.length) {
                     html += `<tr class="total-row"><td>總計</td><td style="color:var(--income-color);">${totalInc.toLocaleString()}</td><td style="color:var(--expense-color);">${totalExp.toLocaleString()}</td><td style="color:${totalBal>=0?'var(--income-color)':'var(--expense-color)'};font-weight:700;">${totalBal.toLocaleString()}</td></tr>
                             <tr class="total-row"><td>月平均</td><td style="color:var(--income-color);">${(totalInc/cnt).toFixed(1)}</td><td style="color:var(--expense-color);">${(totalExp/cnt).toFixed(1)}</td><td style="color:${(totalBal/cnt)>=0?'var(--income-color)':'var(--expense-color)'};font-weight:700;">${(totalBal/cnt).toFixed(1)}</td></tr>`;
                 } else {
                     html = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
                 }
-
                 balanceBody.innerHTML = html;
             }
 
             // 3. 更新動態下拉選單並讀取目前選擇的類目
             const catSelect = document.getElementById('stat-category-select');
             let selectedCat = '';
-
             if (catSelect) {
                 const currentVal = catSelect.value;
-
-                // 收集所有紀錄中的類目 + 系統設定的類目
-                // income 也要納入，避免「只有收入沒有支出」的類目消失
-                const allCats = new Set([...(state.categories || [])]);
-                data.forEach(r => {
-                    if (r.category) allCats.add(r.category);
-                });
-
-                catSelect.innerHTML = Array.from(allCats)
-                    .map(c => `<option value="${c}">${c}</option>`)
-                    .join('');
-
-                // 優先保留目前選取的類目
-                if (currentVal && allCats.has(currentVal)) {
+                // 收集所有紀錄中的類目 + 系統設定的類目 (利用 Set 確保不重複)
+                const allCats = new Set([...state.categories]);
+                data.forEach(r => { if (r.type === 'expense' && r.category) allCats.add(r.category); });
+                
+                catSelect.innerHTML = Array.from(allCats).map(c => `<option value="${c}">${c}</option>`).join('');
+                
+                // 保留先前選取的項目，若無則預設選取 '飲食'
+                if (Array.from(allCats).includes(currentVal)) {
                     catSelect.value = currentVal;
                 } else if (allCats.has('飲食')) {
                     catSelect.value = '飲食';
-                } else if (allCats.size > 0) {
-                    catSelect.value = Array.from(allCats)[0];
                 }
-
                 selectedCat = catSelect.value;
             }
 
             // 4. 更新每月「各類目」日平均表格
             const catAvgBody = document.getElementById('stat-category-average-body');
-
             if (catAvgBody) {
                 if (!sorted.length || !selectedCat) {
                     catAvgBody.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
                 } else {
-                    // 讀取目前畫面上的日期篩選
-                    const startDateInput = document.getElementById('filterStartDate');
-                    const endDateInput = document.getElementById('filterEndDate');
-                    const startDate = startDateInput ? startDateInput.value : '';
-                    const endDate = endDateInput ? endDateInput.value : '';
-
-                    const rows = sorted.map(m => {
+                    const now = new Date();
+                    const cy = now.getFullYear(), cm = now.getMonth() + 1, cd = now.getDate();
+                    catAvgBody.innerHTML = sorted.map(m => {
                         const d = monthly[m];
+                        const catTotal = d.categories[selectedCat] || 0;
                         const [y, mon] = m.split('-').map(Number);
-
-                        // ★ 類目總額使用「淨額」：支出 + 同類目的收入
-                        const catTotal = d.categoryNet[selectedCat] || 0;
-
-                        // ★ 天數完全跟著日期篩選範圍走
-                        const days = getStatisticsDays(y, mon, startDate, endDate);
-
-                        // 該月份不在日期範圍內
-                        if (days <= 0) return '';
-
-                        const avg = catTotal / days;
-                        let label;
-
-                        if (startDate && endDate) {
-                            label = `${days} 天`;
+                        let days, label;
+                        if (y === cy && mon === cm) {
+                            days = cd; // 本月只除以經過的天數
+                            label = `${cd} 天 (至今)`;
                         } else {
-                            const now = new Date();
-                            if (y === now.getFullYear() && mon === now.getMonth() + 1) {
-                                label = `${days} 天 (至今)`;
-                            } else {
-                                label = `${days} 天`;
-                            }
+                            days = new Date(y, mon, 0).getDate(); // 取得該月總天數
+                            label = `${days} 天`;
                         }
-
+                        const avg = catTotal / days;
                         return `<tr><td>${m}</td><td>${catTotal.toLocaleString()}</td><td>${label}</td><td style="font-weight:700;color:#2980b9;">$${avg.toFixed(1)}</td></tr>`;
                     }).join('');
-
-                    catAvgBody.innerHTML = rows || '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
                 }
             }
 
@@ -4141,34 +4031,20 @@ function loadLocalData() {
                     ratioC.innerHTML = '<p style="padding:13px;color:var(--text-muted);text-align:center;">無資料</p>';
                     return;
                 }
-
-                const exclude = ['利息', '資產', '月薪', '面交', '府府', '拍賣', '支援'];
+                const exclude = [ '利息', '資產','月薪','面交','府府','拍賣','支援'];
                 const displayCats = state.categories.filter(c => !exclude.includes(c));
                 let html = `<table><thead><tr><th>各月份</th><th>總支出</th>${displayCats.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>`;
-
                 sorted.forEach(m => {
                     const d = monthly[m];
                     const total = d.expense;
-
                     html += `<tr><td><strong>${m}</strong></td><td style="color:var(--expense-color);font-weight:700;">${total.toLocaleString()}</td>`;
-
                     displayCats.forEach(cat => {
-                        // ★ 這裡也改用「類目淨額」
-                        // 例如：飲食支出 -11,930 + 飲食收入 1,400 = -10,530
-                        const amt = d.categoryNet[cat] || 0;
-
-                        // ★ 總支出為負數，所以比例用「絕對值」計算
-                        // 例如：-10,530 ÷ -17,932 = 58.7%
-                        const pct = total !== 0
-                            ? ((Math.abs(amt) / Math.abs(total)) * 100).toFixed(1)
-                            : '0.0';
-
+                        const amt = d.categories[cat] || 0;
+                        const pct = total > 0 ? ((amt / total) * 100).toFixed(1) : 0;
                         html += `<td><div>$${amt.toLocaleString()}</div><div style="color:var(--text-muted);font-size:0.7em;">(${pct}%)</div></td>`;
                     });
-
                     html += '</tr>';
                 });
-
                 html += '</tbody></table>';
                 ratioC.innerHTML = html;
             }
@@ -4364,8 +4240,8 @@ function loadLocalData() {
                     <td style="text-align:right; ${diffStyle}">${diffText !== '-' ? diffText : '-'}</td>
                     <td style="text-align:center; font-weight:bold;">${r.note || ''}</td>
                     <td>
-                        <button style="padding:3px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;cursor:pointer;margin-right:4px;" onclick="editAsset('${r.id}')">編輯</button>
-                        <button style="padding:3px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteAsset('${r.id}')">刪除</button>
+                        <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;cursor:pointer;margin-right:4px;" onclick="editAsset('${r.id}')">編輯</button>
+                        <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteAsset('${r.id}')">刪除</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -5141,66 +5017,491 @@ async function saveData() {
             </div>
         </div>
     </div>
- </div>
-/* ========================================================
-   📱 調皮老公強效升級：手機版版面強制解封防護罩
-   ======================================================== */
-@media screen and (max-width: 768px) {
-    
-    /* 1. 強制瓦解所有電腦版的凍結列與絕對定位，全部解凍！ */
-    .frozen-column, 
-    [style*="position: sticky"],
-    [style*="position: absolute"],
-    th:first-child, 
-    td:first-child,
-    .th-sticky,
-    .td-sticky {
-        position: static !important; 
-        left: auto !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
+<!-- 🐻 拉拉熊浪漫飄落特效開始 🐻 -->
+<style>
+    /* 讓飄落的小圖示不會擋到妳原本按鈕的點擊 */
+    .rilakkuma-flake {
+        position: fixed;
+        top: -50px;
+        z-index: 9999;
+        user-select: none;
+        pointer-events: none;
+        animation: fall linear forwards;
+    }
+    /* 控制往下飄和搖擺的動畫 */
+    @keyframes fall {
+        0% {
+            transform: translateY(0) translateX(0) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(105vh) translateX(100px) rotate(360deg);
+            opacity: 0.3;
+        }
+    }
+</style>
+<script>
+    // 建立飄落小熊的魔法陣
+    function createRilakkuma() {
+        const icons = ['🧸','𓍢ִ໋🌷͙֒','🍓','✨']; // 飄落的拉拉熊、小黃雞、草莓小熊
+        const flake = document.createElement('div');
+        
+        flake.className = 'rilakkuma-flake';
+        flake.innerText = icons[Math.floor(Math.random() * icons.length)];
+        
+        // 隨機讓每隻小熊的大小、位置、飄落速度都不一樣，才會自然漂亮
+        const size = Math.random() * 20 + 20; // 大小 20px ~ 40px
+        flake.style.fontSize = size + 'px';
+        flake.style.left = Math.random() * window.innerWidth + 'px';
+        
+        const duration = Math.random() * 4 + 4; // 飄落速度 4秒 ~ 8秒
+        flake.style.animationDuration = duration + 's';
+        
+        // 隨機微調透明度
+        flake.style.opacity = Math.random() * 0.5 + 0.5;
+        
+        document.body.appendChild(flake);
+        
+        // 飄到螢幕最下面後自動消失，網頁才不會卡卡
+        setTimeout(() => {
+            flake.remove();
+        }, duration * 1000);
     }
 
-    /* 2. 表格層級大解放，寬表格在手機版強制啟動左右滑動，絕對不撐爆畫面 */
-    .stat-section table, 
-    table, 
-    .table-responsive,
-    .stat-section {
-        display: block !important;
-        width: 100% !important;
-        overflow-x: auto !important; 
-        -webkit-overflow-scrolling: touch; 
+    // 每 400 毫秒（約0.4秒）自動誕生一隻可愛的拉拉熊
+    setInterval(createRilakkuma, 400);
+</script>
+<!-- 🐻 拉拉熊浪漫飄落特效結束 🐻 -->
+
+<!-- 🐾 拉拉熊游標隨從特效（黃金比例右下跟隨版） 🐾 -->
+<style>
+    /* 設定小隨從的樣式 */
+    #rilakkuma-follower {
+        position: fixed;
+        font-size: 30px;          /* 隨從的大小 */
+        z-index: 9998;            /* 讓牠待在按鈕下面，不影響操作 */
+        pointer-events: none;     /* 點擊直接穿透，絕不卡住網頁 */
+        user-select: none;
+        will-change: transform;
+        /* 讓跟隨的動作有滑順的延遲感（像小碎步在後面追） */
+        transition: transform 0.15s ease-out; 
+        left: 0;
+        top: 0;
+        transform: translate3d(0, 0, 0);
     }
 
-    /* 3. 破除隱形牆！讓原本電腦版左右分開的側邊欄與明細，在手機上一律變成上下乖乖排列 */
-    .main-wrapper, 
-    .container, 
-    .main-content,
-    body {
-        display: flex !important;
-        flex-direction: column !important; 
-        height: auto !important;
-        overflow: visible !important;
-        padding: 6px !important;
-    }
 
-    /* 4. 側邊欄與按鈕區塊強制拉伸至 100% 滿版，清除所有阻擋點擊的透明圖層 */
-    .sidebar, 
-    #tab-item-analysis, 
-    .tab-content,
-    .nav-menu {
+/* =========================================================
+   📱 GitHub Pages / 手機相容性整理版
+   - 手機解除頂部 sticky，避免遮住內容
+   - 手機解除表格 sticky 表頭
+   - 手機選單改為「點擊」開啟，不依賴 hover
+   - 修正原本 480px 最小寬度造成手機橫向爆版
+   - 保留桌機原有版面與 V2 統計邏輯
+   ========================================================= */
+@media (max-width: 768px) {
+    html, body {
         width: 100% !important;
         max-width: 100% !important;
-        position: relative !important;
-        z-index: 100 !important; /* 提到最上層，確保手指一定點得到按鈕！ */
+        overflow-x: hidden !important;
+    }
+
+    body {
+        padding: 6px !important;
+        margin: 0 !important;
+    }
+
+    .app-wrapper {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        padding: 8px !important;
+        margin: 0 !important;
+        border-radius: 12px !important;
         box-sizing: border-box !important;
     }
-    
-    /* 5. 導覽列排好，按鈕自動換行，不重疊不打架 */
-    .navbar, .nav-menu, .tab-buttons {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 6px !important;
+
+    /* ★ 手機不要凍結整個頂部 */
+    .sticky-header {
+        position: static !important;
+        top: auto !important;
+        z-index: auto !important;
+        padding: 0 0 8px 0 !important;
+        gap: 8px !important;
+        overflow: visible !important;
+    }
+
+    /* ★ 頂部三張卡改成單欄 */
+    .header-top-row {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
         width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* ★ 左邊選單卡：標題一行、三個選單一行 */
+    .header-top-row .menu-bar {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        min-height: 0 !important;
+        height: auto !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 3px !important;
+        padding: 6px !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        align-items: stretch !important;
+    }
+
+    .header-top-row .menu-bar h1 {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 5px 6px 7px !important;
+        border: none !important;
+        text-align: center !important;
+        font-size: 0.98rem !important;
+        box-sizing: border-box !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .header-top-row .menu-bar .menu-item {
+        position: relative !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 9px 4px !important;
+        text-align: center !important;
+        font-size: 0.82rem !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+        border-radius: 8px !important;
+    }
+
+    /* ★ 手機不靠 hover，改靠 .open */
+    .header-top-row .menu-item:hover .dropdown {
+        display: none !important;
+    }
+
+    .header-top-row .menu-item.open .dropdown {
+        display: block !important;
+    }
+
+    .header-top-row .menu-item .dropdown {
+        position: absolute !important;
+        top: calc(100% + 4px) !important;
+        left: 0 !important;
+        right: auto !important;
+        width: min(260px, calc(100vw - 24px)) !important;
+        min-width: 0 !important;
+        max-width: calc(100vw - 24px) !important;
+        max-height: 70vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        z-index: 99999 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 第三個選單靠右，避免超出螢幕 */
+    .header-top-row .menu-item:last-child .dropdown {
+        left: auto !important;
+        right: 0 !important;
+    }
+
+    .header-top-row .menu-item .dropdown a {
+        padding: 12px 14px !important;
+        font-size: 0.82rem !important;
+        white-space: normal !important;
+    }
+
+    /* ★ 中間統計卡與右側操作卡 */
+    .header-top-row .stats-bar {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 8px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    .header-top-row .stats-bar .stat-group,
+    .header-top-row .stats-bar .actions-group {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        min-height: 0 !important;
+        height: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    .header-top-row .stats-bar .stat-group {
+        padding: 10px 8px !important;
+        gap: 6px !important;
+        line-height: 1.5 !important;
+    }
+
+    .header-top-row .stats-bar .stat-group .row1,
+    .header-top-row .stats-bar .stat-group .row2 {
+        width: 100% !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 4px 10px !important;
+        text-align: center !important;
+        line-height: 1.55 !important;
+    }
+
+    .header-top-row .stats-bar .actions-group {
+        padding: 9px 8px !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 7px !important;
+    }
+
+    /* ★ 手機取消左側欄 sticky */
+    .left-panel {
+        position: static !important;
+        top: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        height: auto !important;
+        min-width: 0 !important;
+    }
+
+    /* ★ 手機取消所有表格凍結表頭，避免蓋住下拉/內容 */
+    table th,
+    .tab-content table th,
+    #tab-table th,
+    #tab-statistics th {
+        position: static !important;
+        top: auto !important;
+        z-index: auto !important;
+    }
+
+    /* 表格本身維持橫向滑動，不讓整頁被撐寬 */
+    .table-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .table-container table {
+        min-width: 620px;
+    }
+
+    /* 統計分析表格通常欄位更多，允許自然橫滑 */
+    #tab-statistics .table-container table,
+    #tab-item-analysis .table-container table,
+    #tab-member-analysis .table-container table {
+        min-width: 760px !important;
+    }
+
+    /* ★ 篩選區不要撐爆手機 */
+    .top-section {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+    }
+
+    .quick-date-container {
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 6px !important;
+        align-items: center !important;
+    }
+
+    .month-links {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        gap: 5px !important;
+        overflow: visible !important;
+    }
+
+    .month-links a {
+        padding: 4px 8px !important;
+        font-size: 0.68rem !important;
+    }
+
+    .filters {
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .filters .form-group,
+    .filters input,
+    .filters select {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .main-wrapper,
+    .container,
+    .right-panel {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .container {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    .right-panel {
+        gap: 8px !important;
+    }
+
+    .right-panel .card,
+    .left-panel .card {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 分頁標籤手機可橫滑，不把內容擠成一團 */
+    .tab-menu {
+        width: 100% !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: thin !important;
+    }
+
+    .tab-btn {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+    }
+
+    /* 資產表單在手機改成直排 */
+    #assetForm {
+        flex-wrap: wrap !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #assetForm .form-group,
+    #assetForm .form-group:nth-child(1),
+    #assetForm .form-group:nth-child(2),
+    #assetForm .form-group:nth-child(3) {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 0 !important;
+    }
+
+    #assetForm .form-group input,
+    #assetForm .form-group:nth-child(1) input,
+    #assetForm .form-group:nth-child(2) input,
+    #assetForm .form-group:nth-child(3) input,
+    #assetForm #assetNote {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 避免任何內容偷偷把頁面撐出水平捲軸 */
+    img, canvas, iframe, input, select, textarea, button {
+        max-width: 100%;
     }
 }
+
+/* 平板也取消最容易造成遮擋的頂部 sticky，讓操作空間更自然 */
+@media (min-width: 769px) and (max-width: 1000px) {
+    .sticky-header {
+        position: static !important;
+        top: auto !important;
+    }
+    table th {
+        position: static !important;
+        top: auto !important;
+        z-index: auto !important;
+    }
+}
+</style>
+
+<div id="rilakkuma-follower">🐻</div> 
+
+<script>
+    const follower = document.getElementById('rilakkuma-follower');
+    
+    window.addEventListener('mousemove', (e) => {
+        // 💡 黃金比例微調：改成 + 5，讓小熊緊緊貼在滑鼠指針的右下方，不留大空隙，又不會被遮到臉！
+        const x = e.clientX + 5;  // 往右挪 5 像素
+        const y = e.clientY + 5;  // 往下挪 5 像素
+        
+        follower.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    });
+</script>
+<!-- 🐾 拉拉熊游標隨從特效結束 🐾 -->
+
+
+<script>
+/* =========================================================
+   📱 手機選單：點擊開關，不依賴 hover
+   ========================================================= */
+(function () {
+    function initMobileMenus() {
+        const menuItems = document.querySelectorAll('.menu-bar .menu-item');
+        if (!menuItems.length) return;
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function (event) {
+                // 點擊下拉內容本身，不重新切換父選單
+                if (event.target.closest('.dropdown')) return;
+
+                const isOpen = item.classList.contains('open');
+
+                menuItems.forEach(other => other.classList.remove('open'));
+
+                if (!isOpen) {
+                    item.classList.add('open');
+                }
+            });
+        });
+
+        // 下拉選單內的連結仍然照原本 onclick 執行，但不讓 href="#" 把畫面跳回最上方
+        document.querySelectorAll('.menu-bar .dropdown a[href="#"]').forEach(link => {
+            link.addEventListener('click', function () {
+                setTimeout(() => {
+                    menuItems.forEach(item => item.classList.remove('open'));
+                }, 0);
+            });
+        });
+
+        // 點選選單外部就關閉
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.menu-bar')) {
+                menuItems.forEach(item => item.classList.remove('open'));
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMobileMenus);
+    } else {
+        initMobileMenus();
+    }
+})();
+</script>
+</body>
+</html>
