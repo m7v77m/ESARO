@@ -3927,6 +3927,44 @@ function loadLocalData() {
         }
 
         // ----- 統計分析 -----
+        // ==========================================
+        // 統計用天數計算
+        // 有自訂日期範圍 → 計算該範圍與月份的實際重疊天數
+        // 沒有自訂日期範圍 → 本月算已經過天數，過去月份算整月
+        // ==========================================
+        function getStatisticsDays(year, month, startDate, endDate) {
+            const monthStart = new Date(year, month - 1, 1);
+            const monthEnd = new Date(year, month, 0);
+
+            // 有完整的自訂日期範圍
+            if (startDate && endDate) {
+                const rangeStart = new Date(startDate + 'T00:00:00');
+                const rangeEnd = new Date(endDate + 'T00:00:00');
+
+                // 計算兩個日期區間的重疊範圍
+                const overlapStart = rangeStart > monthStart ? rangeStart : monthStart;
+                const overlapEnd = rangeEnd < monthEnd ? rangeEnd : monthEnd;
+
+                if (overlapStart > overlapEnd) return 0;
+
+                const diffTime = overlapEnd - overlapStart;
+                return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            }
+
+            // 沒有完整日期範圍時，沿用原本的統計方式
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1;
+
+            // 本月：算到今天
+            if (year === currentYear && month === currentMonth) {
+                return now.getDate();
+            }
+
+            // 過去月份：算完整月份天數
+            return monthEnd.getDate();
+        }
+
         function renderStatistics(records) {
             if (records) window.lastFilteredRecords = records;
             const data = window.lastFilteredRecords || state.records || [];
@@ -3936,21 +3974,54 @@ function loadLocalData() {
             data.forEach(r => {
                 if (!r.datetime) return;
                 const m = r.datetime.substring(0, 7);
+
                 if (!monthly[m]) {
-                    // 移除寫死的 dietTotal，改為全類目動態追蹤
-                    monthly[m] = { income: 0, expense: 0, categories: {} };
-                    state.categories.forEach(cat => { monthly[m].categories[cat] = 0; });
+                    // categories：維持原本「純支出」統計
+                    // categoryNet：新增「類目淨額」，支出 + 同類目收入
+                    monthly[m] = {
+                        income: 0,
+                        expense: 0,
+                        categories: {},
+                        categoryNet: {}
+                    };
+
+                    state.categories.forEach(cat => {
+                        monthly[m].categories[cat] = 0;
+                        monthly[m].categoryNet[cat] = 0;
+                    });
                 }
+
                 const amt = parseFloat(r.price) || 0;
+
                 if (r.type === 'income') {
+                    // 總收入維持原本邏輯
                     monthly[m].income += amt;
-                } else if (r.type === 'expense') {
-                    monthly[m].expense += amt;
-                    // 確保即使是不在預設列表中的自訂類目也能被計算
-                    if (monthly[m].categories[r.category] === undefined) {
-                        monthly[m].categories[r.category] = 0;
+
+                    // 收入若有類目，加入該類目的「淨額」
+                    // 例如：飲食支出 -11,930 + 飲食收入 1,400 = -10,530
+                    if (r.category) {
+                        if (monthly[m].categoryNet[r.category] === undefined) {
+                            monthly[m].categoryNet[r.category] = 0;
+                        }
+                        monthly[m].categoryNet[r.category] += amt;
                     }
-                    monthly[m].categories[r.category] += amt;
+                } else if (r.type === 'expense') {
+                    // 總支出維持純支出，不把收入抵銷進來
+                    monthly[m].expense += amt;
+
+                    if (r.category) {
+                        // 原本的類目支出統計維持不變
+                        if (monthly[m].categories[r.category] === undefined) {
+                            monthly[m].categories[r.category] = 0;
+                        }
+                        monthly[m].categories[r.category] += amt;
+
+                        // 同時建立類目淨額
+                        if (monthly[m].categoryNet[r.category] === undefined) {
+                            monthly[m].categoryNet[r.category] = 0;
+                        }
+                        monthly[m].categoryNet[r.category] += amt;
+                    }
                 }
             });
 
@@ -3960,67 +4031,106 @@ function loadLocalData() {
             const balanceBody = document.getElementById('stat-monthly-balance-body');
             if (balanceBody) {
                 let totalInc = 0, totalExp = 0;
-                sorted.forEach(m => { totalInc += monthly[m].income; totalExp += monthly[m].expense; });
+                sorted.forEach(m => {
+                    totalInc += monthly[m].income;
+                    totalExp += monthly[m].expense;
+                });
+
                 const totalBal = totalInc + totalExp; // 支出為負，改相加
                 const cnt = sorted.length || 1;
+
                 let html = sorted.map(m => {
                     const d = monthly[m];
                     const bal = d.income + d.expense; // 支出為負
                     const col = bal >= 0 ? 'var(--income-color)' : 'var(--expense-color)';
+
                     return `<tr><td>${m}</td><td style="color:var(--income-color);">${d.income.toLocaleString()}</td><td style="color:var(--expense-color);">${d.expense.toLocaleString()}</td><td style="color:${col};font-weight:700;">${bal.toLocaleString()}</td></tr>`;
                 }).join('');
+
                 if (sorted.length) {
                     html += `<tr class="total-row"><td>總計</td><td style="color:var(--income-color);">${totalInc.toLocaleString()}</td><td style="color:var(--expense-color);">${totalExp.toLocaleString()}</td><td style="color:${totalBal>=0?'var(--income-color)':'var(--expense-color)'};font-weight:700;">${totalBal.toLocaleString()}</td></tr>
                             <tr class="total-row"><td>月平均</td><td style="color:var(--income-color);">${(totalInc/cnt).toFixed(1)}</td><td style="color:var(--expense-color);">${(totalExp/cnt).toFixed(1)}</td><td style="color:${(totalBal/cnt)>=0?'var(--income-color)':'var(--expense-color)'};font-weight:700;">${(totalBal/cnt).toFixed(1)}</td></tr>`;
                 } else {
                     html = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
                 }
+
                 balanceBody.innerHTML = html;
             }
 
             // 3. 更新動態下拉選單並讀取目前選擇的類目
             const catSelect = document.getElementById('stat-category-select');
             let selectedCat = '';
+
             if (catSelect) {
                 const currentVal = catSelect.value;
-                // 收集所有紀錄中的類目 + 系統設定的類目 (利用 Set 確保不重複)
-                const allCats = new Set([...state.categories]);
-                data.forEach(r => { if (r.type === 'expense' && r.category) allCats.add(r.category); });
-                
-                catSelect.innerHTML = Array.from(allCats).map(c => `<option value="${c}">${c}</option>`).join('');
-                
-                // 保留先前選取的項目，若無則預設選取 '飲食'
-                if (Array.from(allCats).includes(currentVal)) {
+
+                // 收集所有紀錄中的類目 + 系統設定的類目
+                // income 也要納入，避免「只有收入沒有支出」的類目消失
+                const allCats = new Set([...(state.categories || [])]);
+                data.forEach(r => {
+                    if (r.category) allCats.add(r.category);
+                });
+
+                catSelect.innerHTML = Array.from(allCats)
+                    .map(c => `<option value="${c}">${c}</option>`)
+                    .join('');
+
+                // 優先保留目前選取的類目
+                if (currentVal && allCats.has(currentVal)) {
                     catSelect.value = currentVal;
                 } else if (allCats.has('飲食')) {
                     catSelect.value = '飲食';
+                } else if (allCats.size > 0) {
+                    catSelect.value = Array.from(allCats)[0];
                 }
+
                 selectedCat = catSelect.value;
             }
 
             // 4. 更新每月「各類目」日平均表格
             const catAvgBody = document.getElementById('stat-category-average-body');
+
             if (catAvgBody) {
                 if (!sorted.length || !selectedCat) {
                     catAvgBody.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
                 } else {
-                    const now = new Date();
-                    const cy = now.getFullYear(), cm = now.getMonth() + 1, cd = now.getDate();
-                    catAvgBody.innerHTML = sorted.map(m => {
+                    // 讀取目前畫面上的日期篩選
+                    const startDateInput = document.getElementById('filterStartDate');
+                    const endDateInput = document.getElementById('filterEndDate');
+                    const startDate = startDateInput ? startDateInput.value : '';
+                    const endDate = endDateInput ? endDateInput.value : '';
+
+                    const rows = sorted.map(m => {
                         const d = monthly[m];
-                        const catTotal = d.categories[selectedCat] || 0;
                         const [y, mon] = m.split('-').map(Number);
-                        let days, label;
-                        if (y === cy && mon === cm) {
-                            days = cd; // 本月只除以經過的天數
-                            label = `${cd} 天 (至今)`;
-                        } else {
-                            days = new Date(y, mon, 0).getDate(); // 取得該月總天數
-                            label = `${days} 天`;
-                        }
+
+                        // ★ 類目總額使用「淨額」：支出 + 同類目的收入
+                        const catTotal = d.categoryNet[selectedCat] || 0;
+
+                        // ★ 天數完全跟著日期篩選範圍走
+                        const days = getStatisticsDays(y, mon, startDate, endDate);
+
+                        // 該月份不在日期範圍內
+                        if (days <= 0) return '';
+
                         const avg = catTotal / days;
+                        let label;
+
+                        if (startDate && endDate) {
+                            label = `${days} 天`;
+                        } else {
+                            const now = new Date();
+                            if (y === now.getFullYear() && mon === now.getMonth() + 1) {
+                                label = `${days} 天 (至今)`;
+                            } else {
+                                label = `${days} 天`;
+                            }
+                        }
+
                         return `<tr><td>${m}</td><td>${catTotal.toLocaleString()}</td><td>${label}</td><td style="font-weight:700;color:#2980b9;">$${avg.toFixed(1)}</td></tr>`;
                     }).join('');
+
+                    catAvgBody.innerHTML = rows || '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
                 }
             }
 
@@ -4031,20 +4141,34 @@ function loadLocalData() {
                     ratioC.innerHTML = '<p style="padding:13px;color:var(--text-muted);text-align:center;">無資料</p>';
                     return;
                 }
-                const exclude = [ '利息', '資產','月薪','面交','府府','拍賣','支援'];
+
+                const exclude = ['利息', '資產', '月薪', '面交', '府府', '拍賣', '支援'];
                 const displayCats = state.categories.filter(c => !exclude.includes(c));
                 let html = `<table><thead><tr><th>各月份</th><th>總支出</th>${displayCats.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>`;
+
                 sorted.forEach(m => {
                     const d = monthly[m];
                     const total = d.expense;
+
                     html += `<tr><td><strong>${m}</strong></td><td style="color:var(--expense-color);font-weight:700;">${total.toLocaleString()}</td>`;
+
                     displayCats.forEach(cat => {
-                        const amt = d.categories[cat] || 0;
-                        const pct = total > 0 ? ((amt / total) * 100).toFixed(1) : 0;
+                        // ★ 這裡也改用「類目淨額」
+                        // 例如：飲食支出 -11,930 + 飲食收入 1,400 = -10,530
+                        const amt = d.categoryNet[cat] || 0;
+
+                        // ★ 總支出為負數，所以比例用「絕對值」計算
+                        // 例如：-10,530 ÷ -17,932 = 58.7%
+                        const pct = total !== 0
+                            ? ((Math.abs(amt) / Math.abs(total)) * 100).toFixed(1)
+                            : '0.0';
+
                         html += `<td><div>$${amt.toLocaleString()}</div><div style="color:var(--text-muted);font-size:0.7em;">(${pct}%)</div></td>`;
                     });
+
                     html += '</tr>';
                 });
+
                 html += '</tbody></table>';
                 ratioC.innerHTML = html;
             }
