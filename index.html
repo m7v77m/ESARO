@@ -2729,7 +2729,7 @@ button#submitBtn.btn-primary {
                         <div class="dropdown">
                             <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importJSON(event)">
                             <a href="#" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-file-import"></i> 匯入全備份 JSON</a>
-                            <a href="#" onclick="exportJSON(event)"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
+                            <a href="#" onclick="exportJSON()"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
                             <div class="divider"></div>
                             <input type="file" id="importSettingsFile" accept=".json" style="display:none;" onchange="importSettingsJSON(event)">
                             <a href="#" onclick="document.getElementById('importSettingsFile').click()"><i class="fa-solid fa-upload"></i> 匯入設定</a>
@@ -4709,50 +4709,16 @@ async function saveData() {
   }
   })();
 }
-        async function exportJSON(event) {
-            if (event && typeof event.preventDefault === 'function') event.preventDefault();
-            try {
-                const filename = `家庭流水帳_${getTodayDateString()}.json`;
-                const json = JSON.stringify(state, null, 2);
-                const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
-
-                // iPhone / iPad：使用系統分享面板，讓使用者可直接「儲存到檔案」。
-                if (navigator.share && typeof File !== 'undefined') {
-                    const file = new File([blob], filename, { type: 'application/json' });
-                    let canShareFile = true;
-                    try {
-                        canShareFile = !navigator.canShare || navigator.canShare({ files: [file] });
-                    } catch (e) { canShareFile = false; }
-                    if (canShareFile) {
-                        try {
-                            await navigator.share({
-                                title: '時來運轉｜全備份',
-                                text: '時來運轉全備份 JSON',
-                                files: [file]
-                            });
-                            return;
-                        } catch (shareErr) {
-                            if (shareErr && shareErr.name === 'AbortError') return;
-                        }
-                    }
-                }
-
-                // 其他瀏覽器：正常下載。
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                a.rel = 'noopener';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => {
-                    try { document.body.removeChild(a); } catch(e) {}
-                    URL.revokeObjectURL(url);
-                }, 500);
-            } catch (err) {
-                console.error('匯出全備份失敗:', err);
-                alert('❌ 匯出失敗：' + (err.message || err));
-            }
+        function exportJSON() {
+            const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `家庭流水帳_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
                 function importJSON(event) {
@@ -5751,101 +5717,51 @@ async function saveData() {
 }
 
 @media (max-width: 900px) {
-    /* 📱 手機篩選器：兩欄整齊排版
-       左：起始日期＋今天 / 結束日期＋今天
-       右：收支類型 / 類目名稱
-       帳戶、成員、關鍵字再各自完整一行。 */
+    /* 篩選器：手機 / 小平板一律單欄，避免兩個日期框互撞 */
     .filters {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1.55fr) minmax(118px, 0.85fr) !important;
-        grid-auto-flow: row !important;
-        gap: 10px 10px !important;
+        grid-template-columns: 1fr !important;
         width: 100% !important;
         min-width: 0 !important;
-        align-items: end !important;
     }
 
-    .filters .form-group {
+    .filters .date-filter-group {
+        grid-column: 1 / -1 !important;
         width: 100% !important;
         min-width: 0 !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    .filters .date-filter-group:nth-child(1) {
-        grid-column: 1 !important;
-        grid-row: 1 !important;
-    }
-    .filters .date-filter-group:nth-child(2) {
-        grid-column: 1 !important;
-        grid-row: 2 !important;
-    }
-    .filters .form-group:nth-child(3) {
-        grid-column: 2 !important;
-        grid-row: 1 !important;
-    }
-    .filters .form-group:nth-child(5) {
-        grid-column: 2 !important;
-        grid-row: 2 !important;
-    }
-    .filters .form-group:nth-child(4) {
-        grid-column: 1 / -1 !important;
-        grid-row: 3 !important;
-    }
-    .filters .form-group:nth-child(6) {
-        grid-column: 1 / -1 !important;
-        grid-row: 4 !important;
-    }
-    .filters .form-group:nth-child(7) {
-        grid-column: 1 / -1 !important;
-        grid-row: 5 !important;
     }
 
     .filters .date-with-today {
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) 58px !important;
-        gap: 6px !important;
+        grid-template-columns: minmax(0, 1fr) 60px !important;
         width: 100% !important;
         min-width: 0 !important;
-        box-sizing: border-box !important;
     }
 
     .filters .date-with-today input[type="date"] {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
-        box-sizing: border-box !important;
-        font-size: 0.78rem !important;
-        padding-left: 8px !important;
-        padding-right: 6px !important;
     }
 
     .filters .today-btn {
-        width: 58px !important;
-        min-width: 58px !important;
-        max-width: 58px !important;
-        height: 36px !important;
-        padding: 0 4px !important;
-        font-size: 0.78rem !important;
-        box-sizing: border-box !important;
+        width: 60px !important;
+        min-width: 60px !important;
+        max-width: 60px !important;
     }
 
-    .filters .form-group label {
-        white-space: nowrap !important;
-    }
-
-    /* 新增紀錄日期維持原本的「日期＋今天」版型，不受篩選器兩欄排版影響。 */
+    /* 新增紀錄日期 */
     .date-form-group,
     .date-form-group .date-with-today {
         width: 100% !important;
         min-width: 0 !important;
-        box-sizing: border-box !important;
     }
+
     .date-form-group .date-with-today input[type="date"] {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
     }
+
     .date-form-group .today-btn {
         width: 60px !important;
         min-width: 60px !important;
