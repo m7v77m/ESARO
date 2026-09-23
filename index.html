@@ -5157,8 +5157,8 @@ async function saveData() {
             // 💡 padding: 0px 0; 和 margin-bottom: -3px; 則是消滅兩排按鈕中間的厚空白！
             footer.style.cssText = "display:flex; gap:6px; margin-top:-2px !important; margin-bottom:-2px !important; padding:-2px -2 !important; align-items:center; line-height:-2;";
             footer.innerHTML = `
-                <button class="btn-secondary" style="background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:13px;" onclick="addNewAccount()"><i class="fa-solid fa-plus"></i> 新增帳戶</button>
-                <button class="btn-secondary" style="background:#E8D5B0; color:#5C4033; border-radius:13px; padding:6px 8px; font-size:13px;" onclick="recalcAccountBalances()">🔄 多餘按鈕</button>
+                <button class="btn-secondary" style="background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:15px;" onclick="addNewAccount()"><i class="fa-solid fa-plus"></i> 新增帳戶</button>
+                
             `;
             container.appendChild(footer);
 
