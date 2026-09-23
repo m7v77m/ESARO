@@ -5209,6 +5209,35 @@ async function saveData() {
     </div>
 <!-- 🐻 拉拉熊浪漫飄落特效開始 🐻 -->
 <style>
+/* ========================================================
+   🧸 調皮老公特製：起始日期、結束日期框框高度完美對齊術
+   ======================================================== */
+/* 1. 鎖定起始與結束日期輸入框，強制把高度和內襯墊縮小，與右邊對齊 */
+#filterStartDate, 
+#filterEndDate {
+    height: 30px !important;       /* 如果右邊稍微高一點，可以改成 32px 或 34px 試試看 */
+    padding: 2px 8px !important;   /* 減少上下多餘的空間，只留左右舒適度 */
+    font-size: 0.85rem !important; /* 讓字體精緻不撐大框框 */
+    box-sizing: border-box !important;
+}
+
+/* 2. 鎖定這兩個日期框旁邊的「今天」按鈕，讓它跟左邊的輸入框齊頭並進 */
+.date-with-today .today-btn {
+    height: 30px !important;       /* 高度必須跟上面的日期框一模一樣 */
+    padding: 0 10px !important;    /* 左右留一點小空間好按 */
+    font-size: 0.8rem !important;  /* 按鈕字體稍微精簡 */
+    line-height: 30px !important;  /* 讓「今天」兩個字垂直居中不歪斜 */
+    box-sizing: border-box !important;
+    margin-left: 4px !important;   /* 讓按鈕跟輸入框之間保持一個漂亮的小空隙 */
+}
+
+/* 3. 確保包裹它們的外殼容器不會自己長肉增高 */
+.date-with-today {
+    display: inline-flex !important;
+    align-items: center !important; /* 讓輸入框和今天按鈕在同一個水平線上對齊 */
+    height: 30px !important;
+}
+
     /* 讓飄落的小圖示不會擋到妳原本按鈕的點擊 */
     .rilakkuma-flake {
         position: fixed;
