@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2280%22>🐻</text></svg>">    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>時來運轉 ₍ ^. .^ ₎ ⟆</title>
 
     <!-- 1. Font Awesome 圖示 -->
@@ -2259,7 +2259,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
         }
         /* 重新計算、重整按鈕也改色 */
         #accountBalanceCard .btn-secondary {
-            border-radius: 13px !important;
+            border-radius: 18px !important;
             font-weight: 700 !important;
         }
         
@@ -2712,76 +2712,11 @@ button#submitBtn.btn-primary {
     padding: 5px 20px !important;
     
     /* 💡 限制它的最大高度，讓它變得更苗條精緻 */
-    height: 36px !important;
+    height: 34px !important;
     line-height: 24px !important;
 }
 
-        
-
-        /* ============================================================
-           🐻 爸爸這次指定的「卡片順序整理」
-           1. 帳戶金額：收入/支出/資產/範圍結餘下方、快速篩選上方
-           2. 帳戶/類目/成員維護：移到明細/統計/資產/項目/成員大卡片下方
-           ============================================================ */
-        .account-balance-top-card {
-            width: 100% !important;
-            box-sizing: border-box !important;
-            margin: 0 0 13px 0 !important;
-            padding: 13px !important;
-        }
-        .account-balance-top-card h3 {
-            margin-top: 0 !important;
-            margin-bottom: 8px !important;
-        }
-        .account-balance-top-card #accountBalanceList {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important;
-            gap: 8px !important;
-        }
-        .account-balance-top-card #accountBalanceList > * {
-            flex: 1 1 220px !important;
-            min-width: 0 !important;
-        }
-        .maintenance-bottom-grid {
-            grid-column: 1 / -1 !important;
-            display: grid !important;
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-            gap: 13px !important;
-            margin-top: 0 !important;
-        }
-        .maintenance-bottom-grid .sync-settings-card {
-            margin: 0 !important;
-            min-width: 0 !important;
-            height: auto !important;
-        }
-        .maintenance-bottom-grid .cat-tag-container {
-            max-height: none !important;
-            height: auto !important;
-            overflow: visible !important;
-        }
-        @media (max-width: 1000px) {
-            .maintenance-bottom-grid {
-                grid-template-columns: 1fr !important;
-            }
-        }
-        @media (max-width: 600px) {
-            .account-balance-top-card {
-                padding: 10px !important;
-                margin-bottom: 10px !important;
-            }
-            .account-balance-top-card #accountBalanceList {
-                flex-direction: column !important;
-            }
-            .account-balance-top-card #accountBalanceList > * {
-                flex: 1 1 auto !important;
-                width: 100% !important;
-            }
-            .maintenance-bottom-grid {
-                gap: 10px !important;
-            }
-        }
-</style>
+        </style>
 </head>
 <body>
     <div class="app-wrapper">
@@ -2794,7 +2729,7 @@ button#submitBtn.btn-primary {
                         <div class="dropdown">
                             <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importJSON(event)">
                             <a href="#" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-file-import"></i> 匯入全備份 JSON</a>
-                            <a href="#" onclick="exportJSON()"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
+                            <a href="#" onclick="exportJSON(event)"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
                             <div class="divider"></div>
                             <input type="file" id="importSettingsFile" accept=".json" style="display:none;" onchange="importSettingsJSON(event)">
                             <a href="#" onclick="document.getElementById('importSettingsFile').click()"><i class="fa-solid fa-upload"></i> 匯入設定</a>
@@ -2819,36 +2754,25 @@ button#submitBtn.btn-primary {
                         </div>
                     </div>
                 </div>
-
+   
                 <div class="stats-bar">
                     <div class="stat-group">
-                        <div class="row1" style="justify-content:center;gap:13px;flex-wrap:wrap;">
-                            <span>💰 收入: <span id="totalIncome" class="text-income">$0</span></span>
-                            <span>💸 支出: <span id="totalExpense" class="text-expense">$0</span></span>
-                            <span>🏦 資產: <span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>
-                            <span style="margin-left:8px;">📊 範圍結餘: <strong id="monthBalance">$0</strong> <span style="color:var(--text-muted);font-size:0.7rem;"> =（收入 + 支出）</span></span>
+                        <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
+                            <span><div class="nav-title" style="color: #385a37; font-size: 13px;">💰 收入<span id="totalIncome" class="text-income">$0</span></span>
+                            <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>
+                            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>
+                            <span style="margin-left:6px;">📊 範圍結餘: <strong id="monthBalance">$0</strong> <span style="color:var(--text-muted);font-size:0.75rem;"> =（收入 + 支出）</span></span>
                         </div>
                     </div>
                     <div class="actions-group">
-                        <button class="btn-danger" style="padding:8px 13px !important;border-radius:var(--radius-full);border:none;font-weight:600;font-size:0.75rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button class="btn-danger" style="padding:8px 13px !important;border-radius:var(--radius-full);border:none;font-weight:600;font-size:0.75rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>&nbsp;&nbsp;&nbsp;
-                        <div class="selected-stats" style="padding:6px 13px !important;">
+                        <button class="btn-danger" style="padding:7px 12px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
+                        <button class="btn-danger" style="padding:6px 10px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>
+                        <div class="selected-stats" style="padding:4px 10px !important;">
                             已勾選 <strong id="selectedCount">0</strong> 筆，小計: <strong id="selectedTotal">$0</strong>
                         </div>
                     </div>
                 </div>
             </div>
-
-            
-                <div class="card account-balance-top-card" id="accountBalanceCard">
-                    <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
-                    <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
-                    <div style="margin-top:13px;display:flex;gap:6px;">
-                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
-                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
-                    </div>
-                    <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 初始金額 + 收入 + 支出（支出為負），新增紀錄自動更新</div>
-                </div>
 
             <div class="top-section" id="top-section">
                 <div class="quick-date-container">
@@ -2856,24 +2780,36 @@ button#submitBtn.btn-primary {
                     <select id="quickYear" onchange="handleYearChange()"></select>
                     <span>年</span>
                    <div class="month-links" id="monthLinks">&nbsp;
-                        <a href="#" onclick="setMonthFilter(1,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">1 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(2,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">2 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(3,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">3 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(4,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">4 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(5,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">5 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(6,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">6 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(7,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">7 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(8,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">8 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(9,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">9 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(10,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">10 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(11,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">11 月 .. </a>
-                        <a href="#" onclick="setMonthFilter(12,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">12 月 .. </a>
+                        <a href="#" onclick="setMonthFilter(1,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">1月</a>
+                        <a href="#" onclick="setMonthFilter(2,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">2月</a>
+                        <a href="#" onclick="setMonthFilter(3,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">3月</a>
+                        <a href="#" onclick="setMonthFilter(4,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">4月</a>
+                        <a href="#" onclick="setMonthFilter(5,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">5月</a>
+                        <a href="#" onclick="setMonthFilter(6,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">6月</a>
+                        <a href="#" onclick="setMonthFilter(7,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">7月</a>
+                        <a href="#" onclick="setMonthFilter(8,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">8月</a>
+                        <a href="#" onclick="setMonthFilter(9,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">9月</a>
+                        <a href="#" onclick="setMonthFilter(10,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">10月</a>
+                        <a href="#" onclick="setMonthFilter(11,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">11月</a>
+                        <a href="#" onclick="setMonthFilter(12,this,event)"  style="padding-top:1px;padding-bottom:2px;font-size:13px;">12月</a>
                         <a href="#" onclick="clearDateFilter(event)" class="clear-link">清 除 ✕</a>
                     </div>
                 </div>
                 <div class="filters">
-                    <div class="form-group"><label>📆 起始日期</label><input type="date" id="filterStartDate" onchange="renderData(true)"></div>
-                    <div class="form-group"><label>📆 結束日期</label><input type="date" id="filterEndDate" onchange="renderData(true)"></div>
+                    <div class="form-group date-filter-group">
+                        <label>📆 起始日期</label>
+                        <div class="date-with-today">
+                            <input type="date" id="filterStartDate" onchange="renderData(true)">
+                            <button type="button" class="today-btn" onclick="setTodayForDate('filterStartDate', true)" title="跳到今天">今天</button>
+                        </div>
+                    </div>
+                    <div class="form-group date-filter-group">
+                        <label>📆 結束日期</label>
+                        <div class="date-with-today">
+                            <input type="date" id="filterEndDate" onchange="renderData(true)">
+                            <button type="button" class="today-btn" onclick="setTodayForDate('filterEndDate', true)" title="跳到今天">今天</button>
+                        </div>
+                    </div>
                     <div class="form-group"><label>💰 收支類型</label>
                         <select id="filterType" onchange="renderData(true)">
                             <option value="">全部</option>
@@ -2898,7 +2834,15 @@ button#submitBtn.btn-primary {
 
                 <div class="left-panel">
 
-                
+                <div class="card" id="accountBalanceCard">
+                    <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
+                    <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
+                    <div style="margin-top:13px;display:flex;gap:6px;">
+                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
+                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
+                    </div>
+                    <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 初始金額 + 收入 + 支出（支出為負），新增紀錄自動更新</div>
+                </div>
 
                     <div class="card">
                         <h3><i class="fa-solid fa-pen-to-square"></i> <span id="formTitle">新增紀錄</span></h3>
@@ -2917,7 +2861,13 @@ button#submitBtn.btn-primary {
                                 <label for="typeAsset" class="asset-label">資產</label>
                             </div>
 
-                            <div class="form-group"><label>📅 日期時間</label><input type="date" id="datetime" required></div>
+                            <div class="form-group date-form-group">
+                                <label>📅 日期時間</label>
+                                <div class="date-with-today">
+                                    <input type="date" id="datetime" required>
+                                    <button type="button" class="today-btn" onclick="setTodayForDate('datetime', false)" title="跳到今天">今天</button>
+                                </div>
+                            </div>
                             <div class="form-group"><label>🏦 帳戶支應</label><select id="account"></select></div>
                             <div class="form-group"><label>📂 類目名稱</label><select id="category" required></select></div>
                             <div class="form-group"><label>👥 成員對象</label><select id="target" required></select></div>
@@ -2968,7 +2918,7 @@ button#submitBtn.btn-primary {
                                             <button type="button" class="operator" onclick="calcInput('+')">+</button>
                                             <button type="button" class="equals" onclick="calcResult()">=</button>
                                         </div>
-                                        <button type="button" onclick="applyCalc()" style="width:100%;margin-top:6px;padding:4px;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;font-weight:600;cursor:pointer;">✅ 帶入金額</button>
+                                        <button type="button" onclick="applyCalc()" style="width:100%;margin-top:12px;padding:5px;height:35px;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;font-size: 14px;font-weight:600;cursor:pointer;">✅&nbsp;&nbsp;帶 入 金 額</button>
                                     </div>
                                 </div>
                             </div>
@@ -2977,11 +2927,32 @@ button#submitBtn.btn-primary {
                         </form>
                     </div>
 
-                    
+                    <div class="card sync-settings-card" id="leftAccountCard">
+                        <h3><i class="fa-solid fa-building-columns"></i> 帳戶維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newAccount" placeholder="新帳戶">
+                            <button onclick="addAccount()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="accountList" class="cat-tag-container"></div>
+                    </div>
 
-                    
+                    <div class="card sync-settings-card" id="leftCategoryCard">
+                        <h3><i class="fa-solid fa-tags"></i> 類目維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newCategory" placeholder="新類目">
+                            <button onclick="addCategory()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="categoryList" class="cat-tag-container"></div>
+                    </div>
 
-                    
+                    <div class="card sync-settings-card" id="leftTargetCard">
+                        <h3><i class="fa-solid fa-users"></i> 成員維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newTarget" placeholder="新成員">
+                            <button onclick="addTarget()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="targetList" class="cat-tag-container"></div>
+                    </div>
                 </div>
 
                 <div class="right-panel">
@@ -3108,7 +3079,7 @@ button#submitBtn.btn-primary {
 							    </table>
 							</div>
                             <div class="stat-section">
-                                <h4>🔍 每日類目統計（依目前篩選結果）</h4>
+                                <h4>🔍 每日項目統計（依目前篩選結果）</h4>
                                 <table>
                                     <thead>
                                         <tr>
@@ -3156,33 +3127,6 @@ button#submitBtn.btn-primary {
                             </div>
                         </div>
 
-                    </div>
-                </div>
-
-                <div class="maintenance-bottom-grid" id="maintenanceBottomGrid">
-                    <div class="card sync-settings-card" id="leftAccountCard">
-                        <h3><i class="fa-solid fa-building-columns"></i> 帳戶維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
-                        <div class="category-mgr">
-                            <input type="text" id="newAccount" placeholder="新帳戶">
-                            <button onclick="addAccount()">新增</button>
-                        </div>
-                        <div id="accountList" class="cat-tag-container"></div>
-                    </div>
-                    <div class="card sync-settings-card" id="leftCategoryCard">
-                        <h3><i class="fa-solid fa-tags"></i> 類目維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
-                        <div class="category-mgr">
-                            <input type="text" id="newCategory" placeholder="新類目">
-                            <button onclick="addCategory()">新增</button>
-                        </div>
-                        <div id="categoryList" class="cat-tag-container"></div>
-                    </div>
-                    <div class="card sync-settings-card" id="leftTargetCard">
-                        <h3><i class="fa-solid fa-users"></i> 成員維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
-                        <div class="category-mgr">
-                            <input type="text" id="newTarget" placeholder="新成員">
-                            <button onclick="addTarget()">新增</button>
-                        </div>
-                        <div id="targetList" class="cat-tag-container"></div>
                     </div>
                 </div>
             </div>
@@ -3574,6 +3518,20 @@ function loadLocalData() {
         }
 
         // ----- 表單 -----
+        // ----- 日期快速跳轉：今天 -----
+        function getTodayDateString() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            return now.toISOString().slice(0, 10);
+        }
+
+        function setTodayForDate(inputId, rerenderFilter) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.value = getTodayDateString();
+            if (rerenderFilter) renderData(true);
+        }
+
         function resetFormDateTime() {
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -4279,13 +4237,9 @@ function loadLocalData() {
             // 依日期從新到舊排序
             const sortedDates = Object.keys(daily).sort((a, b) => b.localeCompare(a));
 
-            const weekdays = ['(日)', '(一)', '(二)', '(三)', '(四)', '(五)', '(六)'];
-
             let html = sortedDates.map(date => {
-                const dateObj = new Date(date + 'T00:00:00');
-                const dateDisplay = `${date} ${weekdays[dateObj.getDay()]}`;
                 return `<tr>
-                    <td style="text-align:center;">${dateDisplay}</td>
+                    <td style="text-align:center;">${date}</td>
                     <td style="text-align:right; font-weight:700;">$${daily[date].sum.toLocaleString()}</td>
                     <td style="text-align:center;">${daily[date].count}</td>
                 </tr>`;
@@ -4442,8 +4396,8 @@ function loadLocalData() {
                     <td style="text-align:right; ${diffStyle}">${diffText !== '-' ? diffText : '-'}</td>
                     <td style="text-align:center; font-weight:bold;">${r.note || ''}</td>
                     <td>
-                        <button style="padding:3px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;cursor:pointer;margin-right:4px;" onclick="editAsset('${r.id}')">編輯</button>
-                        <button style="padding:3px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteAsset('${r.id}')">刪除</button>
+                        <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;cursor:pointer;margin-right:4px;" onclick="editAsset('${r.id}')">編輯</button>
+                        <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteAsset('${r.id}')">刪除</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -4755,16 +4709,50 @@ async function saveData() {
   }
   })();
 }
-        function exportJSON() {
-            const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `家庭流水帳_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        async function exportJSON(event) {
+            if (event && typeof event.preventDefault === 'function') event.preventDefault();
+            try {
+                const filename = `家庭流水帳_${getTodayDateString()}.json`;
+                const json = JSON.stringify(state, null, 2);
+                const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+
+                // iPhone / iPad：使用系統分享面板，讓使用者可直接「儲存到檔案」。
+                if (navigator.share && typeof File !== 'undefined') {
+                    const file = new File([blob], filename, { type: 'application/json' });
+                    let canShareFile = true;
+                    try {
+                        canShareFile = !navigator.canShare || navigator.canShare({ files: [file] });
+                    } catch (e) { canShareFile = false; }
+                    if (canShareFile) {
+                        try {
+                            await navigator.share({
+                                title: '時來運轉｜全備份',
+                                text: '時來運轉全備份 JSON',
+                                files: [file]
+                            });
+                            return;
+                        } catch (shareErr) {
+                            if (shareErr && shareErr.name === 'AbortError') return;
+                        }
+                    }
+                }
+
+                // 其他瀏覽器：正常下載。
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.rel = 'noopener';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    try { document.body.removeChild(a); } catch(e) {}
+                    URL.revokeObjectURL(url);
+                }, 500);
+            } catch (err) {
+                console.error('匯出全備份失敗:', err);
+                alert('❌ 匯出失敗：' + (err.message || err));
+            }
         }
 
                 function importJSON(event) {
@@ -5169,8 +5157,8 @@ async function saveData() {
             // 💡 padding: 0px 0; 和 margin-bottom: -3px; 則是消滅兩排按鈕中間的厚空白！
             footer.style.cssText = "display:flex; gap:6px; margin-top:-2px !important; margin-bottom:-2px !important; padding:-2px -2 !important; align-items:center; line-height:-2;";
             footer.innerHTML = `
-                <button class="btn-secondary" style="background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:13px;" onclick="addNewAccount()"><i class="fa-solid fa-plus"></i> 新增帳戶</button>
-                <button class="btn-secondary" style="background:#E8D5B0; color:#5C4033; border-radius:13px; padding:6px 8px; font-size:13px;" onclick="recalcAccountBalances()">🔄 多餘按鈕</button>
+                <button class="btn-secondary" style="background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:15px;" onclick="addNewAccount()"><i class="fa-solid fa-plus"></i> 新增帳戶</button>
+                
             `;
             container.appendChild(footer);
 
@@ -5219,70 +5207,746 @@ async function saveData() {
             </div>
         </div>
     </div>
- </div>
+<!-- 🐻 拉拉熊浪漫飄落特效開始 🐻 -->
 <style>
 /* ========================================================
-   📱 調皮老公強效升級：手機版版面強制解封防護罩
+   🧸 調皮老公特製：起始日期、結束日期框框高度完美對齊術
    ======================================================== */
-@media screen and (max-width: 768px) {
-    
-    /* 1. 強制瓦解所有電腦版的凍結列與絕對定位，全部解凍！ */
-    .frozen-column, 
-    [style*="position: sticky"],
-    [style*="position: absolute"],
-    th:first-child, 
-    td:first-child,
-    .th-sticky,
-    .td-sticky {
-        position: static !important; 
-        left: auto !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
+/* 1. 鎖定起始與結束日期輸入框，強制把高度和內襯墊縮小，與右邊對齊 */
+#filterStartDate, 
+#filterEndDate {
+    height: 26px !important;       /* 如果右邊稍微高一點，可以改成 32px 或 34px 試試看 */
+    padding: 2px 8px !important;   /* 減少上下多餘的空間，只留左右舒適度 */
+    font-size: 0.85rem !important; /* 讓字體精緻不撐大框框 */
+    box-sizing: border-box !important;
+}
+
+/* 2. 鎖定這兩個日期框旁邊的「今天」按鈕，讓它跟左邊的輸入框齊頭並進 */
+.date-with-today .today-btn {
+    height: 30px !important;       /* 高度必須跟上面的日期框一模一樣 */
+    padding: 0 10px !important;    /* 左右留一點小空間好按 */
+    font-size: 0.8rem !important;  /* 按鈕字體稍微精簡 */
+    line-height: 30px !important;  /* 讓「今天」兩個字垂直居中不歪斜 */
+    box-sizing: border-box !important;
+    margin-left: 4px !important;   /* 讓按鈕跟輸入框之間保持一個漂亮的小空隙 */
+}
+
+/* 3. 確保包裹它們的外殼容器不會自己長肉增高 */
+.date-with-today {
+    display: inline-flex !important;
+    align-items: center !important; /* 讓輸入框和今天按鈕在同一個水平線上對齊 */
+    height: 30px !important;
+}
+
+    /* 讓飄落的小圖示不會擋到妳原本按鈕的點擊 */
+    .rilakkuma-flake {
+        position: fixed;
+        top: -50px;
+        z-index: 9999;
+        user-select: none;
+        pointer-events: none;
+        animation: fall linear forwards;
+    }
+    /* 控制往下飄和搖擺的動畫 */
+    @keyframes fall {
+        0% {
+            transform: translateY(0) translateX(0) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(105vh) translateX(100px) rotate(360deg);
+            opacity: 0.3;
+        }
+    }
+</style>
+<script>
+    // 建立飄落小熊的魔法陣
+    function createRilakkuma() {
+        const icons = ['༘⋆🧸͙*ੈ','ִֶָ ࣪˖ ִֶָ💵͙⋆་༘𓍢ִ','🍓','✨']; // 飄落的拉拉熊、小黃雞、草莓小熊
+        const flake = document.createElement('div');
+        
+        flake.className = 'rilakkuma-flake';
+        flake.innerText = icons[Math.floor(Math.random() * icons.length)];
+        
+        // 隨機讓每隻小熊的大小、位置、飄落速度都不一樣，才會自然漂亮
+        const size = Math.random() * 20 + 20; // 大小 20px ~ 40px
+        flake.style.fontSize = size + 'px';
+        flake.style.left = Math.random() * window.innerWidth + 'px';
+        
+        const duration = Math.random() * 4 + 4; // 飄落速度 4秒 ~ 8秒
+        flake.style.animationDuration = duration + 's';
+        
+        // 隨機微調透明度
+        flake.style.opacity = Math.random() * 0.5 + 0.5;
+        
+        document.body.appendChild(flake);
+        
+        // 飄到螢幕最下面後自動消失，網頁才不會卡卡
+        setTimeout(() => {
+            flake.remove();
+        }, duration * 1000);
     }
 
-    /* 2. 表格層級大解放，寬表格在手機版強制啟動左右滑動，絕對不撐爆畫面 */
-    .stat-section table, 
-    table, 
-    .table-responsive,
-    .stat-section {
-        display: block !important;
-        width: 100% !important;
-        overflow-x: auto !important; 
-        -webkit-overflow-scrolling: touch; 
+    // 每 400 毫秒（約0.4秒）自動誕生一隻可愛的拉拉熊
+    setInterval(createRilakkuma, 400);
+</script>
+<!-- 🐻 拉拉熊浪漫飄落特效結束 🐻 -->
+
+<!-- 🐾 拉拉熊游標隨從特效（黃金比例右下跟隨版） 🐾 -->
+<style>
+    /* 設定小隨從的樣式 */
+    #rilakkuma-follower {
+        position: fixed;
+        font-size: 30px;          /* 隨從的大小 */
+        z-index: 9998;            /* 讓牠待在按鈕下面，不影響操作 */
+        pointer-events: none;     /* 點擊直接穿透，絕不卡住網頁 */
+        user-select: none;
+        will-change: transform;
+        /* 讓跟隨的動作有滑順的延遲感（像小碎步在後面追） */
+        transition: transform 0.15s ease-out; 
+        left: 0;
+        top: 0;
+        transform: translate3d(0, 0, 0);
     }
 
-    /* 3. 破除隱形牆！讓原本電腦版左右分開的側邊欄與明細，在手機上一律變成上下乖乖排列 */
-    .main-wrapper, 
-    .container, 
-    .main-content,
-    body {
-        display: flex !important;
-        flex-direction: column !important; 
-        height: auto !important;
-        overflow: visible !important;
-        padding: 6px !important;
-    }
 
-    /* 4. 側邊欄與按鈕區塊強制拉伸至 100% 滿版，清除所有阻擋點擊的透明圖層 */
-    .sidebar, 
-    #tab-item-analysis, 
-    .tab-content,
-    .nav-menu {
+/* 日期欄位：避免手機原生 date 控制項把外框撐爆，並提供「今天」快速跳轉 */
+.date-with-today {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+.date-with-today input[type="date"] {
+    flex: 1 1 auto;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+.today-btn {
+    flex: 0 0 auto;
+    width: auto !important;
+    min-width: 52px;
+    height: 34px;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    border: none;
+    border-radius: 999px;
+    background: #2196F3;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.78rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,.12);
+    -webkit-tap-highlight-color: transparent;
+}
+.today-btn:active {
+    transform: scale(.96);
+}
+
+/* =========================================================
+   📱 GitHub Pages / 手機相容性整理版
+   - 手機解除頂部 sticky，避免遮住內容
+   - 手機解除表格 sticky 表頭
+   - 手機選單改為「點擊」開啟，不依賴 hover
+   - 修正原本 480px 最小寬度造成手機橫向爆版
+   - 保留桌機原有版面與 V2 統計邏輯
+   ========================================================= */
+@media (max-width: 768px) {
+    html, body {
         width: 100% !important;
         max-width: 100% !important;
-        position: relative !important;
-        z-index: 100 !important; /* 提到最上層，確保手指一定點得到按鈕！ */
+        overflow-x: hidden !important;
+    }
+
+    body {
+        padding: 6px !important;
+        margin: 0 !important;
+    }
+
+    .app-wrapper {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        padding: 8px !important;
+        margin: 0 !important;
+        border-radius: 12px !important;
         box-sizing: border-box !important;
     }
-    
-    /* 5. 導覽列排好，按鈕自動換行，不重疊不打架 */
-    .navbar, .nav-menu, .tab-buttons {
+
+    /* ★ 手機不要凍結整個頂部 */
+    .sticky-header {
+        position: static !important;
+        top: auto !important;
+        z-index: auto !important;
+        padding: 0 0 8px 0 !important;
+        gap: 8px !important;
+        overflow: visible !important;
+    }
+
+    /* ★ 頂部三張卡改成單欄 */
+    .header-top-row {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* ★ 左邊選單卡：標題一行、三個選單一行 */
+    .header-top-row .menu-bar {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        min-height: 0 !important;
+        height: auto !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 3px !important;
+        padding: 6px !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        align-items: stretch !important;
+    }
+
+    .header-top-row .menu-bar h1 {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 5px 6px 7px !important;
+        border: none !important;
+        text-align: center !important;
+        font-size: 0.98rem !important;
+        box-sizing: border-box !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .header-top-row .menu-bar .menu-item {
+        position: relative !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 9px 4px !important;
+        text-align: center !important;
+        font-size: 0.82rem !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+        border-radius: 8px !important;
+    }
+
+    /* ★ 手機不靠 hover，改靠 .open */
+    .header-top-row .menu-item:hover .dropdown {
+        display: none !important;
+    }
+
+    .header-top-row .menu-item.open .dropdown {
+        display: block !important;
+    }
+
+    .header-top-row .menu-item .dropdown {
+        position: absolute !important;
+        top: calc(100% + 4px) !important;
+        left: 0 !important;
+        right: auto !important;
+        width: min(260px, calc(100vw - 24px)) !important;
+        min-width: 0 !important;
+        max-width: calc(100vw - 24px) !important;
+        max-height: 70vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        z-index: 99999 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 第三個選單靠右，避免超出螢幕 */
+    .header-top-row .menu-item:last-child .dropdown {
+        left: auto !important;
+        right: 0 !important;
+    }
+
+    .header-top-row .menu-item .dropdown a {
+        padding: 12px 14px !important;
+        font-size: 0.82rem !important;
+        white-space: normal !important;
+    }
+
+    /* ★ 中間統計卡與右側操作卡 */
+    .header-top-row .stats-bar {
         display: flex !important;
-        flex-wrap: wrap !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 8px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    .header-top-row .stats-bar .stat-group,
+    .header-top-row .stats-bar .actions-group {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        min-height: 0 !important;
+        height: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    .header-top-row .stats-bar .stat-group {
+        padding: 10px 8px !important;
         gap: 6px !important;
+        line-height: 1.5 !important;
+    }
+
+    .header-top-row .stats-bar .stat-group .row1,
+    .header-top-row .stats-bar .stat-group .row2 {
+        width: 100% !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 4px 10px !important;
+        text-align: center !important;
+        line-height: 1.55 !important;
+    }
+
+    .header-top-row .stats-bar .actions-group {
+        padding: 9px 8px !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 7px !important;
+    }
+
+    /* ★ 手機取消左側欄 sticky */
+    .left-panel {
+        position: static !important;
+        top: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        height: auto !important;
+        min-width: 0 !important;
+    }
+
+    /* ★ 手機取消所有表格凍結表頭，避免蓋住下拉/內容 */
+    table th,
+    .tab-content table th,
+    #tab-table th,
+    #tab-statistics th {
+        position: static !important;
+        top: auto !important;
+        z-index: auto !important;
+    }
+
+    /* 表格本身維持橫向滑動，不讓整頁被撐寬 */
+    .table-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .table-container table {
+        min-width: 620px;
+    }
+
+    /* 統計分析表格通常欄位更多，允許自然橫滑 */
+    #tab-statistics .table-container table,
+    #tab-item-analysis .table-container table,
+    #tab-member-analysis .table-container table {
+        min-width: 760px !important;
+    }
+
+    /* ★ 手機日期篩選：起始/結束各自獨立一行，避免 iOS 原生日期框互相擠壓 */
+    .filters .date-filter-group {
+        grid-column: 1 / -1 !important;
+        min-width: 0 !important;
         width: 100% !important;
     }
+    .filters .date-with-today {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    .filters .date-with-today input[type="date"] {
+        min-width: 0 !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+    .filters .today-btn {
+        min-width: 54px;
+        height: 34px;
+        padding: 0 11px !important;
+        font-size: 0.8rem;
+    }
+
+    /* ★ 新增紀錄日期：手機上也保持輸入框 + 今天按鈕不爆版 */
+    .date-form-group,
+    .date-form-group .date-with-today {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .date-form-group .date-with-today input[type="date"] {
+        min-width: 0 !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+    .date-form-group .today-btn {
+        min-width: 54px;
+    }
+
+    /* ★ 篩選區不要撐爆手機 */
+    .top-section {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+    }
+
+    .quick-date-container {
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 6px !important;
+        align-items: center !important;
+    }
+
+    .month-links {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        gap: 5px !important;
+        overflow: visible !important;
+    }
+
+    .month-links a {
+        padding: 4px 8px !important;
+        font-size: 0.68rem !important;
+    }
+
+    .filters {
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .filters .form-group,
+    .filters input,
+    .filters select {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .main-wrapper,
+    .container,
+    .right-panel {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .container {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    .right-panel {
+        gap: 8px !important;
+    }
+
+    .right-panel .card,
+    .left-panel .card {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 分頁標籤手機可橫滑，不把內容擠成一團 */
+    .tab-menu {
+        width: 100% !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: thin !important;
+    }
+
+    .tab-btn {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+    }
+
+    /* 資產表單在手機改成直排 */
+    #assetForm {
+        flex-wrap: wrap !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #assetForm .form-group,
+    #assetForm .form-group:nth-child(1),
+    #assetForm .form-group:nth-child(2),
+    #assetForm .form-group:nth-child(3) {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 0 !important;
+    }
+
+    #assetForm .form-group input,
+    #assetForm .form-group:nth-child(1) input,
+    #assetForm .form-group:nth-child(2) input,
+    #assetForm .form-group:nth-child(3) input,
+    #assetForm #assetNote {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 避免任何內容偷偷把頁面撐出水平捲軸 */
+    img, canvas, iframe, input, select, textarea, button {
+        max-width: 100%;
+    }
 }
+
+/* 平板也取消最容易造成遮擋的頂部 sticky，讓操作空間更自然 */
+@media (min-width: 769px) and (max-width: 1000px) {
+    .sticky-header {
+        position: static !important;
+        top: auto !important;
+    }
+    table th {
+        position: static !important;
+        top: auto !important;
+        z-index: auto !important;
+    }
+}
+
+
+/* ===== [FIX v2.2] iPhone 日期框終極修正 =====
+   - 起始日期 / 結束日期一定各佔一行
+   - iOS 原生 date input 強制可縮，不再把框撐爆
+   - 「今天」按鈕固定顯示在日期框右側
+   - 新增紀錄日期同樣處理
+*/
+.date-with-today {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 60px !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+.date-with-today input[type="date"] {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+}
+.date-with-today .today-btn {
+    display: inline-flex !important;
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+    height: 36px !important;
+    margin: 0 !important;
+    padding: 0 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: #2196F3 !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+@media (max-width: 900px) {
+    /* 📱 手機篩選器：兩欄整齊排版
+       左：起始日期＋今天 / 結束日期＋今天
+       右：收支類型 / 類目名稱
+       帳戶、成員、關鍵字再各自完整一行。 */
+    .filters {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.55fr) minmax(118px, 0.85fr) !important;
+        grid-auto-flow: row !important;
+        gap: 10px 10px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        align-items: end !important;
+    }
+
+    .filters .form-group {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .filters .date-filter-group:nth-child(1) {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+    }
+    .filters .date-filter-group:nth-child(2) {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+    }
+    .filters .form-group:nth-child(3) {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+    }
+    .filters .form-group:nth-child(5) {
+        grid-column: 2 !important;
+        grid-row: 2 !important;
+    }
+    .filters .form-group:nth-child(4) {
+        grid-column: 1 / -1 !important;
+        grid-row: 3 !important;
+    }
+    .filters .form-group:nth-child(6) {
+        grid-column: 1 / -1 !important;
+        grid-row: 4 !important;
+    }
+    .filters .form-group:nth-child(7) {
+        grid-column: 1 / -1 !important;
+        grid-row: 5 !important;
+    }
+
+    .filters .date-with-today {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 58px !important;
+        gap: 6px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .filters .date-with-today input[type="date"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        font-size: 0.78rem !important;
+        padding-left: 8px !important;
+        padding-right: 6px !important;
+    }
+
+    .filters .today-btn {
+        width: 58px !important;
+        min-width: 58px !important;
+        max-width: 58px !important;
+        height: 36px !important;
+        padding: 0 4px !important;
+        font-size: 0.78rem !important;
+        box-sizing: border-box !important;
+    }
+
+    .filters .form-group label {
+        white-space: nowrap !important;
+    }
+
+    /* 新增紀錄日期維持原本的「日期＋今天」版型，不受篩選器兩欄排版影響。 */
+    .date-form-group,
+    .date-form-group .date-with-today {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .date-form-group .date-with-today input[type="date"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+    .date-form-group .today-btn {
+        width: 60px !important;
+        min-width: 60px !important;
+        max-width: 60px !important;
+    }
+}
+
 </style>
+
+<div id="rilakkuma-follower">🐻</div> 
+
+<script>
+    const follower = document.getElementById('rilakkuma-follower');
+    
+    window.addEventListener('mousemove', (e) => {
+        // 💡 黃金比例微調：改成 + 5，讓小熊緊緊貼在滑鼠指針的右下方，不留大空隙，又不會被遮到臉！
+        const x = e.clientX + 5;  // 往右挪 5 像素
+        const y = e.clientY + 5;  // 往下挪 5 像素
+        
+        follower.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    });
+</script>
+<!-- 🐾 拉拉熊游標隨從特效結束 🐾 -->
+
+
+<script>
+/* =========================================================
+   📱 手機選單：點擊開關，不依賴 hover
+   ========================================================= */
+(function () {
+    function initMobileMenus() {
+        const menuItems = document.querySelectorAll('.menu-bar .menu-item');
+        if (!menuItems.length) return;
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function (event) {
+                // 點擊下拉內容本身，不重新切換父選單
+                if (event.target.closest('.dropdown')) return;
+
+                const isOpen = item.classList.contains('open');
+
+                menuItems.forEach(other => other.classList.remove('open'));
+
+                if (!isOpen) {
+                    item.classList.add('open');
+                }
+            });
+        });
+
+        // 下拉選單內的連結仍然照原本 onclick 執行，但不讓 href="#" 把畫面跳回最上方
+        document.querySelectorAll('.menu-bar .dropdown a[href="#"]').forEach(link => {
+            link.addEventListener('click', function () {
+                setTimeout(() => {
+                    menuItems.forEach(item => item.classList.remove('open'));
+                }, 0);
+            });
+        });
+
+        // 點選選單外部就關閉
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.menu-bar')) {
+                menuItems.forEach(item => item.classList.remove('open'));
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMobileMenus);
+    } else {
+        initMobileMenus();
+    }
+})();
+</script>
 </body>
 </html>
