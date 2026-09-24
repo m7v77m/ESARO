@@ -2076,15 +2076,15 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
 
 /* 剩下5欄各20%平均分散 */
 #tab-assets table th:nth-child(2),
-#tab-assets table td:nth-child(2) { width: 20% !important; } /* 紀錄日期 20% */
+#tab-assets table td:nth-child(2) { width: 20% !important; } /* 日期 20% */
 #tab-assets table th:nth-child(3),
 #tab-assets table td:nth-child(3) { width: 20% !important; } /* 資產金額 20% */
 #tab-assets table th:nth-child(4),
-#tab-assets table td:nth-child(4) { width: 20% !important; } /* 誤差金額 20% */
+#tab-assets table td:nth-child(4) { width: 20% !important; } /* 誤差值 20% */
 #tab-assets table th:nth-child(5),
-#tab-assets table td:nth-child(5) { width: 20% !important; } /* 備註內容 20% */
+#tab-assets table td:nth-child(5) { width: 20% !important; } /* 備註 20% */
 #tab-assets table th:nth-child(6),
-#tab-assets table td:nth-child(6) { width: 20% !important; } /* 操作編輯 20% */
+#tab-assets table td:nth-child(6) { width: 20% !important; } /* 操作 20% */
 /* 維護卡片標籤置中，子晴的/補丁就可以刪掉了 */
 .cat-tag-container,
 #accountList,
@@ -2773,15 +2773,6 @@ button#submitBtn.btn-primary {
                     </div>
                 </div>
             </div>
-                <div class="card" id="accountBalanceCard">
-                    <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
-                    <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
-                    <div style="margin-top:13px;display:flex;gap:6px;">
-                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
-                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
-                    </div>
-                    <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 初始金額 + 收入 + 支出（支出為負），新增紀錄自動更新</div>
-                </div>
 
             <div class="top-section" id="top-section">
                 <div class="quick-date-container">
@@ -2843,6 +2834,15 @@ button#submitBtn.btn-primary {
 
                 <div class="left-panel">
 
+                <div class="card" id="accountBalanceCard">
+                    <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
+                    <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
+                    <div style="margin-top:13px;display:flex;gap:6px;">
+                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
+                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
+                    </div>
+                    <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 初始金額 + 收入 + 支出（支出為負），新增紀錄自動更新</div>
+                </div>
 
                     <div class="card">
                         <h3><i class="fa-solid fa-pen-to-square"></i> <span id="formTitle">新增紀錄</span></h3>
@@ -2927,6 +2927,33 @@ button#submitBtn.btn-primary {
                         </form>
                     </div>
 
+                    <div class="card sync-settings-card" id="leftAccountCard">
+                        <h3><i class="fa-solid fa-building-columns"></i> 帳戶維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newAccount" placeholder="新帳戶">
+                            <button onclick="addAccount()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="accountList" class="cat-tag-container"></div>
+                    </div>
+
+                    <div class="card sync-settings-card" id="leftCategoryCard">
+                        <h3><i class="fa-solid fa-tags"></i> 類目維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newCategory" placeholder="新類目">
+                            <button onclick="addCategory()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="categoryList" class="cat-tag-container"></div>
+                    </div>
+
+                    <div class="card sync-settings-card" id="leftTargetCard">
+                        <h3><i class="fa-solid fa-users"></i> 成員維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newTarget" placeholder="新成員">
+                            <button onclick="addTarget()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="targetList" class="cat-tag-container"></div>
+                    </div>
+                </div>
 
                 <div class="right-panel">
                     <div class="card">
