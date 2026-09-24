@@ -2726,6 +2726,21 @@ button#submitBtn.btn-primary {
     margin: 0 !important;
 }
 
+/* ===== 帳戶金額卡片搬到頂部後，補回原本從左側面板繼承的樣式 ===== */
+#accountBalanceCard h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+#accountBalanceCard h3 i {
+    color: var(--primary);
+}
+#accountBalanceCard .btn-secondary {
+    margin-top: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
 /* 寬螢幕（三欄排列）：快速篩選維持原位，帳戶金額卡片獨佔下一整列 */
 @media (min-width: 1201px) {
     .header-top-row > #top-section {
@@ -2828,9 +2843,9 @@ button#submitBtn.btn-primary {
             <div class="card" id="accountBalanceCard">
                 <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
                 <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
-                <div style="margin-top:13px;display:flex;gap:6px;">
-                    <button class="btn-secondary" style="flex:1;padding:6px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
-                    <button class="btn-secondary" style="flex:1;padding:6px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
+                <div class="account-card-footer" style="margin-top:13px;display:flex;gap:6px;">
+                    <button class="btn-secondary" style="flex:1; background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:15px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
+                    <button class="btn-secondary" style="flex:1; background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:15px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
                 </div>
                 <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 初始金額 + 收入 + 支出（支出為負），新增紀錄自動更新</div>
             </div>
