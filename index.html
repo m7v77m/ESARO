@@ -2716,6 +2716,72 @@ button#submitBtn.btn-primary {
     line-height: 24px !important;
 }
 
+
+/* ===== 版面調整：帳戶金額卡片移到頂部（收支統計下方、快速篩選上方） ===== */
+.header-top-row > #accountBalanceCard {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+}
+
+/* ===== 帳戶金額卡片搬到頂部後，補回原本從左側面板繼承的樣式 ===== */
+#accountBalanceCard h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+#accountBalanceCard h3 i {
+    color: var(--primary);
+}
+#accountBalanceCard .btn-secondary {
+    margin-top: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* 寬螢幕（三欄排列）：快速篩選維持原位，帳戶金額卡片獨佔下一整列 */
+@media (min-width: 1201px) {
+    .header-top-row > #top-section {
+        grid-column: 3 !important;
+        grid-row: 1 !important;
+    }
+    .header-top-row > #accountBalanceCard {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+    }
+}
+
+/* ===== 版面調整：帳戶／類目／成員維護移到分頁大卡片下方 ===== */
+.right-panel .maintenance-panel {
+    position: static !important;
+    top: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    padding: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 13px !important;
+}
+.container.sidebar-hidden .right-panel .maintenance-panel {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+.right-panel .maintenance-panel .card {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    padding: 13px !important;
+}
+@media (max-width: 768px) {
+    .right-panel .maintenance-panel { gap: 8px !important; }
+}
         </style>
 </head>
 <body>
@@ -2758,20 +2824,30 @@ button#submitBtn.btn-primary {
                 <div class="stats-bar">
                     <div class="stat-group">
                         <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
-                            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">💰 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;
+                            <span><div class="nav-title" style="color: #385a37; font-size: 13px;">💰 收入<span id="totalIncome" class="text-income">$0</span></span>
                             <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>
-                            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span>&nbsp;&nbsp;
-                            <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
+                            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>
+                            <span style="margin-left:6px;">📊 範圍結餘: <strong id="monthBalance">$0</strong> <span style="color:var(--text-muted);font-size:0.75rem;"> =（收入 + 支出）</span></span>
                         </div>
                     </div>
                     <div class="actions-group">
                         <button class="btn-danger" style="padding:7px 12px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
                         <button class="btn-danger" style="padding:6px 10px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>
                         <div class="selected-stats" style="padding:4px 10px !important;">
-                            已勾選 <strong id="selectedCount">0</strong> 筆，小計：<strong id="selectedTotal">$0</strong>
+                            已勾選 <strong id="selectedCount">0</strong> 筆，小計: <strong id="selectedTotal">$0</strong>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="card" id="accountBalanceCard">
+                <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
+                <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
+                <div class="account-card-footer" style="margin-top:13px;display:flex;gap:6px;">
+                    <button class="btn-secondary" style="flex:1; background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:15px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
+                    <button class="btn-secondary" style="flex:1; background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:15px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
+                </div>
+                <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 初始金額 + 收入 + 支出（支出為負），新增紀錄自動更新</div>
             </div>
 
             <div class="top-section" id="top-section">
@@ -2833,16 +2909,6 @@ button#submitBtn.btn-primary {
                 <div class="floating-toggle" id="floatingToggle" onclick="toggleSidebar()" title="切換側邊欄">◀</div>
 
                 <div class="left-panel">
-
-                <div class="card" id="accountBalanceCard">
-                    <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
-                    <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
-                    <div style="margin-top:13px;display:flex;gap:6px;">
-                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
-                        <button class="btn-secondary" style="flex:1;padding:6px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
-                    </div>
-                    <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 初始金額 + 收入 + 支出（支出為負），新增紀錄自動更新</div>
-                </div>
 
                     <div class="card">
                         <h3><i class="fa-solid fa-pen-to-square"></i> <span id="formTitle">新增紀錄</span></h3>
@@ -2927,32 +2993,6 @@ button#submitBtn.btn-primary {
                         </form>
                     </div>
 
-                    <div class="card sync-settings-card" id="leftAccountCard">
-                        <h3><i class="fa-solid fa-building-columns"></i> 帳戶維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
-                        <div class="category-mgr">
-                            <input type="text" id="newAccount" placeholder="新帳戶">
-                            <button onclick="addAccount()">&nbsp;新增&nbsp;</button>
-                        </div>
-                        <div id="accountList" class="cat-tag-container"></div>
-                    </div>
-
-                    <div class="card sync-settings-card" id="leftCategoryCard">
-                        <h3><i class="fa-solid fa-tags"></i> 類目維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
-                        <div class="category-mgr">
-                            <input type="text" id="newCategory" placeholder="新類目">
-                            <button onclick="addCategory()">&nbsp;新增&nbsp;</button>
-                        </div>
-                        <div id="categoryList" class="cat-tag-container"></div>
-                    </div>
-
-                    <div class="card sync-settings-card" id="leftTargetCard">
-                        <h3><i class="fa-solid fa-users"></i> 成員維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
-                        <div class="category-mgr">
-                            <input type="text" id="newTarget" placeholder="新成員">
-                            <button onclick="addTarget()">&nbsp;新增&nbsp;</button>
-                        </div>
-                        <div id="targetList" class="cat-tag-container"></div>
-                    </div>
                 </div>
 
                 <div class="right-panel">
@@ -3127,6 +3167,36 @@ button#submitBtn.btn-primary {
                             </div>
                         </div>
 
+                    </div>
+
+                    <!-- 帳戶／類目／成員維護（移到分頁大卡片下方） -->
+                    <div class="left-panel maintenance-panel">
+                    <div class="card sync-settings-card" id="leftAccountCard">
+                        <h3><i class="fa-solid fa-building-columns"></i> 帳戶維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newAccount" placeholder="新帳戶">
+                            <button onclick="addAccount()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="accountList" class="cat-tag-container"></div>
+                    </div>
+
+                    <div class="card sync-settings-card" id="leftCategoryCard">
+                        <h3><i class="fa-solid fa-tags"></i> 類目維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newCategory" placeholder="新類目">
+                            <button onclick="addCategory()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="categoryList" class="cat-tag-container"></div>
+                    </div>
+
+                    <div class="card sync-settings-card" id="leftTargetCard">
+                        <h3><i class="fa-solid fa-users"></i> 成員維護 <span class="text-muted">（拖曳/雙擊）</span></h3>
+                        <div class="category-mgr">
+                            <input type="text" id="newTarget" placeholder="新成員">
+                            <button onclick="addTarget()">&nbsp;新增&nbsp;</button>
+                        </div>
+                        <div id="targetList" class="cat-tag-container"></div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -4237,9 +4307,12 @@ function loadLocalData() {
             // 依日期從新到舊排序
             const sortedDates = Object.keys(daily).sort((a, b) => b.localeCompare(a));
 
+            const itemWeekdays = ['(日)', '(一)', '(二)', '(三)', '(四)', '(五)', '(六)'];
             let html = sortedDates.map(date => {
+                const [yy, mm, dd] = date.split('-').map(Number);
+                const wd = itemWeekdays[new Date(yy, mm - 1, dd).getDay()] || '';
                 return `<tr>
-                    <td style="text-align:center;">${date}</td>
+                    <td style="text-align:center;">${date} ${wd}</td>
                     <td style="text-align:right; font-weight:700;">$${daily[date].sum.toLocaleString()}</td>
                     <td style="text-align:center;">${daily[date].count}</td>
                 </tr>`;
@@ -4712,7 +4785,7 @@ async function saveData() {
         async function exportJSON(event) {
             if (event && typeof event.preventDefault === 'function') event.preventDefault();
             try {
-                const filename = `時來運轉全備份_${getTodayDateString()}.json`;
+                const filename = `家庭流水帳_${getTodayDateString()}.json`;
                 const json = JSON.stringify(state, null, 2);
                 const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
 
@@ -5334,7 +5407,7 @@ async function saveData() {
     margin: 0 !important;
     border: none;
     border-radius: 999px;
-    background: #8fa382;
+    background: #2196F3;
     color: #fff;
     font-weight: 700;
     font-size: 0.78rem;
@@ -5768,7 +5841,7 @@ async function saveData() {
     justify-content: center !important;
     border: 0 !important;
     border-radius: 999px !important;
-    background: #8fa382 !important;
+    background: #2196F3 !important;
     color: #fff !important;
     font-weight: 700 !important;
     font-size: 14px !important;
