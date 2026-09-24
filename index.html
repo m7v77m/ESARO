@@ -2760,7 +2760,7 @@ button#submitBtn.btn-primary {
                         <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
                             <span><div class="nav-title" style="color: #385a37; font-size: 14px;">💰 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;
                             <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>&nbsp;&nbsp;
-                            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span>;&nbsp;
+                            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700">$0</span>;&nbsp;
                             <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
                         </div>
                     </div>
@@ -4712,7 +4712,7 @@ async function saveData() {
         async function exportJSON(event) {
             if (event && typeof event.preventDefault === 'function') event.preventDefault();
             try {
-                const filename = `家庭流水帳_${getTodayDateString()}.json`;
+                const filename = `時來運轉全備份_${getTodayDateString()}.json`;
                 const json = JSON.stringify(state, null, 2);
                 const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
 
