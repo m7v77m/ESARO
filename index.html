@@ -3064,11 +3064,11 @@ button#submitBtn.btn-primary {
                         <div id="tab-assets" class="tab-content">
                             <div class="stat-section" style="margin-bottom:13px;">
                                 <form id="assetForm" onsubmit="handleAssetSubmit(event)" style="display:flex; gap:13px; flex-wrap:wrap; align-items:flex-end; background:var(--bg-hover); padding:13px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
-                                    <div class="form-group" style="margin-bottom:0;">
+                                    <div class="form-group" style="margin-bottom:0; flex:1; min-width:150px;">
                                         <label style="font-size:0.75rem; font-weight:bold; color:var(--text-secondary);">📅 紀錄日期</label>
                                         <input type="date" id="assetDate" required style="padding:6px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
                                     </div>
-                                    <div class="form-group" style="margin-bottom:0;">
+                                    <<div class="form-group" style="margin-bottom:0; flex:1; min-width:150px;">
                                         <label style="font-size:0.75rem; font-weight:bold; color:var(--text-secondary);">💰 資產金額</label>
                                         <input type="number" id="assetAmount" step="any" required style="padding:6px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
                                     </div>
@@ -3108,7 +3108,7 @@ button#submitBtn.btn-primary {
                         <div id="tab-item-analysis" class="tab-content">
                            <div class="stat-section">
 							    <h4 style="display: flex; align-items: center; gap: 8px;">
-							        🍱 每月類目日均
+							        🔍 每月類目日均
 							        <select id="stat-category-select" onchange="renderStatistics()" style="padding: 2px 8px; border-radius: var(--radius-full); border: 1px solid var(--border-color); font-size: 0.85rem; background: var(--bg-input); color: var(--text-primary); cursor: pointer;">
 							            <!-- 選項會由 JS 動態生成 -->
 							        </select>
