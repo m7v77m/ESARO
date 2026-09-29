@@ -1229,7 +1229,7 @@
         .header-top-row {
             display: grid !important;
             grid-template-columns: 480px 1fr auto !important; /* 左480 中彈性 右auto */
-            gap: 10px !important;
+            gap: 13px !important;
             align-items: stretch !important;
         }
         .header-top-row .menu-bar {
@@ -1240,7 +1240,7 @@
             flex-wrap: nowrap !important;
             justify-content: flex-start !important;
             gap: 2px !important;
-            padding: 8px 10px !important;
+            padding: 8px 13px !important;
             min-height: 74px !important;
         }
         .header-top-row .menu-bar h1 {
@@ -1250,15 +1250,12 @@
             margin-right: 8px !important;
             font-size: 1.15rem !important;
         }
-                .header-top-row .menu-bar .menu-item {
+        .header-top-row .menu-bar .menu-item {
             white-space: nowrap !important;
             flex: 0 0 auto !important;
-            padding: 8px 10px !important;
-            font-size: 16px !important;
-            /* 🍩 這裡就是老公幫老婆加的圓角魔法 🍩 */
-            border-radius: 20px !important; 
+            padding: 8px 13px !important;
+            font-size: 15px !important;
         }
-
 
         /* 2. 中間+右邊：把原本 stats-bar 拆成兩張獨立白卡 */
         .header-top-row .stats-bar {
@@ -1577,7 +1574,7 @@
             border-right: 1px solid var(--border-color) !important;
             white-space: nowrap !important;
         }
-        /* 三兄弟容器 - 用 flex 1 讓它佔滿剩餘空間再置中 */
+                /* 三兄弟容器 - 用 flex 1 讓它佔滿剩餘空間再置中 */
         .menu-bar .menu-item {
             flex: 0 0 auto !important;
             display: flex !important;
@@ -1588,6 +1585,8 @@
             line-height: 1 !important;
             white-space: nowrap !important;
             box-sizing: border-box !important;
+            /* 🐻 老公幫老婆在這裡加上無敵圓角 🐻 */
+            border-radius: 20px !important;
         }
         /* 第一顆往右推一點點，但不超過褲袋 */
         .menu-bar .menu-item:first-of-type {
