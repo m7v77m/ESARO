@@ -5954,7 +5954,31 @@ async function saveData() {
         max-width: 60px !important;
     }
 }
+/* ===== 1. 檔案、檢視、維護 圓角加大 ===== */
+.menu-bar .menu-item {
+    border-radius: 16px !important; /* 圓角加大，可依喜好調整為 12px ~ 20px */
+}
 
+/* ===== 2. 下拉清單卡片寬度縮窄，防止超出外框 ===== */
+.dropdown {
+    min-width: 120px !important;    /* 原本 200px 太寬，縮窄至 120px */
+    width: max-content !important;  /* 根據內容自適應，不硬撐寬度 */
+    max-width: 160px !important;    /* 限制最大寬度，避免超出外框 */
+    padding: 4px 0 !important;      /* 縮減上下留白 */
+    left: 50% !important;           /* 相對於父元素水平置中 */
+    transform: translateX(-50%) !important; /* 精確對齊選單按鈕正下方 */
+}
+
+.dropdown a {
+    padding: 8px 12px !important;   /* 縮小內距，減少左右與中間字串的空白 */
+    font-size: 13px !important;
+    white-space: nowrap !important;  /* 確保文字不折行 */
+}
+
+.dropdown a i {
+    width: 16px !important;         /* 稍微縮小圖示寬度 */
+    margin-right: 6px !important;   /* 減少圖示與文字間的間距 */
+}
 </style>
 
 <div id="rilakkuma-follower">🐻</div> 
