@@ -2881,7 +2881,7 @@ button#submitBtn.btn-primary {
 
     <div class="stat-group">
         <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
-            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">🪎 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;
+            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">&nbsp;🪎 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;
             <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>&nbsp;&nbsp;
             <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
             <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
@@ -3311,17 +3311,66 @@ button#submitBtn.btn-primary {
     </div>
 
  <div id="budgetModal" class="text-edit-modal-overlay">
-    <!-- 💡 幫調皮熊和無尾熊微調了高度與圓角 -->
+    <!-- 💡 調皮熊幫無尾熊合併好的第一組樣式：預算框圓角、收支框縮扁、一週支出對齊！ -->
     <style>
-    
+        /* 1. 預算框圓角與高度設定 */
         .bd-set-row input[type="number"] {
-            height: 32px !important;       /* 👈 高度微縮（從48px縮小到38px，剛剛好的厚度） */
-            border-radius: 12px !important;/* 👈 圓角加大（讓白色框框變得圓滾滾的更可愛） */
-            background: #8fa382;/*
-            font-size: 1.6rem !important; /* 👈 字體微調（保持大字好閱讀，同時完美適應新高度） */
-            padding: 0 12px !important;    /* 👈 保持內縮距離 */
+            height: 38px !important;       /* 高度微縮 */
+            border-radius: 12px !important;/* 圓角加大 */
+            font-size: 1.25rem !important; /* 字體微調 */
+            padding: 0 12px !important;    
+        }
+
+        /* 2. 今日收支框縮扁扁法術 */
+        .tp-today { gap: 10px !important; }
+        .tp-box {
+            padding: 6px 10px !important;
+            min-height: auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .tp-label { margin-bottom: 2px !important; font-size: 0.85rem !important; }
+        .tp-val { font-size: 1.1rem !important; }
+
+        /* 3. 🐻 一週支出的「對齊推推魔法」 🐻 */
+        #weekTree > div, 
+        .week-tree-row, 
+        #weekTree div:has(> .progress-bar) { 
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            gap: 15px !important; 
+        }
+
+        /* 規定左邊日期的文字寬度，強制騰出空間，就等於自動補零對齊了！ */
+        #weekTree span:first-of-type,
+        #weekTree .date-label {
+            display: inline-block !important;
+            min-width: 90px !important; /* 固定日期區塊的寬度，讓短日期(9/24)和長日期排整齊 */
+            letter-spacing: 0.5px !important; 
+            text-align: left !important;
+        }
+
+        /* 把中間的進度條大力的往右推，並且拉開它跟日期的距離 */
+        #weekTree .progress, 
+        #weekTree [class*="bar"], 
+        #weekTree div[style*="width"] {
+            flex: 1 !important; /* 讓進度條自動填滿中間剩餘空間 */
+            margin-left: 10px !important; /* 👈 數字越大，進度條離左邊日期越遠 */
+            max-width: 55% !important; /* 限制進度條寬度，保持秀氣 */
+        }
+
+        /* 右邊金額固定靠右對齊 */
+        #weekTree span:last-of-type,
+        #weekTree .amount-label {
+            min-width: 65px !important;
+            text-align: right !important;
         }
     </style>
+
 
     <div class="text-edit-modal-box" style="max-width:440px;max-height:94vh;overflow-y:auto;">
         <h4>💰 每月預算設定 <span class="text-muted">（留空 = 不設）</span></h4>
