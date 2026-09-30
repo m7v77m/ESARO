@@ -2859,20 +2859,24 @@ button#submitBtn.btn-primary {
                 <div class="stats-bar">
                     <div class="stat-group">
                         <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
-                            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">🪎 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>
-                            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
+                            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">🪎 收入總額：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span>💸 支出總額：<span id="totalExpense" class="text-expense">$0</span></span>
+                            <span>🏦 資產總額：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
                             <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
                         </div>
 
                         <div class="tp-wrap" id="todayPanel">
                             <div class="tp-today">
-                                <div class="tp-box"><span class="tp-label">🪎️ 今日收入</span><span id="todayIncome" class="tp-val text-income">$0</span></div>
-                                <div class="tp-box"><span class="tp-label">💸 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
+                                <div class="tp-box"><span class="tp-label">☀️ 今日收入</span><span id="todayIncome" class="tp-val text-income">$0</span></div>
+                                <div class="tp-box"><span class="tp-label">🌙 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
                             </div>
                             <div class="tp-tree">
                                 <div class="tp-title">📊 近7天支出 <small>（點日期可展開類目）</small></div>
                                 <div id="weekTree"></div>
+                            </div>
+                            <div class="tp-tree" id="budgetBox">
+                                <div class="tp-title">💰 本月預算 <button type="button" class="qa-mini" style="float:right;" onclick="openBudgetModal()">⚙ 設定</button></div>
+                                <div id="budgetBody"></div>
                             </div>
                         </div>
                     </div>
@@ -2958,6 +2962,16 @@ button#submitBtn.btn-primary {
 
                     <div class="card">
                         <h3><i class="fa-solid fa-pen-to-square"></i> <span id="formTitle">新增紀錄</span></h3>
+                        <div class="qa-wrap" id="quickBar">
+                            <div class="qa-head">
+                                <span class="qa-title">⚡ 常用項目</span>
+                                <span>
+                                    <button type="button" class="qa-mini" onclick="saveQuickItem()">＋存為常用</button>
+                                    <button type="button" class="qa-mini" id="qaManageBtn" onclick="toggleQuickManage()">✎ 管理</button>
+                                </span>
+                            </div>
+                            <div class="qa-chips" id="quickChips"></div>
+                        </div>
                         <form id="recordForm" onsubmit="handleFormSubmit(event)">
                             <div class="form-group" style="display:flex;align-items:center;gap:8px;margin-bottom:13px;">
                                 <input type="checkbox" id="invoiceChecked" style="width:auto;margin:0;cursor:pointer;">
@@ -3274,6 +3288,20 @@ button#submitBtn.btn-primary {
         </div>
     </div>
 
+    <div id="budgetModal" class="text-edit-modal-overlay">
+        <div class="text-edit-modal-box" style="max-width:440px;">
+            <h4>💰 每月預算設定 <span class="text-muted">（留空 = 不設）</span></h4>
+            <div style="max-height:52vh;overflow-y:auto;">
+                <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" inputmode="numeric" placeholder="例：20000"></div>
+                <div id="bdCatInputs"></div>
+            </div>
+            <div class="text-edit-modal-buttons">
+                <button type="button" class="btn-cancel" onclick="closeBudgetModal()">取消</button>
+                <button type="button" class="btn-confirm" onclick="saveBudgetModal()">儲存</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================================
         //  完整 JavaScript 
@@ -3284,7 +3312,9 @@ button#submitBtn.btn-primary {
             categories: ['飲食', '洗烘', '交通', '抽菸', '用品', '工用', '事務', '電信', '醫藥', '理髮', '房租', '政府'],
             targets: ['牛牛', '猴猴', '牛猴'],
             records: [],
-            assetRecords: [] 
+            assetRecords: [],
+            budgets: { total: 0, cats: {} },
+            quickItems: []
         };
 
         // ===== [v2.5/v2.6] 帳戶餘額結構 =====
@@ -3438,6 +3468,8 @@ async function init() {
             state.targets = parsed.targets || state.targets;
             state.records = parsed.records || [];
             state.assetRecords = parsed.assetRecords || [];
+            if (parsed.budgets) state.budgets = parsed.budgets;
+            if (Array.isArray(parsed.quickItems)) state.quickItems = parsed.quickItems;
             if (parsed.accountDetails && Array.isArray(parsed.accountDetails)) {
                 state.accountDetails = parsed.accountDetails;
             }
@@ -3470,6 +3502,8 @@ function loadLocalData() {
             state.targets = parsed.targets || state.targets;
             state.records = parsed.records || [];
             state.assetRecords = parsed.assetRecords || [];
+            if (parsed.budgets) state.budgets = parsed.budgets;
+            if (Array.isArray(parsed.quickItems)) state.quickItems = parsed.quickItems;
             if (parsed.accountDetails && Array.isArray(parsed.accountDetails)) {
                 state.accountDetails = parsed.accountDetails;
             }
@@ -3904,6 +3938,139 @@ function loadLocalData() {
         }
 
 
+
+        // ----- 月預算 -----
+        function bdColor(pct) { return pct >= 100 ? 'var(--expense-color)' : (pct >= 70 ? '#D4A65A' : 'var(--income-color)'); }
+        function bdEsc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+        function bdMonthSpend() {
+            const mk = tpDateStr(new Date()).slice(0, 7);
+            let total = 0; const cats = {};
+            ((state && state.records) || []).forEach(r => {
+                if (r.type !== 'expense' || !r.datetime || r.datetime.slice(0, 7) !== mk) return;
+                const v = Math.abs(parseFloat(r.price) || 0);
+                total += v;
+                const c = r.category || '未分類';
+                cats[c] = (cats[c] || 0) + v;
+            });
+            return { total, cats };
+        }
+        function renderBudget() {
+            const el = document.getElementById('budgetBody');
+            if (!el) return;
+            const b = state.budgets || {};
+            const catBudgets = Object.entries(b.cats || {}).filter(([, v]) => parseFloat(v) > 0);
+            const totalBudget = parseFloat(b.total) || 0;
+            if (!totalBudget && catBudgets.length === 0) {
+                el.innerHTML = '<div class="tp-empty">尚未設定預算，點右上角「⚙ 設定」</div>';
+                return;
+            }
+            const spend = bdMonthSpend();
+            let html = '';
+            const row = (name, spent, budget) => {
+                const pct = budget > 0 ? spent / budget * 100 : 0;
+                return '<div class="bd-row"><span class="bd-name">' + bdEsc(name) + '</span>' +
+                    '<span class="bd-track"><span style="width:' + Math.min(pct, 100) + '%;background:' + bdColor(pct) + '"></span></span>' +
+                    '<span class="bd-num">$' + Math.round(spent).toLocaleString() + ' / $' + Math.round(budget).toLocaleString() + '</span></div>';
+            };
+            if (totalBudget > 0) {
+                html += row('本月總計', spend.total, totalBudget);
+                const left = totalBudget - spend.total;
+                html += left >= 0
+                    ? '<div class="bd-note">還剩 $' + Math.round(left).toLocaleString() + '（已用 ' + Math.round(spend.total / totalBudget * 100) + '%）</div>'
+                    : '<div class="bd-note over">⚠️ 已超支 $' + Math.round(-left).toLocaleString() + '</div>';
+            }
+            catBudgets.forEach(([c, v]) => {
+                const bv = parseFloat(v), sp = spend.cats[c] || 0;
+                html += row(c, sp, bv);
+                if (sp > bv) html += '<div class="bd-note over">⚠️ ' + bdEsc(c) + ' 超支 $' + Math.round(sp - bv).toLocaleString() + '</div>';
+            });
+            el.innerHTML = html;
+        }
+        function openBudgetModal() {
+            const b = state.budgets || { total: 0, cats: {} };
+            document.getElementById('bdTotalInput').value = b.total > 0 ? b.total : '';
+            document.getElementById('bdCatInputs').innerHTML = (state.categories || []).map(c =>
+                '<div class="bd-set-row"><label>📂 ' + bdEsc(c) + '</label><input type="number" inputmode="numeric" data-cat="' + bdEsc(c) + '" value="' +
+                ((b.cats && b.cats[c] > 0) ? b.cats[c] : '') + '" placeholder="不設"></div>').join('');
+            document.getElementById('budgetModal').style.display = 'flex';
+        }
+        function closeBudgetModal() { document.getElementById('budgetModal').style.display = 'none'; }
+        function saveBudgetModal() {
+            const total = parseFloat(document.getElementById('bdTotalInput').value) || 0;
+            const cats = {};
+            document.querySelectorAll('#bdCatInputs input[data-cat]').forEach(inp => {
+                const v = parseFloat(inp.value);
+                if (v > 0) cats[inp.dataset.cat] = v;
+            });
+            state.budgets = { total: total > 0 ? total : 0, cats };
+            saveData();
+            renderBudget();
+            closeBudgetModal();
+        }
+
+        // ----- 常用項目快速新增 -----
+        let qaManage = false;
+        function renderQuickItems() {
+            const box = document.getElementById('quickChips');
+            if (!box) return;
+            const list = state.quickItems || [];
+            const mb = document.getElementById('qaManageBtn');
+            if (mb) mb.textContent = qaManage ? '完成' : '✎ 管理';
+            if (!list.length) {
+                box.innerHTML = '<span class="qa-empty">尚無常用項目：填好下方表單後，按「＋存為常用」</span>';
+                return;
+            }
+            box.innerHTML = list.map((q, i) =>
+                '<button type="button" class="qa-chip' + (qaManage ? ' del' : '') + '" onclick="' +
+                (qaManage ? 'deleteQuickItem(' + i + ')' : 'applyQuickItem(' + i + ')') + '">' +
+                bdEsc(q.name) + (qaManage ? ' ✕' : '') + '</button>').join('');
+        }
+        function toggleQuickManage() { qaManage = !qaManage; renderQuickItems(); }
+        function saveQuickItem() {
+            const val = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+            const itemName = val('itemName').trim();
+            if (!itemName) { alert('請先在下方表單填好「品項名稱」等內容，再存為常用'); return; }
+            const name = prompt('常用項目名稱', itemName);
+            if (name === null) return;
+            const nm = name.trim() || itemName;
+            const type = (document.querySelector('input[name="type"]:checked') || {}).value || 'expense';
+            const item = { name: nm, type, account: val('account'), category: val('category'), target: val('target'),
+                location: val('location'), itemName, spec: val('spec'), quantity: val('quantity'),
+                unitPrice: val('unitPrice'), price: val('price') };
+            if (!Array.isArray(state.quickItems)) state.quickItems = [];
+            const idx = state.quickItems.findIndex(q => q.name === nm);
+            if (idx !== -1) {
+                if (!confirm('已有同名常用項目「' + nm + '」，要覆蓋嗎？')) return;
+                state.quickItems[idx] = item;
+            } else {
+                state.quickItems.push(item);
+            }
+            saveData();
+            renderQuickItems();
+        }
+        function applyQuickItem(i) {
+            const q = (state.quickItems || [])[i];
+            if (!q) return;
+            if (editingId) { alert('目前正在編輯紀錄，請先儲存或取消編輯，再使用常用項目'); return; }
+            if (q.type === 'income') document.getElementById('typeIncome').checked = true;
+            else if (q.type === 'Asset') document.getElementById('typeAsset').checked = true;
+            else document.getElementById('typeExpense').checked = true;
+            const set = (id, v) => { const e = document.getElementById(id); if (e) e.value = v || ''; };
+            set('account', q.account); set('category', q.category); set('target', q.target);
+            set('location', q.location); set('itemName', q.itemName); set('spec', q.spec);
+            set('quantity', q.quantity); set('unitPrice', q.unitPrice); set('price', q.price);
+            document.getElementById('invoiceChecked').checked = false;
+            resetFormDateTime();
+        }
+        function deleteQuickItem(i) {
+            const q = (state.quickItems || [])[i];
+            if (!q) return;
+            if (!confirm('刪除常用項目「' + q.name + '」？')) return;
+            state.quickItems.splice(i, 1);
+            saveData();
+            renderQuickItems();
+        }
+
         // ----- 今日收支 + 近7天支出條狀樹狀圖 -----
         const TP_COLORS = ['#C17A4E','#8fa382','#8B6D5C','#D4A65A','#7C9A92','#B5838D','#A0785A','#6B8E7B','#C9A227','#9C6B98'];
         function tpColor(name) {
@@ -3917,6 +4084,7 @@ function loadLocalData() {
         function updateTodayPanel() {
             const elTree = document.getElementById('weekTree');
             if (!elTree) return;
+            try { renderBudget(); renderQuickItems(); } catch (e) { console.warn(e); }
             const records = (state && state.records) || [];
             const today = new Date();
             const todayStr = tpDateStr(today);
@@ -4956,6 +5124,7 @@ async function saveData() {
                         try { if (typeof cancelEdit === 'function') cancelEdit(); } catch(err) {}
                         state.records = data.records || state.records || [];
                         state.assetRecords = data.assetRecords || state.assetRecords || [];
+                        if (Array.isArray(data.quickItems)) state.quickItems = data.quickItems;
                         if (data.accountDetails && Array.isArray(data.accountDetails)) {
                             state.accountDetails = data.accountDetails.map((ad, idx)=>{
                                 if (typeof ad === 'string') return { name: ad, initial: 0, order: idx };
@@ -6097,6 +6266,26 @@ async function saveData() {
 .tp-cbar > span { display:block; height:100%; border-radius:4px; }
 .tp-camt { flex:0 0 62px; text-align:right; }
 .tp-empty { font-size:0.72rem; color:var(--text-secondary); text-align:center; padding:4px 0; }
+
+/* ===== 月預算 + 常用項目 ===== */
+.qa-wrap { margin-bottom:12px; padding:8px 10px; background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; }
+.qa-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.qa-title { font-size:0.8rem; font-weight:700; color:var(--text-primary); }
+.qa-mini { border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-primary); border-radius:999px; padding:3px 10px; font-size:0.68rem; font-weight:600; cursor:pointer; width:auto; margin:0 0 0 4px; }
+.qa-chips { display:flex; flex-wrap:wrap; gap:6px; max-height:96px; overflow-y:auto; }
+.qa-chip { border:none; background:var(--primary); color:#fff; border-radius:999px; padding:6px 12px; font-size:0.78rem; font-weight:600; cursor:pointer; width:auto; margin:0; }
+.qa-chip.del { background:var(--expense-color); }
+.qa-empty { font-size:0.7rem; color:var(--text-secondary); }
+.bd-row { display:flex; align-items:center; gap:6px; font-size:0.72rem; padding:3px 0; color:var(--text-primary); }
+.bd-name { flex:0 0 58px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bd-track { flex:1; height:12px; background:rgba(0,0,0,0.07); border-radius:6px; overflow:hidden; }
+.bd-track > span { display:block; height:100%; border-radius:6px; }
+.bd-num { flex:0 0 96px; text-align:right; font-size:0.68rem; color:var(--text-secondary); }
+.bd-note { font-size:0.68rem; margin:1px 0 4px 64px; color:var(--text-secondary); }
+.bd-note.over { color:var(--expense-color); font-weight:700; }
+.bd-set-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.bd-set-row label { flex:0 0 110px; font-size:0.8rem; font-weight:600; color:var(--text-primary); }
+.bd-set-row input { flex:1; min-width:0; }
 </style>
 
 <div id="rilakkuma-follower">🐻</div> 
