@@ -2689,6 +2689,21 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             padding: 0 2px !important;
             font-size: 16px !important;
         }
+        /* 🐻 調皮熊威力加強版：直接針對「帳戶維護」與「類目維護」裡的輸入區塊進行轟炸 🐻 */
+.card fieldset,
+.card .input-group,
+.card div[style*="display: flex"] {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* 讓裡面的輸入框不要死撐到最滿，留點空間給它置中 */
+.card input[type="text"] {
+    max-width: 70% !important; 
+}
+
         /* 🐻 調皮熊終極大絕招：直接把 v12 版的最高特權踩扁！ 🐻 */
 div.account-balance-item.v12 {
     min-height: 58px !important;    /* 強制把高度限制從 97px 砍到 45px */
@@ -2782,16 +2797,6 @@ button#submitBtn.btn-primary {
 @media (max-width: 768px) {
     .right-panel .maintenance-panel { gap: 8px !important; }
 }
-/* 🐻 調皮熊再補一刀：強行把輸入框那一排拉到中間對齊 🐻 */
-.account-input-container, 
-div:has(> #submitBtn) { 
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 8px !important;
-    width: 100% !important;
-}
-
         </style>
 </head>
 <body>
