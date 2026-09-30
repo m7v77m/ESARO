@@ -2622,57 +2622,48 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
 
         
         /* ===== 修復 v2 2026-09-18 - 一排3個 + 分散置中 ===== */
-.cat-tag-container,
-#accountList,
-#categoryList,
-#targetList,
-#settingsModalList {
-    display: grid !important;
-    /* 💡 改成 max-content：這樣當只有1、2個標籤時，它們會靠攏在中間，而不是硬撐開到最左最右 */
-    grid-template-columns: repeat(3, max-content) !important;
-    gap: 8px !important;
-    row-gap: 10px !important;
-    column-gap: 8px !important;
-    padding: 8px 4px !important;
-    overflow: visible !important;
-    max-height: none !important;
-    min-height: 40px !important;
-    
-    justify-items: center !important;
-    align-items: center !important;
-    /* 💡 這行是把整個 Grid 區塊在卡片裡水平置中 */
-    justify-content: center !important; 
-}
-
+        .cat-tag-container,
+        #accountList,
+        #categoryList,
+        #targetList,
+        #settingsModalList {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 8px !important;
+            row-gap: 10px !important;
+            column-gap: 8px !important;
+            padding: 8px 4px !important;
+            overflow: visible !important;
+            max-height: none !important;
+            min-height: 40px !important;
+            justify-items: center !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
         .left-panel .card .cat-tag-container {
             max-height: none !important;
             height: auto !important;
             overflow: visible !important;
         }
         .cat-tag {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    
-    /* 💡 修改這兩行：不要強推到 100%，改用 min-width 或讓字自己撐開 */
-    width: auto !important; 
-    min-width: 80px !important; /* 可以設定一個最小寬度，讓短文字的標籤也一樣大好看 */
-    
-    max-width: 100% !important;
-    gap: 2px !important;
-    padding: 1px 12px !important; /* 左右稍微加寬一點點，比較像膠囊鈕 */
-    border-radius: 20px !important;
-    font-size: 13px !important;
-    line-height: 1.2 !important;
-    min-height: 28px !important;
-    background: var(--bg-hover) !important;
-    border: 1px solid var(--border-color) !important;
-    cursor: grab !important;
-    white-space: nowrap !important;
-    text-align: center !important;
-    box-sizing: border-box !important;
-}
-
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            gap: 2px !important;
+            padding: 1px 6px !important;
+            border-radius: 20px !important;
+            font-size: 13px !important;
+            line-height: 1.2 !important;
+            min-height: 28px !important;
+            background: var(--bg-hover) !important;
+            border: 1px solid var(--border-color) !important;
+            cursor: grab !important;
+            white-space: nowrap !important;
+            text-align: center !important;
+            box-sizing: border-box !important;
+        }
         .cat-tag:hover {
             border-color: var(--primary) !important;
             transform: translateY(-1px);
@@ -2791,26 +2782,20 @@ button#submitBtn.btn-primary {
 @media (max-width: 768px) {
     .right-panel .maintenance-panel { gap: 8px !important; }
 }
-<style>
-    /* ... 這裡是你原本滿滿的程式碼 ... */
-    
-    button#submitBtn.btn-primary {
-        padding: 5px 20px !important;
-        height: 34px !important;
-        line-height: 24px !important;
-    }
+/* 🐻 調皮熊威力加強版：直接針對「帳戶維護」與「類目維護」裡的輸入區塊進行轟炸 🐻 */
+.card fieldset,
+.card .input-group,
+.card div[style*="display: flex"] {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+}
 
-    /* 🐻 直接貼在最下面這裡 🐻 */
-    /* 🐻 調皮熊再補一刀：強行把輸入框那一排拉到中間對齊 🐻 */
-    .account-input-container, 
-    div:has(> #submitBtn) { 
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 8px !important;
-        width: 100% !important;
-    }
-</style>  <!-- 黏在結束標籤前面 -->
+/* 讓裡面的輸入框不要死撐到最滿，留點空間給它置中 */
+.card input[type="text"] {
+    max-width: 70% !important; 
+}
 
         </style>
 </head>
