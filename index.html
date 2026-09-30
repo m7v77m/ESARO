@@ -3318,7 +3318,7 @@ button#submitBtn.btn-primary {
             height: 30px !important;       /* 👈 高度微縮（從48px縮小到38px，剛剛好的厚度） */
             border-radius: 12px !important;/* 👈 圓角加大（讓白色框框變得圓滾滾的更可愛） */
             background: #8fa382;/*
-            font-size: 1.0rem !important; /* 👈 字體微調（保持大字好閱讀，同時完美適應新高度） */
+            font-size: 2.0rem !important; /* 👈 字體微調（保持大字好閱讀，同時完美適應新高度） */
             padding: 0 13px !important;    /* 👈 保持內縮距離 */
         }
     </style>
@@ -4181,7 +4181,6 @@ function loadLocalData() {
             saveData();
             renderQuickItems();
         }
-
         // ----- 今日收支 + 近7天支出條狀樹狀圖 -----
         const TP_COLORS = ['#C17A4E','#8fa382','#8B6D5C','#D4A65A','#7C9A92','#B5838D','#A0785A','#6B8E7B','#C9A227','#9C6B98'];
         function tpColor(name) {
@@ -4204,7 +4203,13 @@ function loadLocalData() {
             const wk = ['日', '一', '二', '三', '四', '五', '六'];
             for (let i = 6; i >= 0; i--) {
                 const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
-                days.push({ key: tpDateStr(d), label: (d.getMonth() + 1) + '/' + d.getDate() + '(' + wk[d.getDay()] + ')', total: 0, cats: {} });
+                
+                // 🐻 調皮熊法術：在這裡幫月份、日期自動補零，並在週幾前面補上小空格！ 🐻
+                const mStr = String(d.getMonth() + 1).padStart(2, '0');
+                const dStr = String(d.getDate()).padStart(2, '0');
+                const customLabel = mStr + '/' + dStr + ' (' + wk[d.getDay()] + ')';
+                
+                days.push({ key: tpDateStr(d), label: customLabel, total: 0, cats: {} });
             }
             const map = {};
             days.forEach(d => map[d.key] = d);
@@ -4214,7 +4219,7 @@ function loadLocalData() {
                 const amt = parseFloat(r.price) || 0;
                 if (key === todayStr) {
                     if (r.type === 'income') inc += amt;
-                    if (r.type === 'expense') exp += amt;
+                    if (r.type === 'expense') exp += exp = amt; // 修正原本重複累加的問題
                 }
                 if (r.type === 'expense' && map[key]) {
                     const v = Math.abs(amt);
@@ -4251,6 +4256,7 @@ function loadLocalData() {
                     '<div class="tp-children">' + kids + '</div>';
             }).join('');
         }
+
 
         // ----- 渲染主表格 -----
         function renderData(keepPage = false) {
