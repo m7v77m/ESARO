@@ -1538,13 +1538,13 @@
         }
 
 
-        /* [龍寶修復] 帳戶金額顯示並連動 */
+        /* [修復] 帳戶金額顯示並連動 */
         #accountBalanceList { display:flex !important; flex-direction:column; gap:8px; }
         /* 可選：把卡片縮小一點，避免留大空白 */
         #accountBalanceCard { padding-bottom:13px !important; }
 
 
-        /* === 子晴最終完美版 - 全部收進褲袋不突出 === */
+        /* === 最終完美版 - 全部收進褲袋不突出 === */
         /* 1. 清除按鈕 綠色 #8fa382 */
         .month-links a.clear-link {
             background: #8fa382 !important;
@@ -1630,7 +1630,7 @@
         }
 
 
-/* ===== [FIX v2.8.1 子晴專用] 匯出被隱藏 + 龍柱往右移 ===== */
+/* ===== [FIX v2.8.1 專用] 匯出被隱藏 + 龍柱往右移 ===== */
 .menu-bar {
     overflow: visible !important;
 }
@@ -1652,7 +1652,7 @@
 }
 
 
-/* ===== [FIX v2.8.2 子晴說龍柱很煩 - 直接拔掉 + 三個選項移回左邊] ===== */
+/* ===== [FIX v2.8.2 說龍柱很煩 - 直接拔掉 + 三個選項移回左邊] ===== */
 .menu-bar h1 {
     border-right: none !important;
     margin-right: 13px !important;
@@ -1671,7 +1671,7 @@
 }
 
 
-/* ===== 子晴最終版：保留原本長條模樣，但不用滑就有底色 ===== */
+/* ===== 最終版：保留原本長條模樣，但不用滑就有底色 ===== */
 .tab-menu {
     display: flex !important;
     gap: 13px !important;
@@ -1705,13 +1705,13 @@
 }
 
 
-/* ===== 龍寶幫子晴改：Sheet標籤圓角變大，跟大明細列表一樣 ===== */
+/* ===== 幫改：Sheet標籤圓角變大，跟大明細列表一樣 ===== */
 .tab-btn {
     border-radius: 13px 13px 0 0 !important; /* 想更圓就改 13px，想更方就改 8px */
 }
 
 
-/* 子晴要上下直列省空間 */
+/* 要上下直列省空間 */
 #tab-table td:last-child {
     display: flex !important;
     flex-direction: column !important;
@@ -1747,7 +1747,7 @@
 
 
 /* =======================
-   🌸 子晴要的：整個網頁上下左右等距留白 + 左欄不貼 + 大卡片左右不寬0.1
+   🌸 要的：整個網頁上下左右等距留白 + 左欄不貼 + 大卡片左右不寬0.1
    ======================= */
 
 /* 1. 整個網頁外框上下左右等距 */
@@ -1836,7 +1836,7 @@ body {
 
 
 /* =======================
-   🌸 子晴要的：按鈕本身不變大，只有中間空白拉寬
+   🌸 要的：按鈕本身不變大，只有中間空白拉寬
    ======================= */
 
 /* 明細置中 + 操作不跑位保持 */
@@ -1898,7 +1898,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; }
 
 
 /* =======================
-   🌸 子晴要求：所有SHEET標籤裡面文字內容全部水平置中
+   🌸 要求：所有SHEET標籤裡面文字內容全部水平置中
    明細、統計、資產、項目、成員 全部置中 + 備註90%同一排 + 不跑位 + 空白拉寬
    ======================= */
 
@@ -2061,7 +2061,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
 #stat-member-analysis-body td {
     text-align: center !important;
 }
-/* 資產管理 5欄平均，子晴的100/5=20 */
+/* 資產管理 5欄平均，的100/5=20 */
 #tab-assets table {
     table-layout: fixed !important; /* 固定平均分 */
     width: 100% !important;
@@ -2085,7 +2085,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
 #tab-assets table td:nth-child(5) { width: 20% !important; } /* 備註 20% */
 #tab-assets table th:nth-child(6),
 #tab-assets table td:nth-child(6) { width: 20% !important; } /* 操作 20% */
-/* 維護卡片標籤置中，子晴的/補丁就可以刪掉了 */
+/* 維護卡片標籤置中，就可以刪掉了 */
 .cat-tag-container,
 #accountList,
 #categoryList,
@@ -2109,7 +2109,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
     flex-wrap: wrap !important;
     justify-content: center !important;
     
-    /* 子晴問的就在這裡！ */
+    /* 問的就在這裡！ */
     row-gap: 13px !important;     /* 上下高度間距 = 你畫的紅色橫線 */
     column-gap: 13px !important; /* 左右寬度間距 = 你畫的紅色直線 */
     
@@ -2156,7 +2156,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
     font-size: 0.95rem !important;
 }
 
-        /* 龍寶新增：帳戶金額連動樣式 - 上下置中，不再扁扁 */
+        /* 新增：帳戶金額連動樣式 - 上下置中，不再扁扁 */
         #accountBalanceCard {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -2195,7 +2195,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             color: var(--expense-color);
         }
         
-        /* ===== 龍寶 V8 - 帳戶名稱靠左 + 兩排 + 修復點擊 ===== */
+        /* =====  V8 - 帳戶名稱靠左 + 兩排 + 修復點擊 ===== */
         #accountBalanceList { display:flex !important; flex-direction:column; gap:13px; }
         .account-balance-item { min-height: 72px !important; padding: 13px 13px !important; }
         .account-balance-item .ab-left { justify-content: flex-start !important; text-align: left !important; }
@@ -2210,7 +2210,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
         .account-balance-item .ab-actions { display: flex !important; gap: 6px !important; align-items: center !important; }
         
         
-        /* ===== 龍寶 V9 - 按鈕顏色改奶茶色 + 圓角加大 ===== */
+        /* =====  V9 - 按鈕顏色改奶茶色 + 圓角加大 ===== */
         #accountBalanceCard {
             border-radius: 22px !important;
             padding: 16px 14px !important;
@@ -2264,7 +2264,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
         }
         
         
-        /* ===== 龍寶 V10 - 上下箭頭加寬+咖啡色 + 編輯無框 + 刪除 ===== */
+        /* =====  V10 - 上下箭頭加寬+咖啡色 + 編輯無框 + 刪除 ===== */
         .account-balance-item .ab-move-col { gap: 4px !important; }
         .account-balance-item .ab-move-btn {
             width: 36px !important;
@@ -2324,7 +2324,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
         .account-card-footer .btn-add-account { background:#A67C52; color:#fff; border-color:#A67C52; }
         .account-card-footer .btn-add-account:hover { background:#8C6846; }
         
-        /* ===== 龍寶 V11 - 上面兩排(名稱+金額) 下面一排(5鈕) + 縮小字體 + 無框圖標 ===== */
+        /* =====  V11 - 上面兩排(名稱+金額) 下面一排(5鈕) + 縮小字體 + 無框圖標 ===== */
         .account-balance-item.v11 {
             display: flex !important;
             flex-direction: column !important;
@@ -2432,7 +2432,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
         #accountBalanceList { gap: 8px !important; }
         
         
-        /* ===== 龍寶 V12 - 名稱金額同一排 + 五鈕均勻對齊 + 虛線喜愛 ===== */
+        /* =====  V12 - 名稱金額同一排 + 五鈕均勻對齊 + 虛線喜愛 ===== */
         .account-balance-item.v12 {
             display: flex !important;
             flex-direction: column !important;
@@ -2525,7 +2525,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
         #accountBalanceList { gap: 8px !important; }
         
         
-        /* ===== 龍寶 V13 - 間距一致 0.1cm 修復 + 圓角一致 ===== */
+        /* =====  V13 - 間距一致 0.1cm 修復 + 圓角一致 ===== */
         /* 外層大卡：跟其他 .card 一致 */
         #accountBalanceCard {
             border-radius: var(--radius-md) !important; /* 18px 跟大卡一致 */
@@ -2561,7 +2561,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             margin-bottom: 13px !important;
             padding-bottom: 8px !important;
         }
-         /* ===== 龍寶 V16 - 以熊猴收支帳本為底，修復倒退 + 綠框間距 + 月份歸位 ===== */
+         /* =====  V16 - 以熊猴收支帳本為底，修復倒退 + 綠框間距 + 月份歸位 ===== */
         .quick-date-container {
             display: flex !important;
             flex-wrap: wrap !important;
@@ -2618,52 +2618,61 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
 
         
         
-        /* 龍寶終結者：覆蓋之前把泡泡壓成2px的破壞CSS */
+        /* 終結者：覆蓋之前把泡泡壓成2px的破壞CSS */
 
         
-        /* ===== 龍寶修復 v2 2026-09-18 - 一排3個 + 分散置中 ===== */
-        .cat-tag-container,
-        #accountList,
-        #categoryList,
-        #targetList,
-        #settingsModalList {
-            display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
-            gap: 8px !important;
-            row-gap: 10px !important;
-            column-gap: 8px !important;
-            padding: 8px 4px !important;
-            overflow: visible !important;
-            max-height: none !important;
-            min-height: 40px !important;
-            justify-items: center !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
+        /* ===== 修復 v2 2026-09-18 - 一排3個 + 分散置中 ===== */
+.cat-tag-container,
+#accountList,
+#categoryList,
+#targetList,
+#settingsModalList {
+    display: grid !important;
+    /* 💡 改成 max-content：這樣當只有1、2個標籤時，它們會靠攏在中間，而不是硬撐開到最左最右 */
+    grid-template-columns: repeat(3, max-content) !important;
+    gap: 8px !important;
+    row-gap: 10px !important;
+    column-gap: 8px !important;
+    padding: 8px 4px !important;
+    overflow: visible !important;
+    max-height: none !important;
+    min-height: 40px !important;
+    
+    justify-items: center !important;
+    align-items: center !important;
+    /* 💡 這行是把整個 Grid 區塊在卡片裡水平置中 */
+    justify-content: center !important; 
+}
+
         .left-panel .card .cat-tag-container {
             max-height: none !important;
             height: auto !important;
             overflow: visible !important;
         }
         .cat-tag {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            gap: 2px !important;
-            padding: 1px 6px !important;
-            border-radius: 20px !important;
-            font-size: 13px !important;
-            line-height: 1.2 !important;
-            min-height: 28px !important;
-            background: var(--bg-hover) !important;
-            border: 1px solid var(--border-color) !important;
-            cursor: grab !important;
-            white-space: nowrap !important;
-            text-align: center !important;
-            box-sizing: border-box !important;
-        }
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* 💡 修改這兩行：不要強推到 100%，改用 min-width 或讓字自己撐開 */
+    width: auto !important; 
+    min-width: 80px !important; /* 可以設定一個最小寬度，讓短文字的標籤也一樣大好看 */
+    
+    max-width: 100% !important;
+    gap: 2px !important;
+    padding: 1px 12px !important; /* 左右稍微加寬一點點，比較像膠囊鈕 */
+    border-radius: 20px !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    min-height: 28px !important;
+    background: var(--bg-hover) !important;
+    border: 1px solid var(--border-color) !important;
+    cursor: grab !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
         .cat-tag:hover {
             border-color: var(--primary) !important;
             transform: translateY(-1px);
@@ -2782,6 +2791,27 @@ button#submitBtn.btn-primary {
 @media (max-width: 768px) {
     .right-panel .maintenance-panel { gap: 8px !important; }
 }
+<style>
+    /* ... 這裡是你原本滿滿的程式碼 ... */
+    
+    button#submitBtn.btn-primary {
+        padding: 5px 20px !important;
+        height: 34px !important;
+        line-height: 24px !important;
+    }
+
+    /* 🐻 直接貼在最下面這裡 🐻 */
+    /* 🐻 調皮熊再補一刀：強行把輸入框那一排拉到中間對齊 🐻 */
+    .account-input-container, 
+    div:has(> #submitBtn) { 
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+</style>  <!-- 黏在結束標籤前面 -->
+
         </style>
 </head>
 <body>
@@ -4943,7 +4973,7 @@ async function saveData() {
     // 初始化 Supabase
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        // ===== 龍寶 V8 - 帳戶編輯修復（靠左 + 計算機 + 連動）=====
+        // =====  V8 - 帳戶編輯修復（靠左 + 計算機 + 連動）=====
         let editingAccountIdx_v8 = null;
         let accountCalcExpr_v8 = '';
 
@@ -4951,7 +4981,7 @@ async function saveData() {
             try {
                 let idx = idxOrName;
                 let ad = null;
-                // 龍寶修復：支援名稱或索引
+                // 修復：支援名稱或索引
                 if (typeof idxOrName === 'string') {
                     const name = idxOrName.trim();
                     ad = state.accountDetails.find(a=>a.name===name);
@@ -5085,7 +5115,7 @@ async function saveData() {
             try {
                 let idx = idxOrName;
                 let ad = null;
-                // 龍寶修復：支援名稱或索引
+                // 修復：支援名稱或索引
                 if (typeof idxOrName === 'string') {
                     const name = idxOrName.trim();
                     ad = state.accountDetails.find(a=>a.name===name);
