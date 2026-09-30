@@ -2817,6 +2817,12 @@ button#submitBtn.btn-primary {
 @media (max-width: 768px) {
     .right-panel .maintenance-panel { gap: 8px !important; }
 }
+/* 讓日期的字和右邊的進度條保持一點距離，進度條就不會死黏著日期了 */
+.tp-date {
+    margin-right: 15px !important; /* 👈 數字越大，進度條就會被往右推得越遠喔！ */
+    white-space: nowrap !important;
+}
+
         </style>
 </head>
 <body>
@@ -2881,7 +2887,7 @@ button#submitBtn.btn-primary {
 
     <div class="stat-group">
         <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
-            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">&nbsp;&nbsp;🪎 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;
+            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">&nbsp;&nbsp;🪎 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;
             <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>&nbsp;&nbsp;
             <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
             <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
