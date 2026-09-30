@@ -2622,47 +2622,42 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
 
         
         /* ===== 修復 v2 2026-09-18 - 一排3個 + 分散置中 ===== */
-               /* ===== 全局類目標籤容器（左側與彈窗共用） ===== */
-        /* 🐻 調皮熊融合魔法：管他是 flex 還是 grid，一律強制置中 🐻 */
+                /* ===== 全局類目標籤容器（左側與彈窗共用） ===== */
         .cat-tag-container,
         #accountList,
         #categoryList,
         #targetList,
         #settingsModalList {
-            display: grid !important;
-            grid-template-columns: repeat(3, max-content) !important; /* 💡 改成 max-content，沒滿3個時才不會死撐開 */
-            gap: 8px !important;
-            row-gap: 10px !important;
-            column-gap: 8px !important;
-            padding: 8px 4px !important;
-            overflow: visible !important;
-            max-height: none !important;
-            min-height: 40px !important;
-            justify-items: center !important;
+            display: flex !important;       /* 💡 換回最乖巧的 flex，不跟格子(grid)打架 */
+            flex-wrap: wrap !important;     /* 💡 滿了自動換行 */
+            gap: 6px !important;            /* 💡 標籤之間的間距 */
+            justify-content: center !important; /* 🐻 核心魔法：直接強迫所有標籤在正中央對齊 🐻 */
             align-items: center !important;
-            justify-content: center !important; /* 💡 關鍵：強迫整組標籤在卡片正中央靠攏 */
+            padding: 8px 4px !important;
+            width: 100% !important;         /* 💡 乖乖跟隨卡片原來的寬度，不准死撐變寬 */
+            max-height: none !important;
+            overflow: visible !important;
         }
         
         .left-panel .cat-tag-container {
-            max-height: 150px !important; /* 左側卡片內的高度限制 */
+            max-height: 150px !important; 
             height: auto !important;
-            overflow: visible !important;
+            overflow-y: auto !important;   /* 💡 多了就乖乖在卡片裡滾動 */
         }
 
         .cat-tag {
-            display: inline-flex !important; /* 💡 強制改為 inline-flex 才會變膠囊鈕 */
+            display: inline-flex !important; /* 💡 膠囊鈕形狀 */
             align-items: center !important;
             justify-content: center !important;
             background: var(--bg-hover) !important;
-            padding: 3px 10px 3px 8px !important;
+            padding: 4px 10px !important;    /* 💡 上下 4px 左右 10px，大小剛剛好 */
             border-radius: var(--radius-sm) !important;
-            font-size: 0.75rem !important;
+            font-size: 0.75rem !important;  /* 💡 恢復原來的文字大小 */
             cursor: grab !important;
             border: 1px solid var(--border-color) !important;
             transition: 0.15s !important;
             user-select: none !important;
-            width: auto !important;
-            min-width: 80px !important; /* 💡 給標籤一個好看的最小寬度 */
+            width: auto !important;          /* 💡 字有多少就多寬，不強迫變大變小 */
             white-space: nowrap !important;
         }
         .cat-tag:hover {
@@ -2672,40 +2667,31 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             color: var(--text-muted) !important;
             margin-right: 4px !important;
             font-weight: 700 !important;
-            pointer-events: none !important;
         }
         .cat-tag .tag-text {
             cursor: text !important;
-        }
-        .cat-tag .tag-text:hover {
-            color: var(--primary-dark) !important;
-            text-decoration: underline !important;
         }
         .cat-tag .tag-del {
             cursor: pointer !important;
             color: var(--expense-color) !important;
             margin-left: 4px !important;
             font-weight: 700 !important;
-            padding: 0 2px !important;
-        }
-        .cat-tag .tag-del:hover {
-            color: #8C4A2F !important;
         }
 
-        /* 🐻 調皮熊大絕招：加上最高特權 !important 逼輸入框立正 🐻 */
+        /* ===== 輸入框與新增按鈕一併置中 ===== */
         .left-panel .category-mgr,
         .account-input-container {
             display: flex !important;
             gap: 6px !important;
-            margin-bottom: 6px !important;
-            justify-content: center !important; /* 💡 輸入框跟按鈕強制置中 */
+            margin-bottom: 8px !important;
+            justify-content: center !important; /* 💡 輸入框跟按鈕強制在中央手牽手 */
             align-items: center !important;
             width: 100% !important;
         }
         .left-panel .category-mgr input,
         .account-input-container input {
-            flex: none !important; /* 💡 叫它不准死撐到最滿 */
-            width: 65% !important; /* 💡 固定好看的寬度 */
+            flex: none !important;
+            width: 65% !important; /* 💡 給輸入框一個優雅的寬度，不會撐爆卡片 */
         }
         .left-panel .category-mgr button,
         .account-input-container button {
@@ -2718,10 +2704,6 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             cursor: pointer !important;
             font-size: 0.78rem !important;
             white-space: nowrap !important;
-        }
-        .left-panel .category-mgr button:hover,
-        .account-input-container button:hover {
-            background: var(--primary-hover) !important;
         }
 
         /* 🐻 調皮熊終極大絕招：直接把 v12 版的最高特權踩扁！ 🐻 */
