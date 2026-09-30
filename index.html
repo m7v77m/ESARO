@@ -2859,10 +2859,21 @@ button#submitBtn.btn-primary {
                 <div class="stats-bar">
                     <div class="stat-group">
                         <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
-                            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">🪎 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>
-                            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
+                            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">🪎 收入總額：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span>💸 支出總額：<span id="totalExpense" class="text-expense">$0</span></span>
+                            <span>🏦 資產總額：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
                             <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
+                        </div>
+
+                        <div class="tp-wrap" id="todayPanel">
+                            <div class="tp-today">
+                                <div class="tp-box"><span class="tp-label">☀️ 今日收入</span><span id="todayIncome" class="tp-val text-income">$0</span></div>
+                                <div class="tp-box"><span class="tp-label">🌙 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
+                            </div>
+                            <div class="tp-tree">
+                                <div class="tp-title">📊 近7天支出 <small>（點日期可展開類目）</small></div>
+                                <div id="weekTree"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="actions-group">
@@ -3892,6 +3903,76 @@ function loadLocalData() {
             renderData(true);
         }
 
+
+        // ----- 今日收支 + 近7天支出條狀樹狀圖 -----
+        const TP_COLORS = ['#C17A4E','#8fa382','#8B6D5C','#D4A65A','#7C9A92','#B5838D','#A0785A','#6B8E7B','#C9A227','#9C6B98'];
+        function tpColor(name) {
+            let h = 0;
+            for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+            return TP_COLORS[h % TP_COLORS.length];
+        }
+        function tpDateStr(d) {
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+        function updateTodayPanel() {
+            const elTree = document.getElementById('weekTree');
+            if (!elTree) return;
+            const records = (state && state.records) || [];
+            const today = new Date();
+            const todayStr = tpDateStr(today);
+            let inc = 0, exp = 0;
+            const days = [];
+            const wk = ['日', '一', '二', '三', '四', '五', '六'];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+                days.push({ key: tpDateStr(d), label: (d.getMonth() + 1) + '/' + d.getDate() + '(' + wk[d.getDay()] + ')', total: 0, cats: {} });
+            }
+            const map = {};
+            days.forEach(d => map[d.key] = d);
+            records.forEach(r => {
+                if (!r.datetime) return;
+                const key = r.datetime.split('T')[0];
+                const amt = parseFloat(r.price) || 0;
+                if (key === todayStr) {
+                    if (r.type === 'income') inc += amt;
+                    if (r.type === 'expense') exp += amt;
+                }
+                if (r.type === 'expense' && map[key]) {
+                    const v = Math.abs(amt);
+                    const c = r.category || '未分類';
+                    map[key].total += v;
+                    map[key].cats[c] = (map[key].cats[c] || 0) + v;
+                }
+            });
+            const ti = document.getElementById('todayIncome');
+            const te = document.getElementById('todayExpense');
+            if (ti) ti.innerText = '$' + inc.toLocaleString();
+            if (te) te.innerText = '$' + exp.toLocaleString();
+
+            // 記住已展開的日期
+            const opened = new Set([...elTree.querySelectorAll('.tp-day.open')].map(e => e.dataset.key));
+            const max = Math.max(...days.map(d => d.total), 0);
+            if (max === 0) {
+                elTree.innerHTML = '<div class="tp-empty">近7天沒有支出紀錄</div>';
+                return;
+            }
+            elTree.innerHTML = days.map(d => {
+                const cats = Object.entries(d.cats).sort((a, b) => b[1] - a[1]);
+                const segs = cats.map(([c, v]) =>
+                    '<span class="tp-seg" title="' + c + '" style="width:' + (v / max * 100) + '%;background:' + tpColor(c) + '"></span>').join('');
+                const kids = cats.map(([c, v]) =>
+                    '<div class="tp-child"><span class="tp-cname">' + c + '</span>' +
+                    '<span class="tp-cbar"><span style="width:' + (v / d.total * 100) + '%;background:' + tpColor(c) + '"></span></span>' +
+                    '<span class="tp-camt">$' + v.toLocaleString() + '</span></div>').join('');
+                const isOpen = opened.has(d.key) && d.total > 0;
+                return '<div class="tp-day' + (isOpen ? ' open' : '') + '" data-key="' + d.key + '" onclick="if(this.dataset.has===\'1\')this.classList.toggle(\'open\')" data-has="' + (d.total > 0 ? 1 : 0) + '">' +
+                    '<div class="tp-row"><span class="tp-date"><span class="tp-arrow">' + (d.total > 0 ? '▸' : '') + '</span>' + d.label + '</span>' +
+                    '<span class="tp-track">' + segs + '</span>' +
+                    '<span class="tp-amt">' + (d.total > 0 ? '$' + d.total.toLocaleString() : '—') + '</span></div></div>' +
+                    '<div class="tp-children">' + kids + '</div>';
+            }).join('');
+        }
+
         // ----- 渲染主表格 -----
         function renderData(keepPage = false) {
             if (!keepPage) currentPage = 1;
@@ -3949,6 +4030,7 @@ function loadLocalData() {
             document.getElementById('totalAsset').innerText = `$${assetSum.toLocaleString()}`;
             //document.getElementById('monthBalance').innerText = `$${(incomeSum - expenseSum - assetSum).toLocaleString()}`;
 			document.getElementById('monthBalance').innerText = `$${(incomeSum + expenseSum).toLocaleString()}`; // 支出已為負數，改為相加
+            if (typeof updateTodayPanel === 'function') updateTodayPanel();
 			
             const months = [];
             filtered.forEach(r => { const m = r.datetime.slice(0, 7); if (!months.includes(m)) months.push(m); });
@@ -5990,6 +6072,31 @@ async function saveData() {
     }
 }
 
+
+/* ===== 今日收支 + 近7天支出條狀樹狀圖 ===== */
+.tp-wrap { width:100%; margin-top:10px; display:flex; flex-direction:column; gap:10px; font-weight:400; }
+.tp-today { display:flex; gap:10px; }
+.tp-box { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 6px; background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; }
+.tp-label { font-size:0.75rem; color:var(--text-secondary); font-weight:600; }
+.tp-val { font-size:1.05rem; font-weight:700; }
+.tp-tree { background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; padding:8px 10px; }
+.tp-title { font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:6px; }
+.tp-title small { font-weight:400; color:var(--text-secondary); font-size:0.68rem; }
+.tp-day { cursor:pointer; padding:3px 0; }
+.tp-row { display:flex; align-items:center; gap:6px; font-size:0.72rem; color:var(--text-primary); }
+.tp-date { flex:0 0 58px; font-weight:600; white-space:nowrap; }
+.tp-date .tp-arrow { display:inline-block; width:10px; color:var(--text-secondary); font-size:0.6rem; }
+.tp-track { flex:1; height:14px; background:rgba(0,0,0,0.05); border-radius:7px; overflow:hidden; display:flex; }
+.tp-seg { height:100%; }
+.tp-amt { flex:0 0 62px; text-align:right; font-weight:700; color:var(--expense-color); }
+.tp-children { display:none; margin:3px 0 4px 16px; padding-left:8px; border-left:2px dashed var(--border-color); }
+.tp-day.open + .tp-children { display:block; }
+.tp-child { display:flex; align-items:center; gap:6px; font-size:0.68rem; padding:2px 0; color:var(--text-secondary); }
+.tp-cname { flex:0 0 58px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.tp-cbar { flex:1; height:8px; background:rgba(0,0,0,0.05); border-radius:4px; overflow:hidden; }
+.tp-cbar > span { display:block; height:100%; border-radius:4px; }
+.tp-camt { flex:0 0 62px; text-align:right; }
+.tp-empty { font-size:0.72rem; color:var(--text-secondary); text-align:center; padding:4px 0; }
 </style>
 
 <div id="rilakkuma-follower">🐻</div> 
