@@ -3289,11 +3289,38 @@ button#submitBtn.btn-primary {
     </div>
 
     <div id="budgetModal" class="text-edit-modal-overlay">
-        <div class="text-edit-modal-box" style="max-width:440px;">
+        <div class="text-edit-modal-box" style="max-width:440px;max-height:94vh;overflow-y:auto;">
             <h4>💰 每月預算設定 <span class="text-muted">（留空 = 不設）</span></h4>
-            <div style="max-height:52vh;overflow-y:auto;">
-                <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" inputmode="numeric" placeholder="例：20000"></div>
+            <div id="bdScroll" style="max-height:52vh;overflow-y:auto;">
+                <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" inputmode="numeric" placeholder="例：20000"><button type="button" class="bd-calc-btn" onclick="bdCalcOpen('bdTotalInput','每月總預算')" title="計算機">🧮</button></div>
                 <div id="bdCatInputs"></div>
+            </div>
+            <div id="bdCalcPop" class="calculator-pop" style="display:none;position:static;width:auto;margin:10px 0 0;box-shadow:none;">
+                <div id="bdCalcLabel" style="font-size:0.75rem;font-weight:700;color:var(--text-secondary);margin-bottom:6px;"></div>
+                <textarea id="bdCalcDisplay" class="calc-display" placeholder="請直接輸入或貼上數值..." oninput="bdCalcManual(this.value)"></textarea>
+                <div class="calc-grid">
+                    <button type="button" onclick="bdCalcInput('(')">(</button>
+                    <button type="button" onclick="bdCalcInput(')')">)</button>
+                    <button type="button" style="background:#F5D6BA;color:#8C4A2F;" onclick="bdCalcBack()">⌫</button>
+                    <button type="button" style="background:#F5D6BA;color:#8C4A2F;" onclick="bdCalcClear()">C</button>
+                    <button type="button" onclick="bdCalcInput('7')">7</button>
+                    <button type="button" onclick="bdCalcInput('8')">8</button>
+                    <button type="button" onclick="bdCalcInput('9')">9</button>
+                    <button type="button" class="operator" onclick="bdCalcInput('/')">÷</button>
+                    <button type="button" onclick="bdCalcInput('4')">4</button>
+                    <button type="button" onclick="bdCalcInput('5')">5</button>
+                    <button type="button" onclick="bdCalcInput('6')">6</button>
+                    <button type="button" class="operator" onclick="bdCalcInput('*')">×</button>
+                    <button type="button" onclick="bdCalcInput('1')">1</button>
+                    <button type="button" onclick="bdCalcInput('2')">2</button>
+                    <button type="button" onclick="bdCalcInput('3')">3</button>
+                    <button type="button" class="operator" onclick="bdCalcInput('-')">−</button>
+                    <button type="button" onclick="bdCalcInput('0')">0</button>
+                    <button type="button" onclick="bdCalcInput('.')">.</button>
+                    <button type="button" class="operator" onclick="bdCalcInput('+')">+</button>
+                    <button type="button" class="equals" onclick="bdCalcResult()">=</button>
+                </div>
+                <button type="button" onclick="bdCalcApply()" style="width:100%;margin-top:10px;padding:5px;height:35px;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">✅&nbsp;&nbsp;帶 入 金 額</button>
             </div>
             <div class="text-edit-modal-buttons">
                 <button type="button" class="btn-cancel" onclick="closeBudgetModal()">取消</button>
@@ -3989,12 +4016,62 @@ function loadLocalData() {
         function openBudgetModal() {
             const b = state.budgets || { total: 0, cats: {} };
             document.getElementById('bdTotalInput').value = b.total > 0 ? b.total : '';
-            document.getElementById('bdCatInputs').innerHTML = (state.categories || []).map(c =>
-                '<div class="bd-set-row"><label>📂 ' + bdEsc(c) + '</label><input type="number" inputmode="numeric" data-cat="' + bdEsc(c) + '" value="' +
-                ((b.cats && b.cats[c] > 0) ? b.cats[c] : '') + '" placeholder="不設"></div>').join('');
+            document.getElementById('bdCatInputs').innerHTML = (state.categories || []).map((c, i) =>
+                '<div class="bd-set-row"><label>📂 ' + bdEsc(c) + '</label><input type="number" inputmode="numeric" id="bdIn_' + i + '" data-cat="' + bdEsc(c) + '" value="' +
+                ((b.cats && b.cats[c] > 0) ? b.cats[c] : '') + '" placeholder="不設">' +
+                '<button type="button" class="bd-calc-btn" onclick="bdCalcOpen(\'bdIn_' + i + '\',\'' + bdEsc(c).replace(/'/g, "\\'") + '\')" title="計算機">🧮</button></div>').join('');
+            bdCalcClose();
             document.getElementById('budgetModal').style.display = 'flex';
         }
-        function closeBudgetModal() { document.getElementById('budgetModal').style.display = 'none'; }
+        function closeBudgetModal() { bdCalcClose(); document.getElementById('budgetModal').style.display = 'none'; }
+
+        // ----- 預算設定用計算機 -----
+        let bdCalcExpr = '', bdCalcTarget = null;
+        function bdCalcOpen(inputId, label) {
+            bdCalcTarget = inputId;
+            bdCalcExpr = '';
+            document.getElementById('bdCalcLabel').textContent = '🧮 計算：' + label;
+            document.getElementById('bdCalcPop').style.display = 'block';
+            document.getElementById('bdScroll').style.maxHeight = '24vh';
+            bdCalcUpdate();
+            document.getElementById('bdCalcPop').scrollIntoView({ block: 'nearest' });
+        }
+        function bdCalcClose() {
+            bdCalcTarget = null; bdCalcExpr = '';
+            const pop = document.getElementById('bdCalcPop');
+            if (pop) pop.style.display = 'none';
+            const sc = document.getElementById('bdScroll');
+            if (sc) sc.style.maxHeight = '52vh';
+        }
+        function bdCalcUpdate() {
+            const d = document.getElementById('bdCalcDisplay');
+            d.value = bdCalcExpr.replace(/\//g, '÷').replace(/\*/g, '×');
+            d.scrollTop = d.scrollHeight;
+        }
+        function bdCalcManual(v) { bdCalcExpr = v.replace(/÷/g, '/').replace(/×/g, '*'); }
+        function bdCalcInput(v) { bdCalcExpr += v; bdCalcUpdate(); }
+        function bdCalcBack() { bdCalcExpr = bdCalcExpr.slice(0, -1); bdCalcUpdate(); }
+        function bdCalcClear() { bdCalcExpr = ''; bdCalcUpdate(); }
+        function bdCalcResult() {
+            if (!bdCalcExpr) return;
+            try {
+                if (!/^[0-9+\-*/().\s]+$/.test(bdCalcExpr)) throw new Error('bad');
+                let r = new Function('return ' + bdCalcExpr)();
+                if (!isFinite(r)) r = 0;
+                bdCalcExpr = (Math.round(r * 100) / 100).toString();
+                bdCalcUpdate();
+            } catch (e) {
+                document.getElementById('bdCalcDisplay').value = '錯誤';
+                bdCalcExpr = '';
+            }
+        }
+        function bdCalcApply() {
+            if (bdCalcExpr) bdCalcResult();
+            const t = bdCalcTarget && document.getElementById(bdCalcTarget);
+            if (t && bdCalcExpr) t.value = bdCalcExpr;
+            bdCalcClose();
+        }
+
         function saveBudgetModal() {
             const total = parseFloat(document.getElementById('bdTotalInput').value) || 0;
             const cats = {};
@@ -6286,6 +6363,8 @@ async function saveData() {
 .bd-set-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
 .bd-set-row label { flex:0 0 110px; font-size:0.8rem; font-weight:600; color:var(--text-primary); }
 .bd-set-row input { flex:1; min-width:0; }
+
+.bd-calc-btn { flex:0 0 auto; width:auto; margin:0; border:none; background:var(--primary); color:#fff; border-radius:10px; padding:7px 10px; font-size:0.95rem; cursor:pointer; }
 </style>
 
 <div id="rilakkuma-follower">🐻</div> 
