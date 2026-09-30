@@ -3292,7 +3292,7 @@ button#submitBtn.btn-primary {
         <div class="text-edit-modal-box" style="max-width:440px;max-height:94vh;overflow-y:auto;">
             <h4>💰 每月預算設定 <span class="text-muted">（留空 = 不設）</span></h4>
             <div id="bdScroll" style="max-height:52vh;overflow-y:auto;">
-                <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" inputmode="numeric" placeholder="例：20000"><button type="button" class="bd-calc-btn" onclick="bdCalcOpen('bdTotalInput','每月總預算')" title="計算機">🧮</button></div>
+                <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" inputmode="numeric" placeholder="例：20000"><button type="button" class="bd-calc-btn" onclick="bdCalcOpen('bdTotalInput','每月總預算')" title="計算機">🎲</button></div>
                 <div id="bdCatInputs"></div>
             </div>
             <div id="bdCalcPop" class="calculator-pop" style="display:none;position:static;width:auto;margin:10px 0 0;box-shadow:none;">
@@ -3328,6 +3328,12 @@ button#submitBtn.btn-primary {
             </div>
         </div>
     </div>
+/* 控制「每月總預算」以及「下方各分類」的白色輸入框 */
+.bd-set-row input[type="number"] {
+    height: 45px;       /* 👈 調整這裡的數字來「變高」（原本可能大約 30px-35px） */
+    font-size: 1.2rem;   /* 👈 調整這裡的數字來「字體變大」（例如 1.2rem 或 18px） */
+    padding: 0 10px;    /* 讓文字跟框框左右邊緣保持一點距離，比較美觀 */
+}
 
     <script>
         // ============================================================
@@ -4019,7 +4025,7 @@ function loadLocalData() {
             document.getElementById('bdCatInputs').innerHTML = (state.categories || []).map((c, i) =>
                 '<div class="bd-set-row"><label>📂 ' + bdEsc(c) + '</label><input type="number" inputmode="numeric" id="bdIn_' + i + '" data-cat="' + bdEsc(c) + '" value="' +
                 ((b.cats && b.cats[c] > 0) ? b.cats[c] : '') + '" placeholder="不設">' +
-                '<button type="button" class="bd-calc-btn" onclick="bdCalcOpen(\'bdIn_' + i + '\',\'' + bdEsc(c).replace(/'/g, "\\'") + '\')" title="計算機">🧮</button></div>').join('');
+                '<button type="button" class="bd-calc-btn" onclick="bdCalcOpen(\'bdIn_' + i + '\',\'' + bdEsc(c).replace(/'/g, "\\'") + '\')" title="計算機">🎲</button></div>').join('');
             bdCalcClose();
             document.getElementById('budgetModal').style.display = 'flex';
         }
@@ -4030,7 +4036,7 @@ function loadLocalData() {
         function bdCalcOpen(inputId, label) {
             bdCalcTarget = inputId;
             bdCalcExpr = '';
-            document.getElementById('bdCalcLabel').textContent = '🧮 計算：' + label;
+            document.getElementById('bdCalcLabel').textContent = '🎲 計算：' + label;
             document.getElementById('bdCalcPop').style.display = 'block';
             document.getElementById('bdScroll').style.maxHeight = '24vh';
             bdCalcUpdate();
