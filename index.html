@@ -2622,88 +2622,107 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
 
         
         /* ===== 修復 v2 2026-09-18 - 一排3個 + 分散置中 ===== */
-                /* ===== 全局類目標籤容器（左側與彈窗共用） ===== */
-        .cat-tag-container,
-        #accountList,
-        #categoryList,
-        #targetList,
-        #settingsModalList {
-            display: flex !important;       /* 💡 換回最乖巧的 flex，不跟格子(grid)打架 */
-            flex-wrap: wrap !important;     /* 💡 滿了自動換行 */
-            gap: 6px !important;            /* 💡 標籤之間的間距 */
-            justify-content: center !important; /* 🐻 核心魔法：直接強迫所有標籤在正中央對齊 🐻 */
+                /* ===== 🐻 1. 帳戶維護專用：完美置中 flex 區 🐻 ===== */
+        #accountList {
+            display: flex !important;       
+            flex-wrap: wrap !important;     
+            gap: 6px !important;            
+            justify-content: center !important; /* 💡 讓帳戶標籤在正中央對齊 */
             align-items: center !important;
             padding: 8px 4px !important;
-            width: 100% !important;         /* 💡 乖乖跟隨卡片原來的寬度，不准死撐變寬 */
+            width: 100% !important;         
             max-height: none !important;
             overflow: visible !important;
         }
-        
-        .left-panel .cat-tag-container {
-            max-height: 150px !important; 
-            height: auto !important;
-            overflow-y: auto !important;   /* 💡 多了就乖乖在卡片裡滾動 */
-        }
-
-        .cat-tag {
-            display: inline-flex !important; /* 💡 膠囊鈕形狀 */
+        /* 讓帳戶標籤維持好看的寬度與膠囊形狀 */
+        #accountList .cat-tag {
+            display: inline-flex !important; 
             align-items: center !important;
             justify-content: center !important;
             background: var(--bg-hover) !important;
-            padding: 4px 10px !important;    /* 💡 上下 4px 左右 10px，大小剛剛好 */
+            padding: 4px 10px !important;    
             border-radius: var(--radius-sm) !important;
-            font-size: 0.75rem !important;  /* 💡 恢復原來的文字大小 */
+            font-size: 0.75rem !important;  
             cursor: grab !important;
             border: 1px solid var(--border-color) !important;
             transition: 0.15s !important;
             user-select: none !important;
-            width: auto !important;          /* 💡 字有多少就多寬，不強迫變大變小 */
+            width: auto !important;          
             white-space: nowrap !important;
         }
-        .cat-tag:hover {
-            border-color: var(--primary) !important;
+
+        /* ===== 🐻 2. 類目與成員維護專用：還原一排 3 個 Grid 區 🐻 ===== */
+        .cat-tag-container,
+        #categoryList,
+        #targetList,
+        #settingsModalList {
+            display: grid !important;       /* 💡 還原成網格，類目和成員才會變回一排 3 個 */
+            grid-template-columns: repeat(3, 1fr) !important; /* 💡 完美平分 3 等份 */
+            gap: 8px !important;
+            row-gap: 10px !important;
+            column-gap: 8px !important;
+            padding: 8px 4px !important;
+            overflow: visible !important;
+            max-height: none !important;
+            min-height: 40px !important;
+            justify-items: center !important;
+            align-items: center !important;
         }
-        .cat-tag .drag-handle {
-            color: var(--text-muted) !important;
-            margin-right: 4px !important;
-            font-weight: 700 !important;
-        }
-        .cat-tag .tag-text {
-            cursor: text !important;
-        }
-        .cat-tag .tag-del {
-            cursor: pointer !important;
-            color: var(--expense-color) !important;
-            margin-left: 4px !important;
-            font-weight: 700 !important;
+        
+        /* 類目和成員的標籤寬度拉滿 100%，才能把 3 格格子填滿 */
+        .cat-tag-container .cat-tag,
+        #categoryList .cat-tag,
+        #targetList .cat-tag,
+        #settingsModalList .cat-tag {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;        /* 💡 寬度 100% 才能填滿一排 3 個的格子 */
+            max-width: 100% !important;
+            gap: 2px !important;
+            padding: 3px 6px !important;
+            border-radius: var(--radius-sm) !important;
+            font-size: 0.75rem !important;
+            background: var(--bg-hover) !important;
+            border: 1px solid var(--border-color) !important;
+            cursor: grab !important;
+            white-space: nowrap !important;
+            box-sizing: border-box !important;
         }
 
-        /* ===== 輸入框與新增按鈕一併置中 ===== */
-        .left-panel .category-mgr,
+        /* ===== 🐻 3. 帳戶維護的輸入區單獨置中 🐻 ===== */
         .account-input-container {
             display: flex !important;
             gap: 6px !important;
             margin-bottom: 8px !important;
-            justify-content: center !important; /* 💡 輸入框跟按鈕強制在中央手牽手 */
+            justify-content: center !important; /* 💡 只有帳戶輸入框要強行置中 */
             align-items: center !important;
             width: 100% !important;
         }
-        .left-panel .category-mgr input,
         .account-input-container input {
             flex: none !important;
-            width: 65% !important; /* 💡 給輸入框一個優雅的寬度，不會撐爆卡片 */
+            width: 65% !important; 
         }
-        .left-panel .category-mgr button,
-        .account-input-container button {
-            background: var(--primary) !important;
-            color: #fff !important;
-            border: none !important;
-            padding: 4px 13px !important;
-            border-radius: var(--radius-full) !important;
-            font-weight: 600 !important;
-            cursor: pointer !important;
-            font-size: 0.78rem !important;
-            white-space: nowrap !important;
+
+        /* ===== 🐻 4. 類目維護的輸入區維持原樣 🐻 ===== */
+        .left-panel .category-mgr {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .left-panel .category-mgr input {
+            flex: 1; /* 💡 恢復原樣，讓輸入框自動死撐填滿 */
+        }
+        .left-panel .category-mgr button {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 4px 13px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.78rem;
+            white-space: nowrap;
         }
 
         /* 🐻 調皮熊終極大絕招：直接把 v12 版的最高特權踩扁！ 🐻 */
