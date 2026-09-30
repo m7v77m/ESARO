@@ -531,27 +531,23 @@
             opacity: 0.85;
         }
 
-              /* ===== 全局類目標籤容器（左側與彈窗共用） ===== */
+        /* ===== 全局類目標籤容器（左側與彈窗共用） ===== */
         .cat-tag-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;              /* 💡 稍微加寬間距比較好看 */
+            gap: 3px;
             overflow-y: auto;
             padding: 3px 0;
-            /* 🐻 調皮熊強力催眠：讓裡面的標籤一律在中間集合 🐻 */
-            justify-content: center !important; 
         }
         .left-panel .cat-tag-container {
             max-height: 150px; /* 左側卡片內的高度限制 */
         }
 
         .cat-tag {
-            /* 💡 將 block 改為 inline-flex，標籤才不會死撐一整列，而且字才會置中 */
-            display: inline-flex !important;
+            display: block;
             align-items: center;
-            justify-content: center; /* 💡 讓標籤文字在按鈕內置中 */
             background: var(--bg-hover);
-            padding: 3px 10px 3px 8px; /* 💡 稍微調整內邊距平衡視覺 */
+            padding: 3px 10px 3px 6px;
             border-radius: var(--radius-sm);
             font-size: 0.75rem;
             cursor: grab;
@@ -586,19 +582,13 @@
             color: #8C4A2F;
         }
 
-        /* 🐻 調皮熊大絕招：強行把輸入框跟按鈕拉到中間對齊 🐻 */
         .left-panel .category-mgr {
             display: flex;
             gap: 6px;
             margin-bottom: 6px;
-            /* 💡 關鍵：讓輸入框那一整排在卡片正中間對齊 */
-            justify-content: center !important; 
-            align-items: center !important;
-            width: 100% !important;
         }
         .left-panel .category-mgr input {
-            /* 💡 不要讓它無限延伸，設定最大寬度，畫面上看起來才會置中又精緻 */
-            max-width: 65% !important; 
+            flex: 1;
         }
         .left-panel .category-mgr button {
             background: var(--primary);
@@ -2632,13 +2622,15 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
 
         
         /* ===== 修復 v2 2026-09-18 - 一排3個 + 分散置中 ===== */
+               /* ===== 全局類目標籤容器（左側與彈窗共用） ===== */
+        /* 🐻 調皮熊融合魔法：管他是 flex 還是 grid，一律強制置中 🐻 */
         .cat-tag-container,
         #accountList,
         #categoryList,
         #targetList,
         #settingsModalList {
             display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
+            grid-template-columns: repeat(3, max-content) !important; /* 💡 改成 max-content，沒滿3個時才不會死撐開 */
             gap: 8px !important;
             row-gap: 10px !important;
             column-gap: 8px !important;
@@ -2648,57 +2640,90 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             min-height: 40px !important;
             justify-items: center !important;
             align-items: center !important;
-            justify-content: center !important;
+            justify-content: center !important; /* 💡 關鍵：強迫整組標籤在卡片正中央靠攏 */
         }
-        .left-panel .card .cat-tag-container {
-            max-height: none !important;
+        
+        .left-panel .cat-tag-container {
+            max-height: 150px !important; /* 左側卡片內的高度限制 */
             height: auto !important;
             overflow: visible !important;
         }
+
         .cat-tag {
-            display: inline-flex !important;
+            display: inline-flex !important; /* 💡 強制改為 inline-flex 才會變膠囊鈕 */
             align-items: center !important;
             justify-content: center !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            gap: 2px !important;
-            padding: 1px 6px !important;
-            border-radius: 20px !important;
-            font-size: 13px !important;
-            line-height: 1.2 !important;
-            min-height: 28px !important;
             background: var(--bg-hover) !important;
-            border: 1px solid var(--border-color) !important;
+            padding: 3px 10px 3px 8px !important;
+            border-radius: var(--radius-sm) !important;
+            font-size: 0.75rem !important;
             cursor: grab !important;
+            border: 1px solid var(--border-color) !important;
+            transition: 0.15s !important;
+            user-select: none !important;
+            width: auto !important;
+            min-width: 80px !important; /* 💡 給標籤一個好看的最小寬度 */
             white-space: nowrap !important;
-            text-align: center !important;
-            box-sizing: border-box !important;
         }
         .cat-tag:hover {
             border-color: var(--primary) !important;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px var(--shadow-color);
         }
         .cat-tag .drag-handle {
             color: var(--text-muted) !important;
-            margin-right: 2px !important;
+            margin-right: 4px !important;
             font-weight: 700 !important;
-            font-size: 12px !important;
+            pointer-events: none !important;
         }
         .cat-tag .tag-text {
-            flex: 1 !important;
-            text-align: center !important;
             cursor: text !important;
-            padding: 0 2px !important;
+        }
+        .cat-tag .tag-text:hover {
+            color: var(--primary-dark) !important;
+            text-decoration: underline !important;
         }
         .cat-tag .tag-del {
             cursor: pointer !important;
             color: var(--expense-color) !important;
-            margin-left: 2px !important;
+            margin-left: 4px !important;
             font-weight: 700 !important;
             padding: 0 2px !important;
-            font-size: 16px !important;
         }
+        .cat-tag .tag-del:hover {
+            color: #8C4A2F !important;
+        }
+
+        /* 🐻 調皮熊大絕招：加上最高特權 !important 逼輸入框立正 🐻 */
+        .left-panel .category-mgr,
+        .account-input-container {
+            display: flex !important;
+            gap: 6px !important;
+            margin-bottom: 6px !important;
+            justify-content: center !important; /* 💡 輸入框跟按鈕強制置中 */
+            align-items: center !important;
+            width: 100% !important;
+        }
+        .left-panel .category-mgr input,
+        .account-input-container input {
+            flex: none !important; /* 💡 叫它不准死撐到最滿 */
+            width: 65% !important; /* 💡 固定好看的寬度 */
+        }
+        .left-panel .category-mgr button,
+        .account-input-container button {
+            background: var(--primary) !important;
+            color: #fff !important;
+            border: none !important;
+            padding: 4px 13px !important;
+            border-radius: var(--radius-full) !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            font-size: 0.78rem !important;
+            white-space: nowrap !important;
+        }
+        .left-panel .category-mgr button:hover,
+        .account-input-container button:hover {
+            background: var(--primary-hover) !important;
+        }
+
         /* 🐻 調皮熊終極大絕招：直接把 v12 版的最高特權踩扁！ 🐻 */
 div.account-balance-item.v12 {
     min-height: 58px !important;    /* 強制把高度限制從 97px 砍到 45px */
