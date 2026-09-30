@@ -3288,52 +3288,55 @@ button#submitBtn.btn-primary {
         </div>
     </div>
 
-    <div id="budgetModal" class="text-edit-modal-overlay">
-        <div class="text-edit-modal-box" style="max-width:440px;max-height:94vh;overflow-y:auto;">
-            <h4>💰 每月預算設定 <span class="text-muted">（留空 = 不設）</span></h4>
-            <div id="bdScroll" style="max-height:52vh;overflow-y:auto;">
-                <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" inputmode="numeric" placeholder="例：20000"><button type="button" class="bd-calc-btn" onclick="bdCalcOpen('bdTotalInput','每月總預算')" title="計算機">🧮</button></div>
-                <div id="bdCatInputs"></div>
+   <div id="budgetModal" class="text-edit-modal-overlay">
+    <!-- 💡 在這裡幫你加上了一段專屬的控制樣式，保證框框一定會變高、字體變大 -->
+    <style>
+        .bd-set-row input[type="number"] {
+            height: 48px !important;    /* 👈 框框高度（加大到48px，原本約30px） */
+            font-size: 1.3rem !important;/* 👈 字體大小（放大了，看得更清楚） */
+            padding: 0 12px !important; /* 👈 讓數字離左邊框有一點距離，比較美觀 */
+        }
+    </style>
+
+    <div class="text-edit-modal-box" style="max-width:440px;max-height:94vh;overflow-y:auto;">
+        <h4>💰 每月預算設定 <span class="text-muted">（留空 = 不設）</span></h4>
+        <div id="bdScroll" style="max-height:52vh;overflow-y:auto;">
+            <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" inputmode="numeric" placeholder="例：20000"><button type="button" class="bd-calc-btn" onclick="bdCalcOpen('bdTotalInput','每月總預算')" title="計算機">🧮</button></div>
+            <div id="bdCatInputs"></div>
+        </div>
+        <div id="bdCalcPop" class="calculator-pop" style="display:none;position:static;width:auto;margin:10px 0 0;box-shadow:none;">
+            <div id="bdCalcLabel" style="font-size:0.75rem;font-weight:700;color:var(--text-secondary);margin-bottom:6px;"></div>
+            <textarea id="bdCalcDisplay" class="calc-display" placeholder="請直接輸入或貼上數值..." oninput="bdCalcManual(this.value)"></textarea>
+            <div class="calc-grid">
+                <button type="button" onclick="bdCalcInput('(')">(</button>
+                <button type="button" onclick="bdCalcInput(')')">)</button>
+                <button type="button" style="background:#F5D6BA;color:#8C4A2F;" onclick="bdCalcBack()">⌫</button>
+                <button type="button" style="background:#F5D6BA;color:#8C4A2F;" onclick="bdCalcClear()">C</button>
+                <button type="button" onclick="bdCalcInput('7')">7</button>
+                <button type="button" onclick="bdCalcInput('8')">8</button>
+                <button type="button" onclick="bdCalcInput('9')">9</button>
+                <button type="button" class="operator" onclick="bdCalcInput('/')">÷</button>
+                <button type="button" onclick="bdCalcInput('4')">4</button>
+                <button type="button" onclick="bdCalcInput('5')">5</button>
+                <button type="button" onclick="bdCalcInput('6')">6</button>
+                <button type="button" class="operator" onclick="bdCalcInput('*')">×</button>
+                <button type="button" onclick="bdCalcInput('1')">1</button>
+                <button type="button" onclick="bdCalcInput('2')">2</button>
+                <button type="button" onclick="bdCalcInput('3')">3</button>
+                <button type="button" class="operator" onclick="bdCalcInput('-')">−</button>
+                <button type="button" onclick="bdCalcInput('0')">0</button>
+                <button type="button" onclick="bdCalcInput('.')">.</button>
+                <button type="button" class="operator" onclick="bdCalcInput('+')">+</button>
+                <button type="button" class="equals" onclick="bdCalcResult()">=</button>
             </div>
-            <div id="bdCalcPop" class="calculator-pop" style="display:none;position:static;width:auto;margin:10px 0 0;box-shadow:none;">
-                <div id="bdCalcLabel" style="font-size:0.75rem;font-weight:700;color:var(--text-secondary);margin-bottom:6px;"></div>
-                <textarea id="bdCalcDisplay" class="calc-display" placeholder="請直接輸入或貼上數值..." oninput="bdCalcManual(this.value)"></textarea>
-                <div class="calc-grid">
-                    <button type="button" onclick="bdCalcInput('(')">(</button>
-                    <button type="button" onclick="bdCalcInput(')')">)</button>
-                    <button type="button" style="background:#F5D6BA;color:#8C4A2F;" onclick="bdCalcBack()">⌫</button>
-                    <button type="button" style="background:#F5D6BA;color:#8C4A2F;" onclick="bdCalcClear()">C</button>
-                    <button type="button" onclick="bdCalcInput('7')">7</button>
-                    <button type="button" onclick="bdCalcInput('8')">8</button>
-                    <button type="button" onclick="bdCalcInput('9')">9</button>
-                    <button type="button" class="operator" onclick="bdCalcInput('/')">÷</button>
-                    <button type="button" onclick="bdCalcInput('4')">4</button>
-                    <button type="button" onclick="bdCalcInput('5')">5</button>
-                    <button type="button" onclick="bdCalcInput('6')">6</button>
-                    <button type="button" class="operator" onclick="bdCalcInput('*')">×</button>
-                    <button type="button" onclick="bdCalcInput('1')">1</button>
-                    <button type="button" onclick="bdCalcInput('2')">2</button>
-                    <button type="button" onclick="bdCalcInput('3')">3</button>
-                    <button type="button" class="operator" onclick="bdCalcInput('-')">−</button>
-                    <button type="button" onclick="bdCalcInput('0')">0</button>
-                    <button type="button" onclick="bdCalcInput('.')">.</button>
-                    <button type="button" class="operator" onclick="bdCalcInput('+')">+</button>
-                    <button type="button" class="equals" onclick="bdCalcResult()">=</button>
-                </div>
-                <button type="button" onclick="bdCalcApply()" style="width:100%;margin-top:10px;padding:5px;height:35px;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">✅&nbsp;&nbsp;帶 入 金 額</button>
-            </div>
-            <div class="text-edit-modal-buttons">
-                <button type="button" class="btn-cancel" onclick="closeBudgetModal()">取消</button>
-                <button type="button" class="btn-confirm" onclick="saveBudgetModal()">儲存</button>
-            </div>
+            <button type="button" onclick="bdCalcApply()" style="width:100%;margin-top:10px;padding:5px;height:35px;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">✅&nbsp;&nbsp;帶 入 金 額</button>
+        </div>
+        <div class="text-edit-modal-buttons">
+            <button type="button" class="btn-cancel" onclick="closeBudgetModal()">取消</button>
+            <button type="button" class="btn-confirm" onclick="saveBudgetModal()">儲存</button>
         </div>
     </div>
-/* 控制「每月總預算」以及「下方各分類」的白色輸入框 */
-.bd-set-row input[type="number"] {
-    height: 65px;       /* 👈 調整這裡的數字來「變高」（原本可能大約 30px-35px） */
-    font-size: 1.6rem;   /* 👈 調整這裡的數字來「字體變大」（例如 1.2rem 或 18px） */
-    padding: 0 10px;    /* 讓文字跟框框左右邊緣保持一點距離，比較美觀 */
-}
+</div>
 
     <script>
         // ============================================================
