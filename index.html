@@ -2782,19 +2782,14 @@ button#submitBtn.btn-primary {
 @media (max-width: 768px) {
     .right-panel .maintenance-panel { gap: 8px !important; }
 }
-/* 🐻 調皮熊威力加強版：直接針對「帳戶維護」與「類目維護」裡的輸入區塊進行轟炸 🐻 */
-.card fieldset,
-.card .input-group,
-.card div[style*="display: flex"] {
+/* 🐻 調皮熊再補一刀：強行把輸入框那一排拉到中間對齊 🐻 */
+.account-input-container, 
+div:has(> #submitBtn) { 
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
+    gap: 8px !important;
     width: 100% !important;
-}
-
-/* 讓裡面的輸入框不要死撐到最滿，留點空間給它置中 */
-.card input[type="text"] {
-    max-width: 70% !important; 
 }
 
         </style>
