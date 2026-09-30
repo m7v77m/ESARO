@@ -2614,33 +2614,30 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             border: 1.5px dashed #D4B896 !important;
         }
         #accountBalanceList { gap: 10px !important; padding: 0 !important; }
-        .container, .main-container, .left-panel { gap: 14px !important; }
-
-        
+        .container, .main-container, .left-panel { gap: 14px !important; }      
         
         /* 終結者：覆蓋之前把泡泡壓成2px的破壞CSS */
 
-        
-        /* ===== 修復 v2 2026-09-18 - 一排3個 + 分散置中 ===== */
-                /* ===== 🐻 1. 帳戶維護專用：完美置中 flex 區 🐻 ===== */
+               /* ===== 🐻 1. 帳戶維護專用：完美置中且不跳行 🐻 ===== */
         #accountList {
             display: flex !important;       
-            flex-wrap: wrap !important;     
-            gap: 6px !important;            
-            justify-content: center !important; /* 💡 讓帳戶標籤在正中央對齊 */
+            flex-wrap: nowrap !important;   /* 💡 核心魔法：強制不准跳行！大家排在同一排 */
+            gap: 8px !important;            
+            justify-content: center !important; 
             align-items: center !important;
             padding: 8px 4px !important;
             width: 100% !important;         
             max-height: none !important;
-            overflow: visible !important;
+            overflow-x: auto !important;    /* 💡 萬一字真的太長，會自動產生左右低調的滾動條，絕不踢到下一行 */
         }
-        /* 讓帳戶標籤維持好看的寬度與膠囊形狀 */
+        
+        /* 讓帳戶標籤有完美的高度與膠囊形狀 */
         #accountList .cat-tag {
             display: inline-flex !important; 
             align-items: center !important;
             justify-content: center !important;
             background: var(--bg-hover) !important;
-            padding: 4px 10px !important;    
+            padding: 6px 12px !important;    /* 💡 加大內邊距，變得圓潤飽滿 */
             border-radius: var(--radius-sm) !important;
             font-size: 0.75rem !important;  
             cursor: grab !important;
@@ -2648,18 +2645,19 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             transition: 0.15s !important;
             user-select: none !important;
             width: auto !important;          
+            min-height: 28px !important;    /* 💡 強制設定最小高度，不縮扁 */
             white-space: nowrap !important;
         }
 
-        /* ===== 🐻 2. 類目與成員維護專用：還原一排 3 個 Grid 區 🐻 ===== */
+        /* ===== 🐻 2. 類目與成員維護專用：一排 3 個 + 完美加高 🐻 ===== */
         .cat-tag-container,
         #categoryList,
         #targetList,
         #settingsModalList {
-            display: grid !important;       /* 💡 還原成網格，類目和成員才會變回一排 3 個 */
-            grid-template-columns: repeat(3, 1fr) !important; /* 💡 完美平分 3 等份 */
+            display: grid !important;       
+            grid-template-columns: repeat(3, 1fr) !important; 
             gap: 8px !important;
-            row-gap: 10px !important;
+            row-gap: 12px !important;       /* 💡 加大行與行之間的上下間距，看起來不擁擠 */
             column-gap: 8px !important;
             padding: 8px 4px !important;
             overflow: visible !important;
@@ -2669,7 +2667,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             align-items: center !important;
         }
         
-        /* 類目和成員的標籤寬度拉滿 100%，才能把 3 格格子填滿 */
+        /* 類目和成員的標籤：撐滿寬度、同時完美加高！ */
         .cat-tag-container .cat-tag,
         #categoryList .cat-tag,
         #targetList .cat-tag,
@@ -2677,12 +2675,13 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 100% !important;        /* 💡 寬度 100% 才能填滿一排 3 個的格子 */
+            width: 100% !important;        
             max-width: 100% !important;
-            gap: 2px !important;
-            padding: 3px 6px !important;
+            gap: 4px !important;
+            padding: 6px 6px !important;    /* 💡 上下內邊距從 3px 加高到 6px！ */
             border-radius: var(--radius-sm) !important;
             font-size: 0.75rem !important;
+            min-height: 28px !important;    /* 💡 強制設定跟以前一樣的 28px 高度！ */
             background: var(--bg-hover) !important;
             border: 1px solid var(--border-color) !important;
             cursor: grab !important;
@@ -2695,7 +2694,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             display: flex !important;
             gap: 6px !important;
             margin-bottom: 8px !important;
-            justify-content: center !important; /* 💡 只有帳戶輸入框要強行置中 */
+            justify-content: center !important; 
             align-items: center !important;
             width: 100% !important;
         }
@@ -2711,7 +2710,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             margin-bottom: 6px;
         }
         .left-panel .category-mgr input {
-            flex: 1; /* 💡 恢復原樣，讓輸入框自動死撐填滿 */
+            flex: 1; 
         }
         .left-panel .category-mgr button {
             background: var(--primary);
