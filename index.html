@@ -2857,38 +2857,60 @@ button#submitBtn.btn-primary {
                 </div>
    
                 <div class="stats-bar">
-                    <div class="stat-group">
-                        <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
-                            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">🪎 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>
-                            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
-                            <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
-                        </div>
+    <!-- 💡 幫無尾熊把「今日收支框」縮扁扁的專屬控制樣式 -->
+    <style>
+        .tp-today {
+            gap: 10px !important;       /* 👈 縮小左邊跟右邊格子之間的間距 */
+        }
+        .tp-box {
+            padding: 6px 10px !important;/* 👈 縮小上下留白（從大留白縮小到 6px） */
+            min-height: auto !important; /* 👈 解除原本可能的最低高度限制 */
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .tp-label {
+            margin-bottom: 2px !important;/* 👈 讓「今日收入」文字和「金額」貼近一點 */
+            font-size: 0.85rem !important;
+        }
+        .tp-val {
+            font-size: 1.1rem !important;  /* 👈 保持金額大字好看，但讓格子不臃腫 */
+        }
+    </style>
 
-                        <div class="tp-wrap" id="todayPanel">
-                            <div class="tp-today">
-                                <div class="tp-box"><span class="tp-label">🪎 今日收入</span><span id="todayIncome" class="tp-val text-income">$0</span></div>
-                                <div class="tp-box"><span class="tp-label">💸 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
-                            </div>
-                            <div class="tp-tree">
-                                <div class="tp-title">📊 一週支出 <small>（點日期可展開類目）</small></div>
-                                <div id="weekTree"></div>
-                            </div>
-                            <div class="tp-tree" id="budgetBox">
-                                <div class="tp-title">💰 本月預算 <button type="button" class="qa-mini" style="float:right;" onclick="openBudgetModal()">⚙ 設定</button></div>
-                                <div id="budgetBody"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="actions-group">
-                        <button class="btn-danger" style="padding:7px 12px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
-                        <button class="btn-danger" style="padding:6px 10px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>
-                        <div class="selected-stats" style="padding:4px 10px !important;">
-                            已勾選 <strong id="selectedCount">0</strong> 筆，小計：<strong id="selectedTotal">$0</strong>
-                        </div>
-                    </div>
-                </div>
+    <div class="stat-group">
+        <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
+            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">   收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>
+            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
+            <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
+        </div>
+
+        <div class="tp-wrap" id="todayPanel">
+            <div class="tp-today">
+                <div class="tp-box"><span class="tp-label">   今日收入</span><span id="todayIncome" class="tp-val text-income">$0</span></div>
+                <div class="tp-box"><span class="tp-label">💸 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
             </div>
+            <div class="tp-tree">
+                <div class="tp-title">📊 一週支出 <small>（點日期可展開類目）</small></div>
+                <div id="weekTree"></div>
+            </div>
+            <div class="tp-tree" id="budgetBox">
+                <div class="tp-title">💰 本月預算 <button type="button" class="qa-mini" style="float:right;" onclick="openBudgetModal()">⚙ 設定</button></div>
+                <div id="budgetBody"></div>
+            </div>
+        </div>
+    </div>
+    <div class="actions-group">
+        <button class="btn-danger" style="padding:7px 12px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
+        <button class="btn-danger" style="padding:6px 10px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>
+        <div class="selected-stats" style="padding:4px 10px !important;">
+            已勾選 <strong id="selectedCount">0</strong> 筆，小計：<strong id="selectedTotal">$0</strong>
+        </div>
+    </div>
+</div>
+
 <!--
             <div class="card" id="accountBalanceCard">
                 <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
