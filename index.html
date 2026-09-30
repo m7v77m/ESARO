@@ -5989,6 +5989,32 @@ async function saveData() {
         max-width: 60px !important;
     }
 }
+/* 🐻 調皮熊日期置中魔法：解決無尾熊的日期文字偏上問題 🐻 */
+input[type="date"] {
+    display: inline-flex !important;
+    align-items: center !important;      /* 💡 核心魔法：強制讓裡面的文字和微調圖標垂直置中 */
+    justify-content: flex-start !important;
+    
+    /* 💡 重新平衡上下內邊距，把文字溫柔地推回正中間 */
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    
+    /* 💡 強制高度與行高一致，確保文字不會亂飄 */
+    line-height: normal !important; 
+}
+
+/* 針對包夾著日期與今天按鈕的容器，也順便做完美的垂直置中對齊 */
+.date-with-today {
+    display: flex !important;
+    align-items: center !important;      /* 💡 讓日期輸入框跟旁邊的「今天」按鈕完美平齊 */
+    gap: 6px !important;
+}
+
+/* 確保輸入框的高度好看且一致 */
+.date-with-today input[type="date"] {
+    height: 34px !important;            /* 💡 配合你之前新增紀錄按鈕的精緻高度 */
+    box-sizing: border-box !important;
+}
 
 </style>
 
