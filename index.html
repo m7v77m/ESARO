@@ -6412,6 +6412,18 @@ async function saveData() {
 .bd-set-row input { flex:1; min-width:0; }
 
 .bd-calc-btn { flex:0 0 auto; width:auto; margin:0; border:none; background: transparent;; color:#fff; border-radius:10px; padding:7px 10px; font-size:0.95rem; cursor:pointer; }
+        /* 🐻 幫無尾熊把「快速篩選」四個字變大變清晰 🐻 */
+        .filters legend, 
+        .filters h4, 
+        .filters .nav-title,
+        #filterPanel div:first-of-type,
+        div:has(> .month-btns) previous-sibling,
+        .filters-title {
+            font-size: 1.15rem !important; /* 👈 字體放大（可以改成 1.2rem 或 18px 調整大小） */
+            font-weight: 700 !important;   /* 👈 讓字體加粗，看起來更有古典風的質感 */
+            color: #385a37 !important;     /* 👈 保持你最愛的深綠色 */
+        }
+
 </style>
 
 <div id="rilakkuma-follower">🐻</div> 
