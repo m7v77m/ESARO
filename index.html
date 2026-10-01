@@ -5741,37 +5741,30 @@ async function saveData() {
             opacity: 0.3;
         }
     }
-                   /* 🐻 聯手無尾熊精準一擊：把快速篩選四個字變大變粗！ 🐻 */
+                  /* 🐻 聯手無尾熊精準一擊：把快速篩選四個字變大變粗！ 🐻 */
         .quick-date-container strong, 
-        #top-section .quick-date-container strong,
-        .filters strong,
-        strong:contains("快速篩選") {
-            font-size: 0.92rem !important; /* 👈 無尾熊微調最滿意的 0.92rem */
+        #top-section .quick-date-container strong {
+            font-size: 0.92rem !important; /* 👈 無尾熊的黃金比例 0.92rem */
             font-weight: 800 !important;   
             color: #4A3728 !important;     
-            margin-right: 8px !important;  /* 👈 加大文字和 2026 框框的左右間距 */
         }
 
-        /* 🐻 超霸道！強制把整個 2026 這一列和下方的月份按鈕拉開距離 🐻 */
-        .quick-date-container, 
-        .filters > div:first-of-type,
-        div:has(> #quickYear) {
-            display: flex !important;
-            align-items: center !important;     /* 👈 強制讓文字和 2026 框框平行對齊 */
-            justify-content: flex-start !important; 
-            flex-wrap: nowrap !important;       
-            margin-bottom: 20px !important;    /* 👈 這次大力的從 14px 加到 20px！強制往下推開 12 個月份！ */
+        /* 🐻 精準微調：只讓 2026 這一行往下推，且月份絕對保持在正中央 🐻 */
+        .quick-date-container {
+            display: block !important;       /* 👈 改回區塊模式，讓月份按鈕乖乖回歸下一行，不被往右擠！ */
+            margin-bottom: 22px !important;  /* 👈 關鍵！從這行大力的往下推 22 像素，跟月份拉開舒適距離！ */
+            text-align: left !important;     /* 保持文字靠左 */
         }
 
-        /* 修正 2026 年份下拉選單本身，讓它乖乖站好 */
-        #quickYear, .quick-date-container select, .filters select {
-            margin: 0 !important;
-            padding: 2px 4px !important;        
-            height: auto !important;
+        /* 讓 2026 年份下拉選單跟左邊文字微調平行 */
+        #quickYear, .quick-date-container select {
             display: inline-block !important;
             vertical-align: middle !important;
+            margin-left: 6px !important;    /* 幫文字和框框中間留個舒服小空隙 */
+            margin-top: -3px !important;    /* 👈 神奇微調：微調往上拉一點點，讓它跟文字完美平行！ */
+            height: auto !important;
+            padding: 2px 4px !important;
         }
-
 
 </style>
 <script>
