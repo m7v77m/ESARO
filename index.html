@@ -2995,7 +2995,7 @@ button#submitBtn.btn-primary {
                                 <span class="qa-title">📌 常用項目</span>
                                 <span>
                                     <button type="button" class="qa-mini" onclick="saveQuickItem()">＋ 存為常用</button>
-                                    <button type="button" class="qa-mini" id="qaManageBtn" onclick="toggleQuickManage()">☰ 管理</button>
+                                    <button type="button" class="qa-mini" id="qaManageBtn" onclick="toggleQuickManage()">☰ 管理清單</button>
                                 </span>
                             </div>
                             <div class="qa-chips" id="quickChips"></div>
@@ -4133,7 +4133,7 @@ function loadLocalData() {
             if (!box) return;
             const list = state.quickItems || [];
             const mb = document.getElementById('qaManageBtn');
-            if (mb) mb.textContent = qaManage ? '完成' : '☰ 管理';
+            if (mb) mb.textContent = qaManage ? '完成' : '☰ 管理清單';
             if (!list.length) {
                 box.innerHTML = '<span class="qa-empty">尚無常用項目：填好下方表單後，按「＋ 存為常用」</span>';
                 return;
