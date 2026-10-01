@@ -2995,7 +2995,7 @@ button#submitBtn.btn-primary {
                                 <span class="qa-title">📌 常用項目</span>
                                 <span>
                                     <button type="button" class="qa-mini" onclick="saveQuickItem()">＋存為常用</button>
-                                    <button type="button" class="qa-mini" id="qaManageBtn" onclick="toggleQuickManage()">☰管理</button>
+                                    <button type="button" class="qa-mini" id="qaManageBtn" onclick="toggleQuickManage()">🪄管理</button>
                                 </span>
                             </div>
                             <div class="qa-chips" id="quickChips"></div>
@@ -5742,18 +5742,6 @@ async function saveData() {
             opacity: 0.3;
         }
     }
-            /* 🐻 幫無尾熊把「快速篩選」四個字變大變清晰 🐻 */
-        .filters legend, 
-        .filters h4, 
-        .filters .nav-title,
-        #filterPanel div:first-of-type,
-        div:has(> .month-btns) previous-sibling,
-        .filters-title {
-            font-size: 1.15rem !important; /* 👈 字體放大（可以改成 1.2rem 或 18px 調整大小） */
-            font-weight: 700 !important;   /* 👈 讓字體加粗，看起來更有古典風的質感 */
-            color: #385a37 !important;     /* 👈 保持你最愛的深綠色 */
-        }
-
 </style>
 <script>
     // 建立飄落小熊的魔法陣
