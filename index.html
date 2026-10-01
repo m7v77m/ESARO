@@ -3321,10 +3321,10 @@ button#submitBtn.btn-primary {
     <style>
     
         .bd-set-row input[type="number"] {
-            height: 29px !important;       /* 👈 高度微縮（從48px縮小到38px，剛剛好的厚度） */
+            height: 28px !important;       /* 👈 高度微縮（從48px縮小到38px，剛剛好的厚度） */
             border-radius: 14px !important;/* 👈 圓角加大（讓白色框框變得圓滾滾的更可愛） */
-            background: #8fa382;/*
             font-size: 1.5rem !important; /* 👈 字體微調（保持大字好閱讀，同時完美適應新高度） */
+            background: #8fa382;/*
             padding: 0 13px !important;    /* 👈 保持內縮距離 */
         }
     </style>
@@ -5692,41 +5692,8 @@ async function saveData() {
 <!-- 🐻 拉拉熊浪漫飄落特效開始 🐻 -->
 <style>
 /* ========================================================
-   🎨 🐻 無尾熊專屬：月曆三個藍色死角大換色法術！
-   ======================================================== */
-/* 1. 幫月曆標題旁邊的小箭頭 > 換成莫蘭迪綠 */
-span[onclick*="next"], .flatpickr-next-month, .flatpickr-prev-month,
-[class*="next"] {
-    color: #8fa382 !important;
-    fill: #8fa382 !important;
-}
-
-/* 2. 幫今天日期的圓圈藍色底換成古典綠 */
-.flatpickr-day.today, .flatpickr-day.selected,
-td.selected, td.today,
-[style*="background-color: rgb(0, 122, 255)"],
-[style*="background: rgb(0, 122, 255)"],
-[style*="background:#007bff"] {
-    background-color: #8fa382 !important;
-    background: #8fa382 !important;
-    border-color: #8fa382 !important;
-    color: #ffffff !important; /* 數字1依保持白色 */
-}
-
-/* 3. 幫右下角亮藍色的圓形打勾按鈕換成古典綠 */
-button.confirm-btn, button.btn-primary,
-button:has(> span), button:has(svg),
-[style*="background-color: var(--primary)"],
-div[style*="position: absolute"] button:last-of-type {
-    background-color: #8fa382 !important;
-    background: #8fa382 !important;
-    border-color: #8fa382 !important;
-}
-
-/* ========================================================
    🧸 調皮熊特製：起始日期、結束日期框框高度完美對齊術
    ======================================================== */
-
 /* 1. 鎖定起始與結束日期輸入框，強制把高度和內襯墊縮小，與右邊對齊 */
 #filterStartDate, 
 #filterEndDate {
