@@ -5740,6 +5740,31 @@ async function saveData() {
             opacity: 0.3;
         }
     }
+            /* ========================================================
+           🌿 🐻 Flatpickr 古典莫蘭迪綠專屬月曆換色法術
+           ======================================================== */
+        /* 1. 變更「今天」與「被選中日期」的底色為莫蘭迪綠，並加上軟萌圓角 */
+        .flatpickr-day.today, 
+        .flatpickr-day.selected, 
+        .flatpickr-day.selected:hover {
+            background: #8fa382 !important;
+            border-color: #8fa382 !important;
+            color: #fff !important;
+            border-radius: 8px !important; /* 讓日期數字的格子也有可愛小圓角 */
+        }
+        
+        /* 2. 當手指滑過日期時的淡淡綠色陰影 */
+        .flatpickr-day:hover {
+            background: #e8ded1 !important; /* 使用舒服的米色襯托古典風 */
+            border-color: #e8ded1 !important;
+        }
+
+        /* 3. 月曆上個月、下個月的小箭頭顏色調和 */
+        .flatpickr-months .flatpickr-prev-month:hover svg, 
+        .flatpickr-months .flatpickr-next-month:hover svg {
+            fill: #8fa382 !important;
+        }
+
 </style>
 <script>
     // 建立飄落小熊的魔法陣
@@ -6477,5 +6502,22 @@ async function saveData() {
     }
 })();
 </script>
+
+    <!-- 引入 Flatpickr 月曆的漂亮外衣與大腦（免費開源套件） -->
+    <link rel="stylesheet" href="https://jsdelivr.net">
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://jsdelivr.net/dist/l10n/zh.js"></script>
+
+    <script>
+        // 🐻 調皮熊法術：網頁載入後，自動把所有日期輸入框變成扁平古典月曆！
+        document.addEventListener("DOMContentLoaded", function() {
+            flatpickr('input[type="date"]', {
+                locale: "zh",          // 繁體中文顯示
+                dateFormat: "Y-m-d",   // 標準日期格式
+                disableMobile: true  // 👈 強制手機上也用外掛月曆，把蘋果原生藍色月曆消滅掉！
+            });
+        });
+    </script>
+
 </body>
 </html>
