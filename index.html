@@ -2994,8 +2994,8 @@ button#submitBtn.btn-primary {
                             <div class="qa-head">
                                 <span class="qa-title">📌 常用項目</span>
                                 <span>
-                                    <button type="button" class="qa-mini" onclick="saveQuickItem()">＋存為常用</button>
-                                    <button type="button" class="qa-mini" id="qaManageBtn" onclick="toggleQuickManage()">🪄管理</button>
+                                    <button type="button" class="qa-mini" onclick="saveQuickItem()">＋ 存為常用</button>
+                                    <button type="button" class="qa-mini" id="qaManageBtn" onclick="toggleQuickManage()">☰ 管理</button>
                                 </span>
                             </div>
                             <div class="qa-chips" id="quickChips"></div>
@@ -4133,9 +4133,9 @@ function loadLocalData() {
             if (!box) return;
             const list = state.quickItems || [];
             const mb = document.getElementById('qaManageBtn');
-            if (mb) mb.textContent = qaManage ? '完成' : '✎ 管理';
+            if (mb) mb.textContent = qaManage ? '完成' : '☰ 管理';
             if (!list.length) {
-                box.innerHTML = '<span class="qa-empty">尚無常用項目：填好下方表單後，按「＋存為常用」</span>';
+                box.innerHTML = '<span class="qa-empty">尚無常用項目：填好下方表單後，按「＋ 存為常用」</span>';
                 return;
             }
             box.innerHTML = list.map((q, i) =>
@@ -5695,7 +5695,6 @@ async function saveData() {
 /* ========================================================
    🧸 調皮熊特製：起始日期、結束日期框框高度完美對齊術
    ======================================================== */
-   
 /* 1. 鎖定起始與結束日期輸入框，強制把高度和內襯墊縮小，與右邊對齊 */
 #filterStartDate, 
 #filterEndDate {
