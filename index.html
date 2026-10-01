@@ -3321,11 +3321,11 @@ button#submitBtn.btn-primary {
     <style>
     
         .bd-set-row input[type="number"] {
-            height: 28px !important;       /* 👈 高度微縮（從48px縮小到38px，剛剛好的厚度） */
+            height: 27px !important;       /* 👈 高度微縮（從48px縮小到38px，剛剛好的厚度） */
             border-radius: 14px !important;/* 👈 圓角加大（讓白色框框變得圓滾滾的更可愛） */
-            font-size: 1.2rem !important; /* 👈 字體微調（保持大字好閱讀，同時完美適應新高度） */
+            font-size: 1.1rem !important; /* 👈 字體微調（保持大字好閱讀，同時完美適應新高度） */
             background: #8fa382;/*
-            padding: 0 13px !important;    /* 👈 保持內縮距離 */
+            padding: 0 12px !important;    /* 👈 保持內縮距離 */
         }
     </style>
 
@@ -5694,31 +5694,6 @@ async function saveData() {
 /* ========================================================
    🧸 調皮熊特製：起始日期、結束日期框框高度完美對齊術
    ======================================================== */
-           /* ========================================================
-           🌿 🐻 Flatpickr 古典莫蘭迪綠專屬月曆換色法術
-           ======================================================== */
-        /* 1. 變更「今天」與「被選中日期」的底色為莫蘭迪綠，並加上軟萌圓角 */
-        .flatpickr-day.today, 
-        .flatpickr-day.selected, 
-        .flatpickr-day.selected:hover {
-            background: #8fa382 !important;
-            border-color: #8fa382 !important;
-            color: #fff !important;
-            border-radius: 8px !important; /* 讓日期數字的格子也有可愛小圓角 */
-        }
-        
-        /* 2. 當手指滑過日期時的淡淡綠色陰影 */
-        .flatpickr-day:hover {
-            background: #e8ded1 !important; /* 使用舒服的米色襯托古典風 */
-            border-color: #e8ded1 !important;
-        }
-
-        /* 3. 月曆上個月、下個月的小箭頭顏色調和 */
-        .flatpickr-months .flatpickr-prev-month:hover svg, 
-        .flatpickr-months .flatpickr-next-month:hover svg {
-            fill: #8fa382 !important;
-        }
-
 /* 1. 鎖定起始與結束日期輸入框，強制把高度和內襯墊縮小，與右邊對齊 */
 #filterStartDate, 
 #filterEndDate {
@@ -5765,6 +5740,31 @@ async function saveData() {
             opacity: 0.3;
         }
     }
+            /* ========================================================
+           🌿 🐻 Flatpickr 古典莫蘭迪綠專屬月曆換色法術
+           ======================================================== */
+        /* 1. 變更「今天」與「被選中日期」的底色為莫蘭迪綠，並加上軟萌圓角 */
+        .flatpickr-day.today, 
+        .flatpickr-day.selected, 
+        .flatpickr-day.selected:hover {
+            background: #8fa382 !important;
+            border-color: #8fa382 !important;
+            color: #fff !important;
+            border-radius: 8px !important; /* 讓日期數字的格子也有可愛小圓角 */
+        }
+        
+        /* 2. 當手指滑過日期時的淡淡綠色陰影 */
+        .flatpickr-day:hover {
+            background: #e8ded1 !important; /* 使用舒服的米色襯托古典風 */
+            border-color: #e8ded1 !important;
+        }
+
+        /* 3. 月曆上個月、下個月的小箭頭顏色調和 */
+        .flatpickr-months .flatpickr-prev-month:hover svg, 
+        .flatpickr-months .flatpickr-next-month:hover svg {
+            fill: #8fa382 !important;
+        }
+
 </style>
 <script>
     // 建立飄落小熊的魔法陣
