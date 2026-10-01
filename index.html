@@ -5745,11 +5745,25 @@ async function saveData() {
         .quick-date-container strong, 
         #top-section .quick-date-container strong,
         .quick-date-container > strong {
-            font-size: 0.92rem !important; /* 👈 字體放大到 1.15rem（大約 18px，比旁邊大了好幾圈！） */
+            font-size: 0.9rem !important; /* 👈 字體放大到 1.15rem（大約 18px，比旁邊大了好幾圈！） */
             font-weight: 800 !important;   /* 👈 讓字體變得厚實、更有主標題的古典氣勢 */
             color: #4A3728 !important;     /* 👈 保持你原本截圖上的深咖啡色質感 */
             display: inline-block !important;
             margin-bottom: 3px !important;  /* 讓它跟下面的月份按鈕保持一點點舒服的距離 */
+        }
+        /* 🐻 讓「快速篩選」與「2026年份框」完美平行，並跟下方月份保持距離 🐻 */
+        .quick-date-container {
+            display: flex !important;
+            align-items: center !important; /* 👈 強制讓左邊文字和右邊 2026 框框在同一條水平線上對齊！ */
+            flex-wrap: wrap !important;
+            margin-bottom: 15px !important; /* 👈 關鍵！大力的把整個區塊跟下面的 12 個月份拉開 15 像素的舒適距離！ */
+        }
+
+        /* 修正 2026 年份下拉選單本身的上下微調 */
+        #quickYear, .quick-date-container select {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            vertical-align: middle !important;
         }
 
 </style>
