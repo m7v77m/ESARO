@@ -6502,20 +6502,25 @@ async function saveData() {
     }
 })();
 </script>
-
-    <!-- 引入 Flatpickr 月曆的漂亮外衣與大腦（免費開源套件） -->
+    <!-- 引入 Flatpickr 月曆的漂亮外衣與大腦 -->
     <link rel="stylesheet" href="https://jsdelivr.net">
     <script src="https://jsdelivr.net"></script>
     <script src="https://jsdelivr.net/dist/l10n/zh.js"></script>
 
     <script>
-        // 🐻 調皮熊法術：網頁載入後，自動把所有日期輸入框變成扁平古典月曆！
         document.addEventListener("DOMContentLoaded", function() {
-            flatpickr('input[type="date"]', {
-                locale: "zh",          // 繁體中文顯示
-                dateFormat: "Y-m-d",   // 標準日期格式
-                disableMobile: true  // 👈 強制手機上也用外掛月曆，把蘋果原生藍色月曆消滅掉！
-            });
+            try {
+                var dateInput = document.getElementById('datetime');
+                if (dateInput) {
+                    flatpickr(dateInput, {
+                        locale: "zh",
+                        dateFormat: "Y-m-d",
+                        disableMobile: true
+                    });
+                }
+            } catch (error) {
+                console.error("調皮熊保護網頁不卡住！", error);
+            }
         });
     </script>
 
