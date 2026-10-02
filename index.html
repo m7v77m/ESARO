@@ -3331,9 +3331,9 @@ button#submitBtn.btn-primary {
     </style>
 
     <div class="text-edit-modal-box" style="max-width:440px;max-height:94vh;overflow-y:auto;">
-        <h4>💰 每月預算設定 <span class="text-muted">（留空 = 不設）</span></h4>
+        <h4>💰 每月預算設定 <span class="text-muted">（留空 = 不設；支出填負數、收入填正數）</span></h4>
         <div id="bdScroll" style="max-height:52vh;overflow-y:auto;">
-            <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" inputmode="numeric" placeholder="例：20000"><button type="button" class="bd-calc-btn" onclick="bdCalcOpen('bdTotalInput','每月總預算')" title="計算機">🧮</button></div>
+            <div class="bd-set-row"><label>📊 每月總預算</label><input type="number" id="bdTotalInput" step="any" placeholder="例：-20000"><button type="button" class="bd-calc-btn" onclick="bdCalcOpen('bdTotalInput','每月總預算')" title="計算機">🧮</button></div>
             <div id="bdCatInputs"></div>
         </div>
         <div id="bdCalcPop" class="calculator-pop" style="display:none;position:static;width:auto;margin:10px 0 0;box-shadow:none;">
@@ -4011,11 +4011,12 @@ function loadLocalData() {
         function bdColor(pct) { return pct >= 100 ? 'var(--expense-color)' : (pct >= 70 ? '#D4A65A' : 'var(--income-color)'); }
         function bdEsc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
         function bdMonthSpend() {
+            // 本月各類目「收入+支出」淨額：支出為負、收入為正，直接相加
             const mk = tpDateStr(new Date()).slice(0, 7);
             let total = 0; const cats = {};
             ((state && state.records) || []).forEach(r => {
-                if (r.type !== 'expense' || !r.datetime || r.datetime.slice(0, 7) !== mk) return;
-                const v = Math.abs(parseFloat(r.price) || 0);
+                if ((r.type !== 'expense' && r.type !== 'income') || !r.datetime || r.datetime.slice(0, 7) !== mk) return;
+                const v = parseFloat(r.price) || 0;
                 total += v;
                 const c = r.category || '未分類';
                 cats[c] = (cats[c] || 0) + v;
@@ -4026,40 +4027,53 @@ function loadLocalData() {
             const el = document.getElementById('budgetBody');
             if (!el) return;
             const b = state.budgets || {};
-            const catBudgets = Object.entries(b.cats || {}).filter(([, v]) => parseFloat(v) > 0);
+            const catBudgets = Object.entries(b.cats || {}).filter(([, v]) => parseFloat(v));
             const totalBudget = parseFloat(b.total) || 0;
             if (!totalBudget && catBudgets.length === 0) {
                 el.innerHTML = '<div class="tp-empty">尚未設定預算，點右上角「⚙ 設定」</div>';
                 return;
             }
             const spend = bdMonthSpend();
+            const n0 = v => (Math.round(v) || 0).toLocaleString();
+            // 實際金額與預算「同號」才算進度（支出對負數預算、收入對正數預算）
+            const pctOf = (spent, budget) => (budget !== 0 && spent * budget > 0) ? spent / budget * 100 : 0;
+            const colorOf = (pct, budget) => budget < 0 ? bdColor(pct) : (pct >= 100 ? 'var(--income-color)' : '#D4A65A');
             let html = '';
             const row = (name, spent, budget) => {
-                const pct = budget > 0 ? spent / budget * 100 : 0;
+                const pct = pctOf(spent, budget);
                 return '<div class="bd-row"><span class="bd-name">' + bdEsc(name) + '</span>' +
-                    '<span class="bd-track"><span style="width:' + Math.min(pct, 100) + '%;background:' + bdColor(pct) + '"></span></span>' +
-                    '<span class="bd-num">$' + Math.round(spent).toLocaleString() + ' / $' + Math.round(budget).toLocaleString() + '</span></div>';
+                    '<span class="bd-track"><span style="width:' + Math.min(pct, 100) + '%;background:' + colorOf(pct, budget) + '"></span></span>' +
+                    '<span class="bd-num">$' + n0(spent) + ' / $' + n0(budget) + '</span></div>';
             };
-            if (totalBudget > 0) {
+            if (totalBudget) {
                 html += row('本月總計', spend.total, totalBudget);
-                const left = totalBudget - spend.total;
-                html += left >= 0
-                    ? '<div class="bd-note">還剩 $' + Math.round(left).toLocaleString() + '（已用 ' + Math.round(spend.total / totalBudget * 100) + '%）</div>'
-                    : '<div class="bd-note over">⚠️ 已超支 $' + Math.round(-left).toLocaleString() + '</div>';
+                const pct = pctOf(spend.total, totalBudget);
+                if (totalBudget < 0) {
+                    const left = Math.abs(totalBudget) - (spend.total < 0 ? Math.abs(spend.total) : 0);
+                    html += left >= 0
+                        ? '<div class="bd-note">還剩 $' + n0(left) + '（已用 ' + Math.round(pct) + '%）</div>'
+                        : '<div class="bd-note over">⚠️ 已超支 $' + n0(-left) + '</div>';
+                } else {
+                    html += pct >= 100
+                        ? '<div class="bd-note">🎉 已達標，多出 $' + n0(spend.total - totalBudget) + '</div>'
+                        : '<div class="bd-note">還差 $' + n0(totalBudget - spend.total) + '（已達 ' + Math.round(pct) + '%）</div>';
+                }
             }
             catBudgets.forEach(([c, v]) => {
                 const bv = parseFloat(v), sp = spend.cats[c] || 0;
+                const pct = pctOf(sp, bv);
                 html += row(c, sp, bv);
-                if (sp > bv) html += '<div class="bd-note over">⚠️ ' + bdEsc(c) + ' 超支 $' + Math.round(sp - bv).toLocaleString() + '</div>';
+                if (bv < 0 && pct > 100) html += '<div class="bd-note over">⚠️ ' + bdEsc(c) + ' 超支 $' + n0(Math.abs(sp) - Math.abs(bv)) + '</div>';
+                if (bv > 0 && pct >= 100) html += '<div class="bd-note">🎉 ' + bdEsc(c) + ' 已達標，多出 $' + n0(sp - bv) + '</div>';
             });
             el.innerHTML = html;
         }
         function openBudgetModal() {
             const b = state.budgets || { total: 0, cats: {} };
-            document.getElementById('bdTotalInput').value = b.total > 0 ? b.total : '';
+            document.getElementById('bdTotalInput').value = b.total ? b.total : '';
             document.getElementById('bdCatInputs').innerHTML = (state.categories || []).map((c, i) =>
-                '<div class="bd-set-row"><label>📂 ' + bdEsc(c) + '</label><input type="number" inputmode="numeric" id="bdIn_' + i + '" data-cat="' + bdEsc(c) + '" value="' +
-                ((b.cats && b.cats[c] > 0) ? b.cats[c] : '') + '" placeholder="不設">' +
+                '<div class="bd-set-row"><label>📂 ' + bdEsc(c) + '</label><input type="number" step="any" id="bdIn_' + i + '" data-cat="' + bdEsc(c) + '" value="' +
+                ((b.cats && b.cats[c]) ? b.cats[c] : '') + '" placeholder="不設">' +
                 '<button type="button" class="bd-calc-btn" onclick="bdCalcOpen(\'bdIn_' + i + '\',\'' + bdEsc(c).replace(/'/g, "\\'") + '\')" title="計算機">🎲</button></div>').join('');
             bdCalcClose();
             document.getElementById('budgetModal').style.display = 'flex';
@@ -4118,9 +4132,9 @@ function loadLocalData() {
             const cats = {};
             document.querySelectorAll('#bdCatInputs input[data-cat]').forEach(inp => {
                 const v = parseFloat(inp.value);
-                if (v > 0) cats[inp.dataset.cat] = v;
+                if (v) cats[inp.dataset.cat] = v;
             });
-            state.budgets = { total: total > 0 ? total : 0, cats };
+            state.budgets = { total: total || 0, cats };
             saveData();
             renderBudget();
             closeBudgetModal();
@@ -4228,11 +4242,12 @@ function loadLocalData() {
                     if (r.type === 'income') inc += amt;
                     if (r.type === 'expense') exp += exp = amt; // 修正原本重複累加的問題
                 }
-                if (r.type === 'expense' && map[key]) {
-                    const v = Math.abs(amt);
+                if ((r.type === 'expense' || r.type === 'income') && map[key]) {
+                    // 支出為負、收入為正，同類目直接相加（收入+支出＝淨額）
                     const c = r.category || '未分類';
-                    map[key].total += v;
-                    map[key].cats[c] = (map[key].cats[c] || 0) + v;
+                    map[key].has = true;
+                    map[key].total += amt;
+                    map[key].cats[c] = (map[key].cats[c] || 0) + amt;
                 }
             });
             const ti = document.getElementById('todayIncome');
@@ -4242,24 +4257,27 @@ function loadLocalData() {
 
             // 記住已展開的日期
             const opened = new Set([...elTree.querySelectorAll('.tp-day.open')].map(e => e.dataset.key));
-            const max = Math.max(...days.map(d => d.total), 0);
-            if (max === 0) {
-                elTree.innerHTML = '<div class="tp-empty">近7天沒有支出紀錄</div>';
+            if (!days.some(d => d.has)) {
+                elTree.innerHTML = '<div class="tp-empty">近7天沒有收支紀錄</div>';
                 return;
             }
+            const max = Math.max(...days.map(d => Math.abs(d.total)), 1);
+            const tpFmt = v => '$' + (Math.round(v * 100) / 100 || 0).toLocaleString();
             elTree.innerHTML = days.map(d => {
-                const cats = Object.entries(d.cats).sort((a, b) => b[1] - a[1]);
+                const cats = Object.entries(d.cats).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+                const gross = cats.reduce((sum, [, v]) => sum + Math.abs(v), 0);
+                const dayW = Math.abs(d.total) / max * 100;
                 const segs = cats.map(([c, v]) =>
-                    '<span class="tp-seg" title="' + c + '" style="width:' + (v / max * 100) + '%;background:' + tpColor(c) + '"></span>').join('');
+                    '<span class="tp-seg" title="' + c + '" style="width:' + (gross > 0 ? Math.abs(v) / gross * dayW : 0) + '%;background:' + tpColor(c) + '"></span>').join('');
                 const kids = cats.map(([c, v]) =>
                     '<div class="tp-child"><span class="tp-cname">' + c + '</span>' +
-                    '<span class="tp-cbar"><span style="width:' + (v / d.total * 100) + '%;background:' + tpColor(c) + '"></span></span>' +
-                    '<span class="tp-camt">$' + v.toLocaleString() + '</span></div>').join('');
-                const isOpen = opened.has(d.key) && d.total > 0;
-                return '<div class="tp-day' + (isOpen ? ' open' : '') + '" data-key="' + d.key + '" onclick="if(this.dataset.has===\'1\')this.classList.toggle(\'open\')" data-has="' + (d.total > 0 ? 1 : 0) + '">' +
-                    '<div class="tp-row"><span class="tp-date"><span class="tp-arrow">' + (d.total > 0 ? '▸' : '') + '</span>' + d.label + '</span>' +
+                    '<span class="tp-cbar"><span style="width:' + (gross > 0 ? Math.abs(v) / gross * 100 : 0) + '%;background:' + tpColor(c) + '"></span></span>' +
+                    '<span class="tp-camt"' + (v > 0 ? ' style="color:var(--income-color)"' : '') + '>' + tpFmt(v) + '</span></div>').join('');
+                const isOpen = opened.has(d.key) && d.has;
+                return '<div class="tp-day' + (isOpen ? ' open' : '') + '" data-key="' + d.key + '" onclick="if(this.dataset.has===\'1\')this.classList.toggle(\'open\')" data-has="' + (d.has ? 1 : 0) + '">' +
+                    '<div class="tp-row"><span class="tp-date"><span class="tp-arrow">' + (d.has ? '▸' : '') + '</span>' + d.label + '</span>' +
                     '<span class="tp-track">' + segs + '</span>' +
-                    '<span class="tp-amt">' + (d.total > 0 ? '$' + d.total.toLocaleString() : '—') + '</span></div></div>' +
+                    '<span class="tp-amt"' + (d.total > 0 ? ' style="color:var(--income-color)"' : '') + '>' + (d.has ? tpFmt(d.total) : '—') + '</span></div></div>' +
                     '<div class="tp-children">' + kids + '</div>';
             }).join('');
         }
@@ -6417,6 +6435,9 @@ async function saveData() {
 #monthLinks { margin-top: 8px !important; }
 .top-section .filters { margin-top: 0px !important; }
 .quick-date-container strong { font-size: 0.93rem !important; }
+
+/* ===== 預算設定：「不設」提示字改黃色 ===== */
+#bdCatInputs input::placeholder { color: #FFE066 !important; opacity: 1 !important; }
 </style>
 
 <div id="rilakkuma-follower">🐻</div> 
