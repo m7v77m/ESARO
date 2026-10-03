@@ -2824,6 +2824,41 @@ button#submitBtn.btn-primary {
 }
 
         </style>
+<style id="rilakkuma-datepicker-css">
+/* 🐨 自製月曆：莫蘭迪綠 #8fa382 */
+input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統月曆，由下面的自製月曆接手 */
+#dpOverlay { position: fixed; inset: 0; z-index: 100000; display: none; align-items: center; justify-content: center;
+    background: rgba(74,55,40,.38); -webkit-tap-highlight-color: transparent; }
+#dpOverlay.open { display: flex; }
+#dpCard { width: min(332px, 92vw); background: #FFF8EB; border: 1px solid #D4B896; border-radius: 24px; overflow: hidden;
+    box-shadow: 0 14px 40px rgba(74,55,40,.28); color: #4A3728; font-family: inherit; box-sizing: border-box; }
+#dpCard * { box-sizing: border-box; }
+#dpCard .dp-head { background: #8fa382; color: #fff; padding: 10px 12px 12px; }
+#dpCard .dp-cap { text-align: center; font-size: 12px; letter-spacing: 2px; opacity: .92; margin-bottom: 8px; }
+#dpCard .dp-nav-row { display: flex; align-items: center; justify-content: center; gap: 6px; }
+#dpCard .dp-nav { flex: 0 0 auto; width: 34px !important; height: 34px !important; padding: 0 !important; border: none !important;
+    border-radius: 50% !important; background: rgba(255,255,255,.24) !important; color: #fff !important; font-size: 20px; line-height: 1;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; }
+#dpCard .dp-sel { height: 34px !important; padding: 0 8px !important; border: none !important; border-radius: 17px !important;
+    background: rgba(255,255,255,.2) !important; color: #fff !important; font-size: 16px !important; font-weight: 700;
+    text-align: center; text-align-last: center; -webkit-appearance: none; appearance: none; cursor: pointer; }
+#dpCard .dp-sel option { color: #4A3728; background: #fff; }
+#dpCard .dp-week { display: grid; grid-template-columns: repeat(7, 1fr); padding: 8px 10px 2px; background: #eef2ea;
+    font-size: 12px; font-weight: 700; color: #6f8264; text-align: center; }
+#dpCard .dp-week span:nth-child(6), #dpCard .dp-week span:nth-child(7) { color: #C17A4E; }
+#dpCard .dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 8px 10px 6px; justify-items: center; }
+#dpCard .dp-day { width: 38px !important; height: 38px !important; padding: 0 !important; border: none !important; border-radius: 50% !important;
+    background: transparent !important; color: #4A3728 !important; font-size: 16px; font-weight: 600; cursor: pointer; line-height: 1; }
+#dpCard .dp-day.dp-wknd { color: #C17A4E !important; }
+#dpCard .dp-day.dp-out { color: #cdbfae !important; font-weight: 500; }
+#dpCard .dp-day.dp-today { box-shadow: inset 0 0 0 2px #8fa382; }
+#dpCard .dp-day.dp-sel { background: #8fa382 !important; color: #fff !important; box-shadow: none; font-weight: 700; }
+#dpCard .dp-foot { display: flex; align-items: center; gap: 8px; padding: 6px 12px 14px; }
+#dpCard .dp-foot .dp-bear { font-size: 22px; margin-right: auto; user-select: none; }
+#dpCard .dp-btn { height: 34px !important; padding: 0 16px !important; border-radius: 17px !important; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: 1px solid #D4B896 !important; background: #F0DFC0 !important; color: #4A3728 !important; }
+#dpCard .dp-btn.dp-primary { background: #8fa382 !important; border-color: #8fa382 !important; color: #fff !important; }
+</style>
 </head>
 <body>
     <div class="app-wrapper">
@@ -6502,6 +6537,130 @@ async function saveData() {
     } else {
         initMobileMenus();
     }
+})();
+</script>
+<script>
+/* 🐨 自製月曆（莫蘭迪綠）：所有 type="date" 的框框共用；點框框就跳出，選完會照原本流程觸發 input / change */
+(function rilakkumaDatePicker(){
+    const MAIN = '#8fa382';
+    let target = null, vy = 0, vm = 0;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'dpOverlay';
+    overlay.innerHTML =
+      '<div id="dpCard" role="dialog" aria-label="選擇日期">' +
+        '<div class="dp-head">' +
+          '<div class="dp-cap">🐨 選個好日子 🎋</div>' +
+          '<div class="dp-nav-row">' +
+            '<button type="button" class="dp-nav" id="dpPrev" aria-label="上個月">‹</button>' +
+            '<select class="dp-sel" id="dpYear" aria-label="年"></select>' +
+            '<select class="dp-sel" id="dpMonth" aria-label="月"></select>' +
+            '<button type="button" class="dp-nav" id="dpNext" aria-label="下個月">›</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="dp-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>' +
+        '<div class="dp-grid" id="dpGrid"></div>' +
+        '<div class="dp-foot">' +
+          '<span class="dp-bear">🐨</span>' +
+          '<button type="button" class="dp-btn" id="dpClear">清除</button>' +
+          '<button type="button" class="dp-btn" id="dpCancel">取消</button>' +
+          '<button type="button" class="dp-btn dp-primary" id="dpToday">今天</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    const $ = id => document.getElementById(id);
+    const pad = n => String(n).padStart(2, '0');
+    const iso = (y, m, d) => y + '-' + pad(m + 1) + '-' + pad(d);
+    function todayParts(){ const n = new Date(); return [n.getFullYear(), n.getMonth(), n.getDate()]; }
+    function parse(v){
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || '');
+        return m ? [+m[1], +m[2] - 1, +m[3]] : null;
+    }
+
+    function fillSelects(){
+        const [ty] = todayParts();
+        const lo = Math.min(ty - 15, vy), hi = Math.max(ty + 10, vy);
+        let h = '';
+        for (let y = lo; y <= hi; y++) h += '<option value="' + y + '">' + y + '年</option>';
+        $('dpYear').innerHTML = h;
+        let mh = '';
+        for (let m = 0; m < 12; m++) mh += '<option value="' + m + '">' + (m + 1) + '月</option>';
+        $('dpMonth').innerHTML = mh;
+    }
+
+    function render(){
+        $('dpYear').value = vy; $('dpMonth').value = vm;
+        const sel = parse(target && target.value), tp = todayParts();
+        const first = (new Date(vy, vm, 1).getDay() + 6) % 7;      // 週一開頭
+        const start = new Date(vy, vm, 1 - first);
+        let html = '';
+        for (let i = 0; i < 42; i++){
+            const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+            const y = d.getFullYear(), m = d.getMonth(), dd = d.getDate();
+            if (i >= 35 && m !== vm) break;                         // 最後一週整排都是下個月就不畫
+            const cls = ['dp-day'];
+            if (m !== vm) cls.push('dp-out');
+            if (i % 7 >= 5) cls.push('dp-wknd');
+            if (y === tp[0] && m === tp[1] && dd === tp[2]) cls.push('dp-today');
+            if (sel && y === sel[0] && m === sel[1] && dd === sel[2]) cls.push('dp-sel');
+            html += '<button type="button" class="' + cls.join(' ') + '" data-v="' + iso(y, m, dd) + '">' + dd + '</button>';
+        }
+        $('dpGrid').innerHTML = html;
+    }
+
+    function setValue(v){
+        if (!target) return;
+        target.value = v;
+        target.dispatchEvent(new Event('input',  { bubbles: true }));
+        target.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    function close(){ overlay.classList.remove('open'); target = null; }
+    function open(input){
+        target = input;
+        const p = parse(input.value) || todayParts();
+        vy = p[0]; vm = p[1];
+        fillSelects(); render();
+        overlay.classList.add('open');
+    }
+    function shift(n){
+        vm += n;
+        if (vm < 0){ vm = 11; vy--; } else if (vm > 11){ vm = 0; vy++; }
+        if (!$('dpYear').querySelector('option[value="' + vy + '"]')) fillSelects();
+        render();
+    }
+
+    $('dpPrev').addEventListener('click', () => shift(-1));
+    $('dpNext').addEventListener('click', () => shift(1));
+    $('dpYear').addEventListener('change', e => { vy = +e.target.value; render(); });
+    $('dpMonth').addEventListener('change', e => { vm = +e.target.value; render(); });
+    $('dpGrid').addEventListener('click', e => {
+        const b = e.target.closest('.dp-day');
+        if (!b) return;
+        const v = b.getAttribute('data-v');
+        setValue(v); close();
+    });
+    $('dpToday').addEventListener('click', () => { const t = todayParts(); setValue(iso(t[0], t[1], t[2])); close(); });
+    $('dpClear').addEventListener('click', () => { setValue(''); close(); });
+    $('dpCancel').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) close(); });
+
+    /* 日期框本身設成不接收點擊，改用座標判斷「點到哪一個日期框」，連之後才產生的編輯列日期框也適用 */
+    document.addEventListener('click', function(e){
+        if (e.target.closest && e.target.closest('#dpOverlay')) return;
+        const list = document.querySelectorAll('input[type="date"]');
+        for (const inp of list){
+            if (inp.disabled) continue;
+            const r = inp.getBoundingClientRect();
+            if (r.width === 0 || r.height === 0) continue;
+            if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom){
+                e.preventDefault();
+                open(inp);
+                return;
+            }
+        }
+    }, true);
 })();
 </script>
 </body>
