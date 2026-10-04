@@ -4080,7 +4080,7 @@ function loadLocalData() {
                     '<span class="bd-num"><span>$' + n0(spent) + ' /</span><span>$' + n0(budget) + '</span></span></div>';
             };
             if (totalBudget) {
-                html += row('本月總計', spend.total, totalBudget);
+                html += row('總計', spend.total, totalBudget);
                 const pct = pctOf(spend.total, totalBudget);
                 if (totalBudget < 0) {
                     const left = Math.abs(totalBudget) - (spend.total < 0 ? Math.abs(spend.total) : 0);
