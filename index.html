@@ -2822,11 +2822,6 @@ button#submitBtn.btn-primary {
     margin-right: 20px !important; /* 👈 數字越大，進度條就會被往右推得越遠喔！ */
     white-space: nowrap !important;
 }
-/* 一週支出讓日期的字和右邊的進度條保持一點距離，進度條就不會死黏著日期了 */
-.bd-track {
-    margin-right: 2px !important; /* 👈 數字越大，進度條就會被往右推得越遠喔！ */
-    white-space: nowrap !important;
-}
         </style>
 <style id="rilakkuma-datepicker-css">
 /* 🐨 自製月曆：莫蘭迪綠 #8fa382 */
@@ -4082,7 +4077,7 @@ function loadLocalData() {
                 const pct = pctOf(spent, budget);
                 return '<div class="bd-row"><span class="bd-name">' + bdEsc(name) + '</span>' +
                     '<span class="bd-track"><span style="width:' + Math.min(pct, 100) + '%;background:' + colorOf(pct, budget) + '"></span></span>' +
-                    '<span class="bd-num">$' + n0(spent) + ' / $' + n0(budget) + '</span></div>';
+                    '<span class="bd-num"><span>$' + n0(spent) + ' /</span><span>$' + n0(budget) + '</span></span></div>';
             };
             if (totalBudget) {
                 html += row('本月總計', spend.total, totalBudget);
@@ -6458,10 +6453,10 @@ async function saveData() {
 .qa-chip.del { background:var(--expense-color); }
 .qa-empty { font-size:0.7rem; color:var(--text-secondary); }
 .bd-row { display:flex; align-items:center; gap:6px; font-size:0.72rem; padding:3px 0; color:var(--text-primary); }
-.bd-name { flex:0 0 40px; font-weight:400; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bd-name { flex:0 0 50px; font-weight:400; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .bd-track { flex:1; height:12px; background:rgba(0,0,0,0.07); border-radius:6px; overflow:hidden; }
 .bd-track > span { display:block; height:100%; border-radius:6px; }
-.bd-num { flex:0 0 96px; text-align:right; font-size:0.68rem; color:var(--text-secondary); }
+.bd-num { flex:0 0 62px; display:flex; flex-direction:column; align-items:flex-end; text-align:right; line-height:1.35; white-space:nowrap; font-size:0.68rem; color:var(--text-secondary); }
 .bd-note { font-size:0.68rem; margin:1px 0 4px 64px; color:var(--text-secondary); }
 .bd-note.over { color:var(--expense-color); font-weight:700; }
 .bd-set-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
