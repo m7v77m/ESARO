@@ -3155,10 +3155,11 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                             <th>成員</th>
                                             <th class="col-fixed-equal" style="text-align:center;">消費品名</th>
                                             <th class="col-fixed-equal" style="text-align:center;">規格備註</th>
-                                            <th>數量</th>
                                             <th style="width:70px;text-align:center;">單價</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">商家名稱</th>
+                                            <th>數量</th>
                                             <th style="width:70px;text-align:center;">金額</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">商家名稱</th>
+                                            <th style="min-width:80px;text-align:center;">消費地區</th>
                                             <th style="width:65px;text-align:center;">操作</th>
                                         </tr>
                                     </thead>
@@ -3270,15 +3271,15 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         <!-- 第六個 Sheet：消費排行 -->
                         <div id="tab-rank-analysis" class="tab-content">
                             <div class="stat-section">
-                                <h4>🏆 前10名綜合消費支出（依消費地區）</h4>
+                                <h4 id="rank-title-all">🏆 總年度前10名綜合消費支出</h4>
                                 <table class="rank-table">
-                                    <thead><tr><th>名次</th><th>消費地區</th><th>支出</th><th>筆數</th></tr></thead>
+                                    <thead><tr><th>名次</th><th>類目</th><th>支出</th><th>筆數</th></tr></thead>
                                     <tbody id="stat-rank-all-body"></tbody>
                                 </table>
                                 <div class="rank-note" id="rank-note-all"></div>
                             </div>
                             <div class="stat-section">
-                                <h4>🍽️ 前10名飲食消費地區</h4>
+                                <h4 id="rank-title-food">🍽️ 總年度前10名飲食消費地區</h4>
                                 <table class="rank-table">
                                     <thead><tr><th>名次</th><th>消費地區</th><th>支出</th><th>筆數</th></tr></thead>
                                     <tbody id="stat-rank-food-body"></tbody>
@@ -4482,10 +4483,11 @@ function loadLocalData() {
                     <td style="text-align:center;">${r.target || ''}</td>
                     <td class="col-fixed-equal"><strong>${r.itemName}</strong></td>
                     <td class="col-fixed-equal" style="color:var(--text-muted);">${r.spec || ''}</td>
-                    <td>${r.quantity || ''}</td>
                     <td>${r.unitPrice !== undefined && r.unitPrice !== '' ? '$' + parseFloat(r.unitPrice).toLocaleString() : ''}</td>
-                    <td class="col-fixed-equal">${r.location || ''}</td>
+                    <td>${r.quantity || ''}</td>
                     <td>$${r.price.toLocaleString()}</td>
+                    <td class="col-fixed-equal">${r.location || ''}</td>
+                    <td style="min-width:80px;">${r.region || ''}</td>
                     <td>
                         <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;cursor:pointer;margin-right:4px;" onclick="event.stopPropagation();editRecord('${r.id}')">編輯</button>
                         <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="event.stopPropagation();deleteRecord('${r.id}')">刪除</button>
@@ -5215,9 +5217,33 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
             }
         }
 
-        // ----- 消費排行：依「消費地區」統計支出，前10名（依目前篩選結果）-----
+        // ----- 消費排行（依目前篩選結果）-----
+        // 標題會跟著日期篩選變：沒篩日期=總年度；剛好一整個月=本月（或 N月）；剛好一整年=N年度；其他=起訖日期
+        function rankPeriodLabel() {
+            const s = document.getElementById('filterStartDate').value;
+            const e = document.getElementById('filterEndDate').value;
+            if (!s && !e) return '總年度';
+            if (s && !e) return s + ' 起';
+            if (!s && e) return '至 ' + e;
+            const [sy, sm, sd] = s.split('-').map(Number);
+            const [ey, em, ed] = e.split('-').map(Number);
+            const now = new Date();
+            if (sy === ey && sm === em && sd === 1 && ed === new Date(sy, sm, 0).getDate()) {
+                return (sy === now.getFullYear() && sm === now.getMonth() + 1) ? '本月' : (sy + '年' + sm + '月');
+            }
+            if (sy === ey && sm === 1 && sd === 1 && em === 12 && ed === 31) return sy + '年度';
+            return s + '～' + e;
+        }
+
         function renderRankingAnalysis(records) {
-            const fill = (list, bodyId, noteId) => {
+            const period = rankPeriodLabel();
+            const tAll = document.getElementById('rank-title-all');
+            const tFood = document.getElementById('rank-title-food');
+            if (tAll) tAll.textContent = '🏆 ' + period + '前10名綜合消費支出';
+            if (tFood) tFood.textContent = '🍽️ ' + period + '前10名飲食消費地區';
+
+            // 依指定欄位（類目 或 消費地區）加總「支出」，取金額最大的前10名
+            const fill = (list, keyFn, bodyId, noteId, emptyMsg) => {
                 const body = document.getElementById(bodyId);
                 const note = document.getElementById(noteId);
                 if (!body) return;
@@ -5225,16 +5251,16 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
                 let blank = 0;
                 (list || []).forEach(r => {
                     if (r.type !== 'expense') return;
-                    const reg = (r.region || '').trim();
-                    if (!reg) { blank++; return; }
-                    if (!map[reg]) map[reg] = { sum: 0, count: 0 };
-                    map[reg].sum += parseFloat(r.price) || 0;
-                    map[reg].count += 1;
+                    const k = (keyFn(r) || '').trim();
+                    if (!k) { blank++; return; }
+                    if (!map[k]) map[k] = { sum: 0, count: 0 };
+                    map[k].sum += parseFloat(r.price) || 0;
+                    map[k].count += 1;
                 });
                 const rows = Object.keys(map).map(k => ({ name: k, sum: map[k].sum, count: map[k].count }))
                     .sort((a, b) => Math.abs(b.sum) - Math.abs(a.sum) || b.count - a.count).slice(0, 10);
                 if (rows.length === 0) {
-                    body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">尚無資料（新增紀錄時請填「消費地區」）</td></tr>';
+                    body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">' + emptyMsg + '</td></tr>';
                 } else {
                     const medals = ['🥇', '🥈', '🥉'];
                     let totalSum = 0, totalCnt = 0;
@@ -5245,11 +5271,11 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
                     html += `<tr class="total-row"><td colspan="2" style="font-weight:700;">前${rows.length}名合計</td><td style="color:var(--expense-color);font-weight:700;">$${totalSum.toLocaleString()}</td><td style="font-weight:700;">${totalCnt}</td></tr>`;
                     body.innerHTML = html;
                 }
-                if (note) note.textContent = blank > 0 ? `另有 ${blank} 筆支出未填「消費地區」，未列入排行` : '';
+                if (note) note.textContent = (noteId === 'rank-note-food' && blank > 0) ? `另有 ${blank} 筆飲食支出未填「消費地區」，未列入排行` : '';
             };
             const all = records || [];
-            fill(all, 'stat-rank-all-body', 'rank-note-all');
-            fill(all.filter(r => String(r.category || '').includes('飲食')), 'stat-rank-food-body', 'rank-note-food');
+            fill(all, r => r.category, 'stat-rank-all-body', 'rank-note-all', '尚無支出資料');
+            fill(all.filter(r => String(r.category || '').includes('飲食')), r => r.region, 'stat-rank-food-body', 'rank-note-food', '尚無資料（新增紀錄時請填「消費地區」）');
         }
 
         function renderMemberAnalysis(records) {
