@@ -2865,6 +2865,20 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
 #tab-rank-analysis table.rank-table th:nth-child(4), #tab-rank-analysis table.rank-table td:nth-child(4) { width: 16% !important; }
 #tab-rank-analysis .rank-note { margin-top: 6px; font-size: 0.7rem; color: var(--text-muted); text-align: center; }
 </style>
+<style id="ledger-css">
+#tab-account-ledger .ledger-controls { display:flex; gap:8px; margin-bottom:8px; }
+#tab-account-ledger .ledger-controls select { flex:1; min-width:0; height:34px; font-size:0.85rem; }
+#tab-account-ledger .ledger-summary { font-size:0.74rem; line-height:1.6; color:var(--text-secondary); background:var(--bg-hover); border:1px solid var(--border-color); border-radius:12px; padding:6px 10px; margin-bottom:8px; }
+#tab-account-ledger .ledger-summary b { color:var(--text-primary); }
+#tab-account-ledger table.ledger-table { table-layout:fixed; width:100%; }
+#tab-account-ledger table.ledger-table th:nth-child(1), #tab-account-ledger table.ledger-table td:nth-child(1) { width:15%; font-size:0.72rem; }
+#tab-account-ledger table.ledger-table th:nth-child(3), #tab-account-ledger table.ledger-table td:nth-child(3) { width:22%; }
+#tab-account-ledger table.ledger-table th:nth-child(4), #tab-account-ledger table.ledger-table td:nth-child(4) { width:24%; }
+#tab-account-ledger table.ledger-table td { font-size:0.74rem; padding:6px 4px; word-break:break-all; }
+#tab-account-ledger .lg-sub { display:block; font-size:0.62rem; color:var(--text-muted); margin-top:1px; }
+#tab-account-ledger .lg-adj { color:#C08A55; font-weight:700; }
+#tab-account-ledger .lg-del { margin-left:4px; border:none; background:transparent; color:var(--expense-color); cursor:pointer; font-size:0.8rem; padding:0 2px; width:auto; }
+</style>
 </head>
 <body>
     <div class="app-wrapper">
@@ -2958,17 +2972,6 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
     </div>
 </div>
 
-<!--
-            <div class="card" id="accountBalanceCard">
-                <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
-                <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
-                <div class="account-card-footer" style="margin-top:13px;display:flex;gap:6px;">
-                    <button class="btn-secondary" style="flex:1; background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:14px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
-                    <button class="btn-secondary" style="flex:1; background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:14px;" onclick="resetDefaultAccounts()">↩️ 重置帳戶</button>
-                </div>
-                <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 初始金額 + 收入 + 支出（支出為負），新增紀錄自動更新</div>
-            </div>
--->
             <div class="top-section" id="top-section">
                 <div class="quick-date-container">
                     <strong>📅 快速篩選：</strong>
@@ -3016,6 +3019,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                     <div class="form-group"><label>🏦 帳戶名稱</label><select id="filterAccount" onchange="renderData(true)"><option value="">全部</option></select></div>
                     <div class="form-group"><label>📂 類目名稱</label><select id="filterCategory" onchange="renderData(true)"><option value="">全部</option></select></div>
                     <div class="form-group"><label>👥 成員名稱</label><select id="filterTarget" onchange="renderData(true)"><option value="">全部</option></select></div>
+                    <div class="form-group"><label>📍 消費地區</label><select id="filterRegion" onchange="renderData(true)"><option value="">全部</option></select></div>
                     <div class="form-group" style="grid-column:span 2;"><label>🔍 關鍵字串（品名/規格/商家）</label>
                         <input type="text" id="filterItem" placeholder="輸入關鍵字自動過濾..." oninput="renderData(true)">
                     </div>
@@ -3071,7 +3075,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                 <datalist id="locationHistory"></datalist>
                             </div>
                             <div class="form-group"><label>📍 消費地區</label>
-                                <input type="text" id="region" list="regionHistory" placeholder="北屯區、神岡區、和平區、.........">
+                                <input type="text" id="region" list="regionHistory" placeholder="北屯區、西屯區、逢甲、.........">
                                 <datalist id="regionHistory"></datalist>
                             </div>
                             <div class="form-group"><label>🔖 品項名稱 <span class="text-muted">(雙擊編輯)</span></label>
@@ -3138,6 +3142,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             <button class="tab-btn" onclick="switchTab('tab-item-analysis',this)">🔍 項目分析</button>
                             <button class="tab-btn" onclick="switchTab('tab-member-analysis',this)">👥 成員分析</button>
                             <button class="tab-btn" onclick="switchTab('tab-rank-analysis',this)">🏆 消費排行</button>
+                            <button class="tab-btn" onclick="switchTab('tab-account-ledger',this)">🏦 帳戶金額</button>
                         </div>
 
                         <div id="tab-table" class="tab-content active">
@@ -3265,6 +3270,35 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                     </thead>
                                     <tbody id="stat-item-analysis-body"></tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <!-- 第七個 Sheet：帳戶金額 + 金流歷史明細 -->
+                        <div id="tab-account-ledger" class="tab-content">
+                            <div class="card" id="accountBalanceCard">
+                                <h3><i class="fa-solid fa-credit-card"></i> 帳戶金額</h3>
+                                <div id="accountBalanceList" style="display:flex;flex-direction:column;gap:4px;"></div>
+                                <div class="account-card-footer" style="margin-top:13px;display:flex;gap:6px;">
+                                    <button class="btn-secondary" style="flex:1; background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:14px;" onclick="recalcAccountBalances()">🔄 重新計算</button>
+                                </div>
+                                <div class="text-muted" style="margin-top:6px;font-size:0.7rem;">💡 餘額 = 起始金額 + 收入 + 支出（支出為負）+ 餘額校正；每一筆變動都能在下方「金流歷史明細」核對</div>
+                            </div>
+                            <div class="stat-section">
+                                <h4>🧾 金流歷史明細</h4>
+                                <div class="ledger-controls">
+                                    <select id="ledgerAccount" onchange="renderAccountLedger()"><option value="">全部帳戶</option></select>
+                                    <select id="ledgerRange" onchange="renderAccountLedger()">
+                                        <option value="all">全部期間</option>
+                                        <option value="month">本月</option>
+                                        <option value="30">近30天</option>
+                                    </select>
+                                </div>
+                                <div class="ledger-summary" id="ledgerSummary"></div>
+                                <table class="rank-table ledger-table" id="ledgerTable">
+                                    <thead><tr><th>日期</th><th>項目</th><th>金額</th><th>餘額</th></tr></thead>
+                                    <tbody id="ledgerBody"></tbody>
+                                </table>
+                                <div class="rank-note" id="ledgerNote"></div>
                             </div>
                         </div>
 
@@ -3596,20 +3630,31 @@ async function init() {
             console.warn('雲端讀取失敗或無資料，嘗試讀取本機快取:', error.message);
             loadLocalData();
         } else if (data && data.content) {
-            console.log('成功從 Supabase 雲端載入資料！');
             const parsed = data.content;
+            let __ls = null;
+            try { __ls = JSON.parse(localStorage.getItem('familyAccountBook') || 'null'); } catch (e) { __ls = null; }
+            if (__ls && (__ls._savedAt || 0) > (parsed._savedAt || 0)) {
+                // 本機的資料比雲端新（例如上次存檔後雲端還沒上傳完）：用本機，並補傳雲端，避免舊資料蓋掉新資料
+                console.warn('本機資料比雲端新，改用本機並重新上傳');
+                loadLocalData();
+                setTimeout(() => { try { saveData(); } catch (e) {} }, 1500);
+            } else {
+            console.log('成功從 Supabase 雲端載入資料！');
             state.accounts = parsed.accounts || state.accounts;
             state.categories = parsed.categories || state.categories;
             state.targets = parsed.targets || state.targets;
             state.records = parsed.records || [];
             state.assetRecords = parsed.assetRecords || [];
             if (parsed.budgets) state.budgets = parsed.budgets;
+            if (Array.isArray(parsed.accountAdjustments)) state.accountAdjustments = parsed.accountAdjustments;
             if (Array.isArray(parsed.quickItems)) state.quickItems = parsed.quickItems;
             if (parsed.accountDetails && Array.isArray(parsed.accountDetails)) {
                 state.accountDetails = parsed.accountDetails;
             }
+            if (Array.isArray(parsed.accountAdjustments)) state.accountAdjustments = parsed.accountAdjustments;
             // 同步更新本機快取
             localStorage.setItem('familyAccountBook', JSON.stringify(state));
+            }
         } else {
             loadLocalData();
         }
@@ -3638,6 +3683,7 @@ function loadLocalData() {
             state.records = parsed.records || [];
             state.assetRecords = parsed.assetRecords || [];
             if (parsed.budgets) state.budgets = parsed.budgets;
+            if (Array.isArray(parsed.accountAdjustments)) state.accountAdjustments = parsed.accountAdjustments;
             if (Array.isArray(parsed.quickItems)) state.quickItems = parsed.quickItems;
             if (parsed.accountDetails && Array.isArray(parsed.accountDetails)) {
                 state.accountDetails = parsed.accountDetails;
@@ -3874,6 +3920,7 @@ function loadLocalData() {
                     price,
                     invoiceChecked
                 });
+                try { queueItemSync(state.records[0]); } catch (e) {}
             }
             saveData();
             document.getElementById('invoiceChecked').checked = false;
@@ -4368,6 +4415,7 @@ function loadLocalData() {
             const filterCat = document.getElementById('filterCategory').value;
             // 修改後
 			const filterTar = document.getElementById('filterTarget') ? document.getElementById('filterTarget').value : '';
+            const filterReg = document.getElementById('filterRegion') ? document.getElementById('filterRegion').value : '';
             const keyword = document.getElementById('filterItem').value.toLowerCase().trim();
 
             let incomeSum = 0,
@@ -4379,6 +4427,19 @@ function loadLocalData() {
             const locSet = new Set();
             const regSet = new Set();
 
+            {   // 消費地區篩選下拉：列出所有出現過的地區
+                const fr = document.getElementById('filterRegion');
+                if (fr) {
+                    const all = [...new Set(state.records.map(r => (r.region || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+                    const cur = fr.value;
+                    const sig = all.join('|');
+                    if (fr.dataset.sig !== sig) {
+                        fr.innerHTML = '<option value="">全部</option>' + all.map(v => '<option value="' + v.replace(/"/g, '&quot;') + '">' + v + '</option>').join('');
+                        fr.dataset.sig = sig;
+                        fr.value = all.includes(cur) ? cur : '';
+                    }
+                }
+            }
             let filtered = [...state.records];
             filtered = filtered.filter(r => {
                 if (r.itemName) itemSet.add(r.itemName);
@@ -4392,10 +4453,12 @@ function loadLocalData() {
                 if (filterAcc && r.account !== filterAcc) return false;
                 if (filterCat && r.category !== filterCat) return false;
                 if (filterTar && r.target !== filterTar) return false;
+                if (filterReg && (r.region || '') !== filterReg) return false;
                 if (keyword && !(
                         r.itemName.toLowerCase().includes(keyword) ||
                         (r.spec && r.spec.toLowerCase().includes(keyword)) ||
-                        (r.location && r.location.toLowerCase().includes(keyword))
+                        (r.location && r.location.toLowerCase().includes(keyword)) ||
+                        (r.region && r.region.toLowerCase().includes(keyword))
                     )) return false;
                 return true;
             });
@@ -5214,6 +5277,8 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
                 renderMemberAnalysis(window.lastFilteredRecords || state.records);
             } else if (tabId === 'tab-rank-analysis') {
                 renderRankingAnalysis(window.lastFilteredRecords || state.records);
+            } else if (tabId === 'tab-account-ledger') {
+                if (typeof renderAccountBalances === 'function') renderAccountBalances();
             }
         }
 
@@ -5330,6 +5395,7 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
         // ----- 儲存 / 匯入 / 匯出 -----
 async function saveData() {
   try { if (typeof syncAccountsFromDetails === 'function') syncAccountsFromDetails(); } catch(e){}
+  state._savedAt = Date.now();
   localStorage.setItem('familyAccountBook', JSON.stringify(state));
   if (typeof renderAccountBalances === "function") { try { renderAccountBalances(); } catch(e){} }
   // 雲端同步（非同步，不阻塞）
@@ -5435,6 +5501,7 @@ async function saveData() {
                         state.categories = data.categories || state.categories;
                         state.targets = data.targets || state.targets;
                         if (data.budgets) state.budgets = data.budgets;
+                        if (Array.isArray(data.accountAdjustments)) state.accountAdjustments = data.accountAdjustments;
                         saveData();
                         refreshDropdownsAndTags();
                         renderData();
@@ -6531,7 +6598,10 @@ async function saveData() {
 .tp-label { font-size:0.75rem; color:var(--text-secondary); font-weight:600; }
 .tp-val { font-size:1.05rem; font-weight:700; }
 .tp-tree { background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; padding:8px 10px; }
+/* 只有「一週支出」的進度條組：左邊多 0.1cm、右邊多 0.2cm（本月預算不動） */
+.tp-tree:not(#budgetBox) { padding-left:calc(10px - 0.1cm); padding-right:calc(10px - 0.2cm); }
 .tp-title { font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:6px; }
+.tp-tree:not(#budgetBox) > .tp-title { margin-left:0.1cm; }
 .tp-title small { font-weight:600; color:var(--text-secondary); font-size:0.68rem; }
 .tp-day { cursor:pointer; padding:3px 0; }
 .tp-row { display:flex; align-items:center; gap:3px; font-size:0.72rem; color:var(--text-primary); }
@@ -6766,6 +6836,254 @@ async function saveData() {
             }
         }
     }, true);
+})();
+</script>
+<script>
+/* ===== 🏦 帳戶金額重做：餘額校正紀錄 + 金流歷史明細 + 維護卡片修正 + 同步到綜合紀錄 ===== */
+(function accountLedgerPatch(){
+    const esc = t => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const money = v => '$' + (Math.round((+v || 0) * 100) / 100).toLocaleString();
+    const todayStr = () => { const n = new Date(); return n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0'); };
+    const adjList = () => (state.accountAdjustments = state.accountAdjustments || []);
+
+    /* ---- 餘額計算：起始金額 + 收支紀錄 + 餘額校正 ---- */
+    window.sumAdjustmentsForAccount = function(name){
+        return adjList().filter(a => a.account === name).reduce((s, a) => s + (parseFloat(a.amount) || 0), 0);
+    };
+    window.getCurrentBalance = function(name){
+        const ad = state.accountDetails.find(a => a.name === name);
+        if (!ad) return 0;
+        const v = (ad.initial || 0) + sumRecordsForAccount(name) + sumAdjustmentsForAccount(name);
+        return Math.round(v * 10000) / 10000;
+    };
+
+    /* ---- 「修正金額」：不再偷偷改起始金額，而是記一筆「餘額校正」，明細裡看得到 ---- */
+    window.applyAccountCalc_v8 = function(){
+        try {
+            if (editingAccountIdx_v8 === null) { alert('未選擇帳戶'); return; }
+            if (accountCalcExpr_v8) {
+                let r = new Function('return ' + accountCalcExpr_v8)();
+                if (!isFinite(r)) r = 0;
+                accountCalcExpr_v8 = r.toString();
+            }
+            const target = parseFloat(accountCalcExpr_v8);
+            if (isNaN(target)) { alert('請輸入有效數字或公式'); return; }
+            const ad = state.accountDetails[editingAccountIdx_v8];
+            const cur = getCurrentBalance(ad.name);
+            const diff = Math.round((target - cur) * 10000) / 10000;
+            if (diff === 0) { closeAccountCalc_v8(); alert('金額沒有變動'); return; }
+            if (!confirm('「' + ad.name + '」目前 ' + money(cur) + ' → 修正為 ' + money(target) + '\n將在金流明細新增一筆「餘額校正 ' + (diff > 0 ? '+' : '') + money(diff).replace('$','$') + '」，確定？')) return;
+            adjList().push({ id: Date.now().toString(), account: ad.name, date: todayStr(), amount: diff, note: '手動校正' });
+            saveData();
+            renderAccountBalances();
+            renderData(true);
+            closeAccountCalc_v8();
+        } catch (e) { console.error(e); alert('公式錯誤:' + e.message); }
+    };
+    window.recalcAccountBalances = function(){ renderAccountBalances(); renderData(true); alert('✅ 已重新計算'); };
+    window.deleteAccountAdjustment = function(id){
+        const a = adjList().find(x => x.id === id);
+        if (!a) return;
+        if (!confirm('刪除這筆餘額校正？\n（' + a.account + ' ' + (a.amount > 0 ? '+' : '') + money(a.amount) + '），刪除後該帳戶餘額會回到校正前。')) return;
+        state.accountAdjustments = adjList().filter(x => x.id !== id);
+        saveData(); renderAccountBalances(); renderData(true);
+    };
+
+    /* ---- 改名／刪除帳戶時，校正紀錄一起跟著 ---- */
+    (function(){
+        const o = window.editAccountName;
+        if (typeof o === 'function') window.editAccountName = function(){
+            const before = state.accountDetails.map(a => [a, a.name]);
+            const r = o.apply(this, arguments);
+            before.forEach(([a, n]) => { if (a.name !== n) adjList().forEach(x => { if (x.account === n) x.account = a.name; }); });
+            try { saveData(); } catch (e) {}
+            return r;
+        };
+        const d = window.deleteAccount;
+        if (typeof d === 'function') window.deleteAccount = function(){
+            const r = d.apply(this, arguments);
+            const names = new Set(state.accountDetails.map(a => a.name));
+            state.accountAdjustments = adjList().filter(x => names.has(x.account));
+            try { saveData(); } catch (e) {}
+            return r;
+        };
+    })();
+
+    /* ---- 金流歷史明細 ---- */
+    function buildLedger(){
+        const out = [];
+        state.accountDetails.forEach(ad => {
+            const name = ad.name, ev = [];
+            (state.records || []).forEach(r => {
+                if (r.account !== name) return;
+                if (!['income', 'expense', 'asset'].includes(r.type)) return;
+                ev.push({ kind: 'rec', ord: 0, date: (r.datetime || '').split('T')[0], key: (r.datetime || '') + '|' + r.id,
+                          amt: parseFloat(r.price) || 0, title: r.itemName || r.category || '（未命名）', sub: [name, r.category].filter(Boolean).join('・') });
+            });
+            adjList().forEach(a => {
+                if (a.account !== name) return;
+                ev.push({ kind: 'adj', ord: 1, id: a.id, date: a.date || '', key: String(a.id), amt: parseFloat(a.amount) || 0,
+                          title: '餘額校正', sub: name + (a.note ? '・' + a.note : '') });
+            });
+            ev.sort((x, y) => x.date < y.date ? -1 : x.date > y.date ? 1 : x.ord - y.ord || (x.key < y.key ? -1 : x.key > y.key ? 1 : 0));
+            let bal = ad.initial || 0;
+            ev.forEach(e => { bal = Math.round((bal + e.amt) * 10000) / 10000; e.bal = bal; e.account = name; out.push(e); });
+        });
+        return out;
+    }
+
+    window.renderAccountLedger = function(){
+        const body = document.getElementById('ledgerBody');
+        if (!body) return;
+        const selAcc = document.getElementById('ledgerAccount');
+        const names = state.accountDetails.map(a => a.name);
+        if (selAcc && selAcc.dataset.sig !== names.join('|')) {
+            const cur = selAcc.value;
+            selAcc.innerHTML = '<option value="">全部帳戶</option>' + names.map(n => '<option value="' + esc(n) + '">' + esc(n) + '</option>').join('');
+            selAcc.dataset.sig = names.join('|');
+            selAcc.value = names.includes(cur) ? cur : '';
+        }
+        const acc = selAcc ? selAcc.value : '';
+        const range = (document.getElementById('ledgerRange') || {}).value || 'all';
+        const all = buildLedger();
+
+        // 摘要（整個期間，不受期間篩選影響）
+        const accs = state.accountDetails.filter(a => !acc || a.name === acc);
+        let init = 0, flow = 0, adj = 0;
+        accs.forEach(a => { init += a.initial || 0; flow += sumRecordsForAccount(a.name); adj += sumAdjustmentsForAccount(a.name); });
+        const total = Math.round((init + flow + adj) * 10000) / 10000;
+        document.getElementById('ledgerSummary').innerHTML =
+            (acc ? '<b>' + esc(acc) + '</b>：' : '<b>全部帳戶</b>：') +
+            '起始 ' + money(init) + ' ＋ 收支 ' + money(flow) + ' ＋ 校正 ' + money(adj) + ' ＝ <b>目前 ' + money(total) + '</b>';
+
+        // 期間篩選
+        const now = new Date(), ts = todayStr();
+        let from = '';
+        if (range === 'month') from = ts.slice(0, 8) + '01';
+        else if (range === '30') { const d = new Date(now.getTime() - 29 * 86400000); from = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+        let rows = all.filter(e => (!acc || e.account === acc) && (!from || e.date >= from));
+        rows.sort((x, y) => x.date < y.date ? 1 : x.date > y.date ? -1 : (y.ord - x.ord) || (x.key < y.key ? 1 : x.key > y.key ? -1 : 0));
+        const LIMIT = 200;
+        const shown = rows.slice(0, LIMIT);
+        if (shown.length === 0) {
+            body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">這個範圍沒有金流紀錄</td></tr>';
+        } else {
+            body.innerHTML = shown.map(e => {
+                const md = e.date ? e.date.slice(5).replace('-', '/') : '';
+                const color = e.kind === 'adj' ? 'var(--primary-dark)' : (e.amt >= 0 ? 'var(--income-color)' : 'var(--expense-color)');
+                const sign = e.amt > 0 ? '+' : '';
+                const del = e.kind === 'adj' ? '<button class="lg-del" title="刪除這筆校正" onclick="deleteAccountAdjustment(\'' + esc(e.id) + '\')">✕</button>' : '';
+                return '<tr><td>' + md + '</td><td><span class="' + (e.kind === 'adj' ? 'lg-adj' : '') + '">' + esc(e.title) + '</span>' + del + '<span class="lg-sub">' + esc(e.sub) + '</span></td>' +
+                       '<td style="color:' + color + ';font-weight:700;">' + sign + money(e.amt) + '</td><td style="font-weight:600;">' + money(e.bal) + '</td></tr>';
+            }).join('');
+        }
+        // 提醒：沒有指定帳戶的紀錄不會計入任何帳戶
+        const nameSet = new Set(names);
+        const orphan = (state.records || []).filter(r => ['income', 'expense'].includes(r.type) && !nameSet.has(r.account));
+        const orphanSum = orphan.reduce((s, r) => s + (parseFloat(r.price) || 0), 0);
+        let note = '';
+        if (rows.length > LIMIT) note += '只顯示最近 ' + LIMIT + ' 筆（共 ' + rows.length + ' 筆）。';
+        if (orphan.length) note += (note ? ' ' : '') + '另有 ' + orphan.length + ' 筆收支沒有指定帳戶（合計 ' + money(orphanSum) + '），不會計入任何帳戶餘額。';
+        document.getElementById('ledgerNote').textContent = note;
+    };
+    (function(){
+        const o = window.renderAccountBalances;
+        window.renderAccountBalances = function(){ const r = o.apply(this, arguments); try { renderAccountLedger(); } catch (e) { console.error(e); } return r; };
+    })();
+
+    /* ---- 帳戶維護卡片：新增、排序（原本被帳戶金額的同步蓋回去） ---- */
+    window.addAccount = function(){
+        const i = document.getElementById('newAccount');
+        const v = (i.value || '').trim();
+        if (!v) return;
+        if (state.accountDetails.some(a => a.name === v)) { alert('帳戶名稱已存在'); return; }
+        state.accountDetails.push({ name: v, initial: 0, order: state.accountDetails.length });
+        syncAccountsFromDetails();
+        i.value = '';
+        saveData(); refreshDropdownsAndTags(); renderData(true); renderAccountBalances();
+    };
+    const _modalAdd = window.handleSettingsModalAdd;
+    window.handleSettingsModalAdd = function(){
+        if (currentSettingsType !== 'account') return _modalAdd.apply(this, arguments);
+        const input = document.getElementById('settingsModalInput');
+        const v = (input.value || '').trim();
+        if (!v) return;
+        if (!state.accountDetails.some(a => a.name === v)) {
+            state.accountDetails.push({ name: v, initial: 0, order: state.accountDetails.length });
+            syncAccountsFromDetails();
+        }
+        input.value = '';
+        saveData(); refreshDropdownsAndTags(); renderAccountBalances();
+    };
+    window.moveSettingItem = function(type, name, target){
+        if (!name || !target || name === target) return;
+        if (type === 'account') {
+            const arr = state.accountDetails;
+            arr.sort((a, b) => a.order - b.order);
+            const from = arr.findIndex(a => a.name === name), to = arr.findIndex(a => a.name === target);
+            if (from < 0 || to < 0) return;
+            const [m] = arr.splice(from, 1);
+            arr.splice(to, 0, m);
+            arr.forEach((a, i) => a.order = i);
+            syncAccountsFromDetails();
+        } else {
+            const arr = type === 'category' ? state.categories : state.targets;
+            const from = arr.indexOf(name), to = arr.indexOf(target);
+            if (from < 0 || to < 0) return;
+            const [m] = arr.splice(from, 1);
+            arr.splice(to, 0, m);
+        }
+        saveData(); refreshDropdownsAndTags(); renderAccountBalances();
+    };
+    window.handleDrop = function(e){
+        e.stopPropagation();
+        if (draggedItemType !== this.dataset.type) return false;
+        moveSettingItem(draggedItemType, draggedItemName, this.dataset.item);
+        return false;
+    };
+    /* 手機（沒有滑鼠拖曳）：按住「≡」往別的項目拖，放開就換位置 */
+    (function(){
+        const o = window.createSafeTag;
+        window.createSafeTag = function(){
+            const tag = o.apply(this, arguments);
+            const handle = tag.querySelector('.drag-handle');
+            if (!handle) return tag;
+            handle.style.touchAction = 'none';
+            let over = null;
+            const under = t => { const el = document.elementFromPoint(t.clientX, t.clientY); return el && el.closest ? el.closest('.cat-tag') : null; };
+            const clear = () => { if (over) over.style.outline = ''; over = null; };
+            handle.addEventListener('touchstart', () => { tag.classList.add('dragging'); }, { passive: true });
+            handle.addEventListener('touchmove', e => {
+                e.preventDefault();
+                const el = under(e.touches[0]);
+                if (el !== over) { clear(); if (el && el !== tag && el.dataset.type === tag.dataset.type) { over = el; el.style.outline = '2px dashed #8fa382'; } }
+            }, { passive: false });
+            handle.addEventListener('touchend', e => {
+                const el = under(e.changedTouches[0]);
+                tag.classList.remove('dragging'); clear();
+                if (el && el !== tag && el.dataset.type === tag.dataset.type) moveSettingItem(tag.dataset.type, tag.dataset.item, el.dataset.item);
+            });
+            return tag;
+        };
+    })();
+
+    /* ---- 同步：日用／交通的新增支出，丟一份到「綜合紀錄」的用品 ---- */
+    window.queueItemSync = function(r){
+        const KEY = 'CrossSync_ExpenseToItems_v1';
+        if (!r || r.type !== 'expense') return;
+        if (!['日用', '交通'].includes(r.category)) return;
+        const name = (r.itemName || '').trim();
+        const date = (r.datetime || '').split('T')[0];
+        if (!name || !date) return;
+        let q = [];
+        try { q = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { q = []; }
+        if (!Array.isArray(q)) q = [];
+        q.push({ syncId: 'exp-' + r.id, name: name, start: date, store: (r.location || '').trim() });
+        localStorage.setItem(KEY, JSON.stringify(q));
+    };
+
+    // 啟動後補畫一次
+    setTimeout(() => { try { renderAccountBalances(); } catch (e) {} }, 800);
 })();
 </script>
 </body>
