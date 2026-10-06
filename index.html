@@ -2879,6 +2879,73 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
 #tab-account-ledger .lg-adj { color:#C08A55; font-weight:700; }
 #tab-account-ledger .lg-del { margin-left:4px; border:none; background:transparent; color:var(--expense-color); cursor:pointer; font-size:0.8rem; padding:0 2px; width:auto; }
 </style>
+<!-- 🐾 調皮熊特製：時來運轉完美一致化外觀法術 🐾 -->
+<style id="rilakkuma-ledger-perfect-fix">
+    /* [1-1] 移除帳戶金額卡片的特殊外框線，使其與其他分頁大卡片規格完全一致 */
+    .account-balance-item.v12 {
+        border: 1px solid var(--border-color) !important; /* 改為標準餅乾邊框 */
+        background: var(--bg-card) !important;            /* 蜂蜜牛奶白底色 */
+        box-shadow: none !important;                      /* 移除獨立懸浮陰影 */
+    }
+    .account-balance-item.v12:hover {
+        border-style: solid !important;
+        border-color: var(--primary) !important;
+        background: var(--bg-input) !important;           /* 奶油白 */
+    }
+    #accountBalanceCard {
+        border: none !important;     /* 移除外層重複的多框 */
+        box-shadow: none !important; /* 移除多餘陰影 */
+        padding: 0 !important;       /* 內距歸零，由大分頁卡片統一管理 */
+    }
+
+    /* [1-2] 帳戶金額卡片底部與金流歷史明細區塊保持一致的舒適物理距離 */
+    #accountBalanceCard, 
+    .account-card-footer {
+        margin-bottom: 20px !important; /* 補滿 20px 的黃金大縫隙 */
+    }
+
+    /* [2-1] 修正金流歷史明細下拉選單：文字、圖標完美垂直置中，不再偏左壓線 */
+    #tab-account-ledger .ledger-controls {
+        display: flex !important;
+        gap: 12px !important;           /* 兩個框框中間保持精緻間距 */
+        align-items: center !important; /* 核心：強迫上下絕對垂直置中 */
+        margin-bottom: 15px !important;
+        width: 100% !important;
+    }
+
+    /* [2-2] 框框底色不要灰色白色！調皮熊調配：蜂蜜奶茶與奶油白拉拉熊專屬適配色 */
+    #tab-account-ledger .ledger-controls select {
+        height: 34px !important;
+        padding: 0 30px 0 14px !important; /* 左邊留舒適距離，右邊留給下拉箭頭 */
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;       /* 文字加粗更護眼 */
+        color: var(--text-primary) !important;   /* 可可深棕字 */
+        background-color: var(--bg-input) !important; /* 奶油白底色 🍯 */
+        border: 1.5px solid var(--border-color) !important; /* 餅乾邊框 */
+        border-radius: var(--radius-sm) !important;  /* 圓潤膠囊角 */
+        outline: none !important;
+        cursor: pointer !important;
+        
+        /* [2-3] 寬度黃金收窄術！拒絕右邊空空，讓框框貼合文字，不無限延伸 */
+        flex: 0 1 auto !important;          /* 取消彈性撐滿 */
+        width: auto !important;             /* 寬度自適應內容 */
+        min-width: 140px !important;        /* 限制最小寬度，避免字被切到 */
+        
+        /* 增加美美的自訂下拉箭頭，確保文字不會壓在箭頭上 */
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23A67C52' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 10px center !important;
+        background-size: 14px !important;
+    }
+
+    #tab-account-ledger .ledger-controls select:focus {
+        border-color: var(--primary) !important; /* 聚焦時變深熊棕 */
+        box-shadow: 0 0 0 3px var(--primary-light) !important;
+    }
+</style>
+
 </head>
 <body>
     <div class="app-wrapper">
