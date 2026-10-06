@@ -7083,5 +7083,49 @@ async function saveData() {
     setTimeout(() => { try { renderAccountBalances(); } catch (e) {} }, 800);
 })();
 </script>
+<style id="ledger-ui-fix">
+/* ===== 🏦 帳戶金額頁：卡片外框拿掉（跟其他 Sheet 一致）、與金流歷史明細留出間距、篩選框置中＋拉拉熊色 ===== */
+#tab-account-ledger #accountBalanceCard {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 0 24px 0 !important;   /* 24px ＝ 其他 Sheet 各區塊之間的間距 */
+}
+#tab-account-ledger .ledger-controls {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+#tab-account-ledger .ledger-controls select {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    flex: 0 0 auto !important;                 /* 框框跟著文字長度，右邊不再空空的 */
+    width: auto !important;
+    min-width: 104px !important;
+    max-width: calc(50% - 4px) !important;
+    height: 36px !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 32px 0 16px !important;         /* 左 16px 讓字離開圓角框線；右 32px 留給箭頭 */
+    line-height: normal !important;
+    text-align: left !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    color: #5C4033 !important;
+    background-color: #F1DFC0 !important;      /* 拉拉熊奶茶色 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%238B6D5C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 12px 8px !important;
+    border: 1.5px solid #D9BF94 !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+</style>
 </body>
 </html>
