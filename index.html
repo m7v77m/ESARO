@@ -6598,10 +6598,7 @@ async function saveData() {
 .tp-label { font-size:0.75rem; color:var(--text-secondary); font-weight:600; }
 .tp-val { font-size:1.05rem; font-weight:700; }
 .tp-tree { background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; padding:8px 10px; }
-/* 只有「一週支出」的進度條組：左邊多 0.1cm、右邊多 0.2cm（本月預算不動） */
-.tp-tree:not(#budgetBox) { padding-left:calc(10px - 0.1cm); padding-right:calc(10px - 0.2cm); }
 .tp-title { font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:6px; }
-.tp-tree:not(#budgetBox) > .tp-title { margin-left:0.1cm; }
 .tp-title small { font-weight:600; color:var(--text-secondary); font-size:0.68rem; }
 .tp-day { cursor:pointer; padding:3px 0; }
 .tp-row { display:flex; align-items:center; gap:3px; font-size:0.72rem; color:var(--text-primary); }
