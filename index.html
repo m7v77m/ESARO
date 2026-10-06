@@ -5888,26 +5888,26 @@ async function saveData() {
             <div id="accountCalcHint_v8" style="font-size:13px; color:var(--text-muted); margin-bottom:8px; line-height:1.4; text-align:left;">支援公式，例如 5000+200*3</div>
             <textarea id="accountCalcDisplay_v8" style="width:100%; min-height:52px; padding:13px 13px; border:1px solid var(--border-color); border-radius:13px; font-size:16px; resize:vertical; background:var(--bg-input);" placeholder="請輸入公式，例如 1000+500..." oninput="handleAccountCalcManual_v8(this.value)"></textarea>
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:7px; margin-top:13px;">
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('(')">(</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8(')')">)</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:#F5D6BA; color:#8C4A2F;" onclick="accountCalcBackspace_v8()">⌫</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:#F5D6BA; color:#8C4A2F;" onclick="accountCalcClear_v8()">C</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('7')">7</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('8')">8</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('9')">9</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--primary-light);" onclick="accountCalcInput_v8('/')">÷</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('4')">4</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('5')">5</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('6')">6</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--primary-light);" onclick="accountCalcInput_v8('*')">×</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('1')">1</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('2')">2</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('3')">3</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--primary-light);" onclick="accountCalcInput_v8('-')">-</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('0')">0</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);" onclick="accountCalcInput_v8('.')">.</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:#8fa382; color:#fff;" onclick="accountCalcResult_v8()">=</button>
-                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--primary-light);" onclick="accountCalcInput_v8('+')">+</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('(')">(</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8(')')">)</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:#F5D6BA; color:#8C4A2F;font-size:14px;" onclick="accountCalcBackspace_v8()">⌫</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:#F5D6BA; color:#8C4A2F;font-size:14px;" onclick="accountCalcClear_v8()">C</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('7')">7</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('8')">8</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('9')">9</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--primary-light);font-size:14px;" onclick="accountCalcInput_v8('/')">÷</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('4')">4</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('5')">5</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('6')">6</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--primary-light);font-size:14px;" onclick="accountCalcInput_v8('*')">×</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('1')">1</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('2')">2</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('3')">3</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--primary-light);font-size:14px;" onclick="accountCalcInput_v8('-')">-</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('0')">0</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--bg-input);font-size:14px;" onclick="accountCalcInput_v8('.')">.</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:#8fa382; color:#fff;font-size:14px;" onclick="accountCalcResult_v8()">=</button>
+                <button type="button" style="padding:13px 0; border:1px solid var(--border-color); border-radius:13px; background:var(--primary-light);font-size:14px;" onclick="accountCalcInput_v8('+')">+</button>
             </div>
             <div style="display:flex; gap:13px; margin-top:14px;">
                 <button style="flex:1; padding:13px; border-radius:13px; border:none; font-weight:800; font-size:14px;background:var(--bg-hover);" onclick="closeAccountCalc_v8()">取消</button>
