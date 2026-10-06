@@ -7102,16 +7102,18 @@ async function saveData() {
 #tab-account-ledger .ledger-controls select {
     -webkit-appearance: none !important;
     appearance: none !important;
-    flex: 0 0 auto !important;                 /* 框框跟著文字長度，右邊不再空空的 */
+    flex: 1 1 0 !important;                    /* 兩個框平均分配整列寬度，右邊剛好切齊 */
     width: auto !important;
-    min-width: 104px !important;
-    max-width: calc(50% - 4px) !important;
+    min-width: 0 !important;
+    max-width: none !important;
     height: 36px !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 0 32px 0 16px !important;         /* 左 16px 讓字離開圓角框線；右 32px 留給箭頭 */
+    padding: 0 32px !important;                /* 左右對稱，文字才會在框框正中央；右側 32px 內放箭頭 */
     line-height: normal !important;
-    text-align: left !important;
+    text-align: center !important;
+    text-align-last: center !important;
+    -moz-text-align-last: center !important;
     font-size: 0.9rem !important;
     font-weight: 600 !important;
     color: #5C4033 !important;
