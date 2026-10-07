@@ -2925,15 +2925,15 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇹🇼 台北</span>
                             <span id="clock-taipei" style="font-size: 0.95rem; font-weight: 800; color: #6e8268; font-family: monospace;">--:--:--</span>
                         </div>
-                        <!-- 東京 -->
-                        <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇯🇵 東京</span>
-                            <span id="clock-tokyo" style="font-size: 0.95rem; font-weight: 800; color: var(--expense-color); font-family: monospace;">--:--:--</span>
-                        </div>
                         <!-- 羅馬 (首爾正式華麗變身！) -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇮🇹 羅馬</span>
                             <span id="clock-rome" style="font-size: 0.95rem; font-weight: 800; color: var(--primary-dark); font-family: monospace;">--:--:--</span>
+                        </div>
+                        <!-- 東京 -->
+                        <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇯🇵 東京</span>
+                            <span id="clock-tokyo" style="font-size: 0.95rem; font-weight: 800; color: var(--expense-color); font-family: monospace;">--:--:--</span>
                         </div>
                         <!-- 雪梨 -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
@@ -2968,13 +2968,13 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         try {
                             const tpe = document.getElementById('clock-taipei');
                             if (tpe) tpe.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Asia/Taipei"})));
-                            
-                            const tky = document.getElementById('clock-tokyo');
-                            if (tky) tky.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})));
-                            
+                                                        
                             // 💡 這裡把 clock-seoul 換成了 clock-rome，並把時區換成歐洲羅馬囉！
                             const rom = document.getElementById('clock-rome');
                             if (rom) rom.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/Rome"})));
+                            
+                            const tky = document.getElementById('clock-tokyo');
+                            if (tky) tky.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})));
                             
                             const syd = document.getElementById('clock-sydney');
                             if (syd) syd.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Australia/Sydney"})));
@@ -7250,6 +7250,7 @@ async function saveData() {
     height: 34px !important;
     box-sizing: border-box !important;
 }
+
 /* 🐻 調皮熊特製：把明細列表的藍色勾勾強制變身莫蘭迪綠底（#8fa382）法術 🐻 */
 /* 1. 鎖定網頁裡所有的核取方塊，強制把原生的藍色底換成無尾熊最愛的綠色 */
 input[type="checkbox"] {
