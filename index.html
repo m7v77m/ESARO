@@ -3287,8 +3287,8 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                 <form id="assetForm" onsubmit="handleAssetSubmit(event)" style="display: grid !important; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important; gap: 12px !important; align-items: end !important; padding: 13px !important; background: var(--bg-hover) !important; border-radius: 13px !important; width: 100% !important; box-sizing: border-box !important;">
                                     
                                     <!-- 📅 紀錄日期（文青白色框＋莫蘭迪綠今天按鈕組合） -->
-                                    <div class="form-group date-form-group" style="margin-bottom:0 !important; flex-direction: column !important; align-items: flex-start !important; gap: 4px !important; width: 100% !important;">
-                                        <label style="font-size: 0.85rem !important; font-weight: 700 !important; color: var(--text-secondary); white-space: nowrap !important; display: flex !important; right: 0px !important;">📅 紀錄日期</label>
+                                    <div class="form-group date-form-group" style="margin-bottom:0 !important; display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 4px !important; width: 100% !important;">
+                                        <label style="font-size: 0.85rem !important; font-weight: 700 !important; color: var(--text-secondary); white-space: nowrap !important;inline-flex!important; right: 0px !important;">📅 紀錄日期</label>
                                         <div class="date-with-today" style="display: grid !important; grid-template-columns: minmax(0, 1fr) 57px !important; align-items: center !important; gap: 4px !important; width: 100% !important; box-sizing: border-box !important;">
                                             <input type="date" id="assetDate" required style="display: block !important; width: 100% !important; height: 22px !important; font-size: 0.85rem !important; padding: 4px 10px !important; background-color: var(--bg-input) !important; border: 1.5px solid #E8D5B0 !important; border-radius: 18px !important; box-sizing: border-box !important;">
                                             <button type="button" class="today-btn" onclick="setTodayForDate('assetDate', false)" title="跳到今天" style="display: inline-flex !important; width: 57px !important; min-width: 57px !important; max-width: 57px !important; height: 37px !important; margin: 0 !important; padding: 0 4px !important; align-items: center !important; justify-content: center !important; border: 0 !important; border-radius: 18px !important; background: #8fa382 !important; color: #fff !important; font-weight: 700 !important; font-size: 0.78rem !important; line-height: 1 !important; white-space: nowrap !important; box-sizing: border-box !important; cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;">今天</button>
@@ -6022,7 +6022,6 @@ async function saveData() {
     padding: 2px 8px !important;   /* 減少上下多餘的空間，只留左右舒適度 */
     font-size: 0.85rem !important; /* 讓字體精緻不撐大框框 */
     box-sizing: border-box !important;
-    display: flex !important;
 }
 
 /* 2. 鎖定這兩個日期框旁邊的「今天」按鈕，讓它跟左邊的輸入框齊頭並進 */
@@ -6398,7 +6397,6 @@ async function saveData() {
         width: 100% !important;
         min-width: 0 !important;
         box-sizing: border-box !important;
-        display: flex !important;
     }
     .date-form-group .date-with-today input[type="date"] {
         min-width: 0 !important;
@@ -6552,7 +6550,6 @@ async function saveData() {
     width: 100% !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
-    display: flex !important;
 }
 .date-with-today input[type="date"] {
     display: block !important;
@@ -6675,7 +6672,6 @@ async function saveData() {
         width: 100% !important;
         min-width: 0 !important;
         box-sizing: border-box !important;
-        display: flex !important;
     }
     .date-form-group .date-with-today input[type="date"] {
         width: 100% !important;
@@ -7253,6 +7249,27 @@ async function saveData() {
     align-items: center !important;
     height: 34px !important;
     box-sizing: border-box !important;
+}
+/* 🐻 調皮熊特製：資產列表大卡片與綠色表頭圓角同步修小術 🐻 */
+
+/* 1. 鎖定第三個 SHEET 下方的資產表格容器，強制讓它的外框圓角跟上面大卡片（紅框）一樣大 */
+#tab-assets .table-container {
+    border-radius: var(--radius-md) !important; /* 確保跟大卡片紅框的 18px 圓角一模一樣 */
+    overflow: hidden !important; /* 核心魔法：強制把裡面突出來的綠色表頭死角切掉 */
+}
+
+/* 2. 同步修小表格內第一行（綠色表頭 <th>）的左上角與右上角，讓它乖乖聽話不亂飆 */
+#tab-assets table th:first-child {
+    border-top-left-radius: var(--radius-md) !important;
+}
+#tab-assets table th:last-child {
+    border-top-right-radius: var(--radius-md) !important;
+}
+
+/* 3. 順便幫妳把大明細列表（第一頁 Sheet）的綠色表頭圓角也一起修小對齊，強迫症看了超療癒 */
+#tab-table .table-container {
+    border-radius: var(--radius-md) !important;
+    overflow: hidden !important;
 }
 
 </style>
