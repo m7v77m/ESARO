@@ -7250,6 +7250,21 @@ async function saveData() {
     height: 34px !important;
     box-sizing: border-box !important;
 }
+/* 🐻 調皮熊特製：把明細列表的藍色勾勾強制變身莫蘭迪綠底（#8fa3f2）法術 🐻 */
+/* 1. 鎖定網頁裡所有的核取方塊，強制把原生的藍色底換成無尾熊最愛的綠色 */
+input[type="checkbox"] {
+    accent-color: #8fa3f2 !important; /* 核心魔法：一鍵將蘋果藍色底強制改成莫蘭迪綠底！ */
+    cursor: pointer !important;
+}
+
+/* 2. 如果無尾熊希望這些勾勾在手機上稍微加大一點點、更好點選，可以順便啟用這兩行喔 */
+@media (max-width: 900px) {
+    input[type="checkbox"] {
+        width: 16px !important;
+        height: 16px !important;
+        vertical-align: middle !important;
+    }
+}
 
 </style>
 </body>
