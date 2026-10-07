@@ -2925,10 +2925,10 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇹🇼 台北</span>
                             <span id="clock-taipei" style="font-size: 0.95rem; font-weight: 800; color: #6e8268; font-family: monospace;">--:--:--</span>
                         </div>
-                        <!-- 羅馬 (首爾正式華麗變身！) -->
+                        <!-- 倫敦 -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇮🇹 羅馬</span>
-                            <span id="clock-rome" style="font-size: 0.95rem; font-weight: 800; color: var(--primary-dark); font-family: monospace;">--:--:--</span>
+                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇬🇧 倫敦</span>
+                            <span id="clock-london" style="font-size: 0.95rem; font-weight: 800; color: var(--primary); font-family: monospace;">--:--:--</span>
                         </div>
                         <!-- 東京 -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
@@ -2950,10 +2950,10 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇺🇸 加州</span>
                             <span id="clock-california" style="font-size: 0.95rem; font-weight: 800; color: var(--primary-dark); font-family: monospace;">--:--:--</span>
                         </div>
-                        <!-- 倫敦 -->
+                        <!-- 羅馬 (首爾正式華麗變身！) -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇬🇧 倫敦</span>
-                            <span id="clock-london" style="font-size: 0.95rem; font-weight: 800; color: var(--primary); font-family: monospace;">--:--:--</span>
+                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇮🇹 羅馬</span>
+                            <span id="clock-rome" style="font-size: 0.95rem; font-weight: 800; color: var(--primary-dark); font-family: monospace;">--:--:--</span>
                         </div>
                     </div>
                 </div>
@@ -2969,11 +2969,9 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             const tpe = document.getElementById('clock-taipei');
                             if (tpe) tpe.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Asia/Taipei"})));
                             
-                            
-                            // 💡 這裡把 clock-seoul 換成了 clock-rome，並把時區換成歐洲羅馬囉！
-                            const rom = document.getElementById('clock-rome');
-                            if (rom) rom.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/Rome"})));
-                            
+                            const lon = document.getElementById('clock-london');
+                            if (lon) lon.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})));
+                          
                             const tky = document.getElementById('clock-tokyo');
                             if (tky) tky.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})));
                             
@@ -2986,8 +2984,8 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             const cal = document.getElementById('clock-california');
                             if (cal) cal.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})));
                             
-                            const lon = document.getElementById('clock-london');
-                            if (lon) lon.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})));
+                            const rom = document.getElementById('clock-rome');
+                            if (rom) rom.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/Rome"})));
                             } catch (e) {
                             console.error("世界時鐘法術微小異常:", e);
                         }
