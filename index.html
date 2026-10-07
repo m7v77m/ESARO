@@ -2940,11 +2940,6 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇦🇺 雪梨</span>
                             <span id="clock-sydney" style="font-size: 0.95rem; font-weight: 800; color: #8A6D4B; font-family: monospace;">--:--:--</span>
                         </div>
-                        <!-- 倫敦 -->
-                        <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇬🇧 倫敦</span>
-                            <span id="clock-london" style="font-size: 0.95rem; font-weight: 800; color: var(--primary); font-family: monospace;">--:--:--</span>
-                        </div>
                         <!-- 伊堡 -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇹🇷 伊堡</span>
@@ -2954,6 +2949,11 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇺🇸 加州</span>
                             <span id="clock-california" style="font-size: 0.95rem; font-weight: 800; color: var(--primary-dark); font-family: monospace;">--:--:--</span>
+                        </div>
+                        <!-- 倫敦 -->
+                        <div style="background: var(--bg-input); border: 1.5px dashed #D4B896; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇬🇧 倫敦</span>
+                            <span id="clock-london" style="font-size: 0.95rem; font-weight: 800; color: var(--primary); font-family: monospace;">--:--:--</span>
                         </div>
                     </div>
                 </div>
@@ -2979,16 +2979,16 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             
                             const syd = document.getElementById('clock-sydney');
                             if (syd) syd.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Australia/Sydney"})));
-                            
-                            const lon = document.getElementById('clock-london');
-                            if (lon) lon.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})));
-                            
+                          
                             const ist = document.getElementById('clock-istanbul');
                             if (ist) ist.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/Istanbul"})));
                             
                             const cal = document.getElementById('clock-california');
                             if (cal) cal.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})));
-                        } catch (e) {
+                            
+                            const lon = document.getElementById('clock-london');
+                            if (lon) lon.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})));
+                            } catch (e) {
                             console.error("世界時鐘法術微小異常:", e);
                         }
                     }
