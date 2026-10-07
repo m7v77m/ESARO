@@ -7250,27 +7250,6 @@ async function saveData() {
     height: 34px !important;
     box-sizing: border-box !important;
 }
-/* 🐻 調皮熊特製：資產列表大卡片與綠色表頭圓角同步修小術 🐻 */
-
-/* 1. 鎖定第三個 SHEET 下方的資產表格容器，強制讓它的外框圓角跟上面大卡片（紅框）一樣大 */
-#tab-assets .table-container {
-    border-radius: var(--radius-md) !important; /* 確保跟大卡片紅框的 18px 圓角一模一樣 */
-    overflow: hidden !important; /* 核心魔法：強制把裡面突出來的綠色表頭死角切掉 */
-}
-
-/* 2. 同步修小表格內第一行（綠色表頭 <th>）的左上角與右上角，讓它乖乖聽話不亂飆 */
-#tab-assets table th:first-child {
-    border-top-left-radius: var(--radius-md) !important;
-}
-#tab-assets table th:last-child {
-    border-top-right-radius: var(--radius-md) !important;
-}
-
-/* 3. 順便幫妳把大明細列表（第一頁 Sheet）的綠色表頭圓角也一起修小對齊，強迫症看了超療癒 */
-#tab-table .table-container {
-    border-radius: var(--radius-md) !important;
-    overflow: hidden !important;
-}
 
 </style>
 </body>
