@@ -5188,6 +5188,8 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
             return alert('名稱不可為空'); if (c === old) return; if (state.categories.includes(c)) return alert('已存在'); const idx =
                 state.categories.indexOf(old); if (idx !== -1) state.categories[idx] = c;
             state.records.forEach(r => { if (r.category === old) r.category = c; });
+            if (state.budgets && state.budgets.cats && Object.prototype.hasOwnProperty.call(state.budgets.cats, old)) { state.budgets.cats[c] = state.budgets.cats[old]; delete state.budgets.cats[old]; }
+            if (typeof renderBudget === 'function') renderBudget();
             saveData();
             refreshDropdownsAndTags();
             renderData(true); }
