@@ -2920,6 +2920,16 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                 <div style="grid-column: 1 / -1; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 13px !important; border-radius: var(--radius-md) !important; box-shadow: 0 2px 8px var(--shadow-color) !important; box-sizing: border-box; margin-bottom: 4px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)); gap: 8px; text-align: center; align-items: center;">
                         <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); text-align: left; white-space: nowrap;">&nbsp;<i class="fa-solid fa-globe" style="color: var(--primary);"></i> 全球國際常用時間表</span>
+                        <!-- 伊堡 -->
+                        <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇹🇷 伊堡</span>
+                            <span id="clock-istanbul" style="font-size: 0.95rem; font-weight: 800; color: #9c6b98; font-family: monospace;">--:--:--</span>
+                        </div>
+                        <!-- 加州 -->
+                        <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇺🇸 加州</span>
+                            <span id="clock-california" style="font-size: 0.95rem; font-weight: 800; color: #8fa382; font-family: monospace;">--:--:--</span>
+                        </div>
                         <!-- 台北 -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇹🇼 台北</span>
@@ -2928,32 +2938,22 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         <!-- 倫敦 -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇬🇧 倫敦</span>
-                            <span id="clock-london" style="font-size: 0.95rem; font-weight: 800; color: #8fa382; font-family: monospace;">--:--:--</span>
+                            <span id="clock-london" style="font-size: 0.95rem; font-weight: 800; color: #9c6b98; font-family: monospace;">--:--:--</span>
                         </div>
                         <!-- 東京 -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇯🇵 東京</span>
                             <span id="clock-tokyo" style="font-size: 0.95rem; font-weight: 800; color: #9c6b98; font-family: monospace;">--:--:--</span>
                         </div>
-                        <!-- 雪梨 -->
-                        <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇦🇺 雪梨</span>
-                            <span id="clock-sydney" style="font-size: 0.95rem; font-weight: 800; color: #9c6b98; font-family: monospace;">--:--:--</span>
-                        </div>
-                        <!-- 伊堡 -->
-                        <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇹🇷 伊堡</span>
-                            <span id="clock-istanbul" style="font-size: 0.95rem; font-weight: 800; color: #8fa382; font-family: monospace;">--:--:--</span>
-                        </div>
-                        <!-- 加州 -->
-                        <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇺🇸 加州</span>
-                            <span id="clock-california" style="font-size: 0.95rem; font-weight: 800; color: #8fa382; font-family: monospace;">--:--:--</span>
-                        </div>
                         <!-- 羅馬 (首爾正式華麗變身！) -->
                         <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                             <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇮🇹 羅馬</span>
-                            <span id="clock-rome" style="font-size: 0.95rem; font-weight: 800; color: #9c6b98; font-family: monospace;">--:--:--</span>
+                            <span id="clock-rome" style="font-size: 0.95rem; font-weight: 800; color: #8fa382; font-family: monospace;">--:--:--</span>
+                        </div>
+                        <!-- 雪梨 -->
+                        <div style="background: var(--bg-input); border: 1.5px dashed #C17A4E; padding: 5px 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">🇦🇺 雪梨</span>
+                            <span id="clock-sydney" style="font-size: 0.95rem; font-weight: 800; color: #8fa382; font-family: monospace;">--:--:--</span>
                         </div>
                     </div>
                 </div>
@@ -2966,6 +2966,12 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         const f = d => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
                         
                         try {
+                            const ist = document.getElementById('clock-istanbul');
+                            if (ist) ist.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/Istanbul"})));
+                            
+                            const cal = document.getElementById('clock-california');
+                            if (cal) cal.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})));
+                            
                             const tpe = document.getElementById('clock-taipei');
                             if (tpe) tpe.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Asia/Taipei"})));
                             
@@ -2975,17 +2981,11 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             const tky = document.getElementById('clock-tokyo');
                             if (tky) tky.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})));
                             
-                            const syd = document.getElementById('clock-sydney');
-                            if (syd) syd.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Australia/Sydney"})));
-                          
-                            const ist = document.getElementById('clock-istanbul');
-                            if (ist) ist.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/Istanbul"})));
-                            
-                            const cal = document.getElementById('clock-california');
-                            if (cal) cal.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})));
-                            
                             const rom = document.getElementById('clock-rome');
                             if (rom) rom.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Europe/Rome"})));
+                             
+                            const syd = document.getElementById('clock-sydney');
+                            if (syd) syd.textContent = f(new Date(now.toLocaleString("en-US", {timeZone: "Australia/Sydney"})));
                             } catch (e) {
                             console.error("世界時鐘法術微小異常:", e);
                         }
@@ -3288,9 +3288,9 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                     <!-- 📅 紀錄日期（文青白色框＋莫蘭迪綠今天按鈕組合） -->
                                     <div class="form-group date-form-group" style="margin-bottom:0 !important; display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 4px !important; width: 100% !important;">
                                         <label style="font-size: 0.85rem !important; font-weight: 700 !important; color: var(--text-secondary); white-space: nowrap !important;inline-flex!important; right: 0px !important;">📅 紀錄日期</label>
-                                        <div class="date-with-today" style="display: grid !important; grid-template-columns: minmax(0, 1fr) 50px !important; align-items: center !important; gap: 4px !important; width: 100% !important; box-sizing: border-box !important;">
+                                        <div class="date-with-today" style="display: grid !important; grid-template-columns: minmax(0, 1fr) 57px !important; align-items: center !important; gap: 4px !important; width: 100% !important; box-sizing: border-box !important;">
                                             <input type="date" id="assetDate" required style="display: block !important; width: 100% !important; height: 22px !important; font-size: 0.85rem !important; padding: 4px 10px !important; background-color: var(--bg-input) !important; border: 1.5px solid #E8D5B0 !important; border-radius: 18px !important; box-sizing: border-box !important;">
-                                            <button type="button" class="today-btn" onclick="setTodayForDate('assetDate', false)" title="跳到今天" style="display: inline-flex !important; width: 50px !important; min-width: 50px !important; max-width: 50px !important; height: 37px !important; margin: 0 !important; padding: 0 4px !important; align-items: center !important; justify-content: center !important; border: 0 !important; border-radius: 18px !important; background: #8fa382 !important; color: #fff !important; font-weight: 700 !important; font-size: 0.78rem !important; line-height: 1 !important; white-space: nowrap !important; box-sizing: border-box !important; cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;">今天</button>
+                                            <button type="button" class="today-btn" onclick="setTodayForDate('assetDate', false)" title="跳到今天" style="display: inline-flex !important; width: 57px !important; min-width: 57px !important; max-width: 57px !important; height: 37px !important; margin: 0 !important; padding: 0 4px !important; align-items: center !important; justify-content: center !important; border: 0 !important; border-radius: 18px !important; background: #8fa382 !important; color: #fff !important; font-weight: 700 !important; font-size: 0.78rem !important; line-height: 1 !important; white-space: nowrap !important; box-sizing: border-box !important; cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;">今天</button>
                                         </div>
                                     </div>
 
