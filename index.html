@@ -7178,6 +7178,21 @@ async function saveData() {
 })();
 </script>
 <style id="ledger-ui-fix">
+/* 全球時間表卡片 → 收入支出卡片 的間隙，統一成 7px */
+.header-top-row {
+    gap: 7px !important;
+    row-gap: 7px !important;
+}
+.header-top-row > div[style*="grid-column: 1 / -1"] {
+    margin-bottom: 0 !important;
+}
+.header-top-row .stats-bar {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+.header-top-row .stats-bar .stat-group {
+    margin-top: 0 !important;
+}
 /* ===== 🏦 帳戶金額頁：卡片外框拿掉（跟其他 Sheet 一致）、與金流歷史明細留出間距、篩選框置中＋拉拉熊色 ===== */
 #tab-account-ledger #accountBalanceCard {
     border: none !important;
