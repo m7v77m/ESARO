@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2280%22>🐻</text></svg>">    <meta charset="UTF-8">
@@ -7280,6 +7280,24 @@ input[type="checkbox"] {
         vertical-align: middle !important;
     }
 }
+
+
+/* ===== 全部卡片上下間距 = 7px（要改數字就把 7px 全部換掉）===== */
+html body .sticky-header,
+html body .header-top-row,
+html body .header-top-row .stats-bar,
+html body .stats-bar,
+html body .container,
+html body .main-wrapper,
+html body .left-panel,
+html body .right-panel,
+html body .right-panel .maintenance-panel,
+html body .left-panel.maintenance-panel {
+    gap: 7px !important;
+    row-gap: 7px !important;
+}
+html body .top-section { gap: 7px !important; }
+html body .container > .left-panel .card { margin-bottom: 0 !important; }
 /* 手機版：新增紀錄卡片寬度與其他卡片一致 */
 @media (max-width: 768px) {
     .container > .left-panel {
