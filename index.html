@@ -4183,7 +4183,7 @@ function loadLocalData() {
                     '<span class="bd-num"><span>$' + n0(spent) + ' /</span><span>$' + n0(budget) + '</span></span></div>';
             };
             if (totalBudget) {
-                html += row('本月總計', spend.total, totalBudget);
+                html += row('本月.總計', spend.total, totalBudget);
                 const pct = pctOf(spend.total, totalBudget);
                 if (totalBudget < 0) {
                     const left = Math.abs(totalBudget) - (spend.total < 0 ? Math.abs(spend.total) : 0);
@@ -4905,7 +4905,7 @@ function loadLocalData() {
 
             if (sortedDates.length > 0) {
                 html += `<tr class="total-row">
-                    <td style="text-align:center;">本月總計</td>
+                    <td style="text-align:center;">本月.總計</td>
                     <td style="text-align:right; font-weight:700; color:var(--expense-color);">$${totalAmount.toLocaleString()}</td>
                     <td style="text-align:center;">${totalCount}</td>
                 </tr>`;
@@ -5400,7 +5400,7 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
             }).join('');
             if (Object.keys(memberMap).length>0) {
                 const totalBal = totalInc + totalExp; // 支出為負，改相加
-                html += `<tr class="total-row"><td style="text-align:center;font-weight:700;">本月總計</td><td style="text-align:right;color:var(--income-color);font-weight:700;">$${totalInc.toLocaleString()}</td><td style="text-align:right;color:var(--expense-color);font-weight:700;">$${totalExp.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${totalBal>=0?'var(--income-color)':'var(--expense-color)'};">$${totalBal.toLocaleString()}</td><td style="text-align:center;font-weight:700;">${totalCnt}</td><td></td></tr>`;
+                html += `<tr class="total-row"><td style="text-align:center;font-weight:700;">本月.總計</td><td style="text-align:right;color:var(--income-color);font-weight:700;">$${totalInc.toLocaleString()}</td><td style="text-align:right;color:var(--expense-color);font-weight:700;">$${totalExp.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${totalBal>=0?'var(--income-color)':'var(--expense-color)'};">$${totalBal.toLocaleString()}</td><td style="text-align:center;font-weight:700;">${totalCnt}</td><td></td></tr>`;
             }
             body.innerHTML = html || '<tr><td colspan="6" style="padding:13px;text-align:center;">無資料</td></tr>';
 
