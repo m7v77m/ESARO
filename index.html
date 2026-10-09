@@ -7238,6 +7238,16 @@ html body .container > .left-panel { padding: 9 !important; }
         padding: 0 !important;
     }
 }
+
+/* 手機版：8 組卡片的內容左右邊界，統一對齊「新增紀錄」卡片（內容距螢幕左右各 30px） */
+@media (max-width: 768px) {
+    html body .header-top-row .stats-bar .stat-group,
+    html body #top-section.top-section,
+    html body .right-panel > .card:first-child {
+        padding-left: 13px !important;
+        padding-right: 13px !important;
+    }
+}
 </style>
 </body>
 </html>
