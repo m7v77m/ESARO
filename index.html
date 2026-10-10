@@ -3143,8 +3143,8 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                 <div class="tp-box"><span class="tp-label">💸 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
             </div>
                                 <div class="sc-line">
-                                    <div class="sc-row"><span>🪎 收入：<span id="totalIncome" class="text-income">$0</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span></div>
-                                    <div class="sc-row"><span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span>&nbsp;&nbsp;&nbsp;</span><span>📊 範圍結餘：<strong id="monthBalance">$0</strong></span></div>
+                                    <div class="sc-row"><span>🪎 收入：<span id="totalIncome" class="text-income">0</span>&nbsp;&nbsp;</span><span>💸 支出：<span id="totalExpense" class="text-expense">0</span></span></div>
+                                    <div class="sc-row"><span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">0</span></span><span>📊 範圍結餘：<strong id="monthBalance">0</strong></span></div>
                                 </div>
                                 <div class="actions-group">
         <button class="btn-danger" style="padding:4px 9px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.64rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
@@ -3606,8 +3606,8 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
             const totalIncome = (state.records||[]).filter(r=>r.type==='income').reduce((s,r)=>s+(parseFloat(r.price)||0),0);
             const totalExpense = (state.records||[]).filter(r=>r.type==='expense').reduce((s,r)=>s+(parseFloat(r.price)||0),0);
             const totalAsset = state.accountDetails.reduce((s,ad)=>s+((ad.initial||0)+sumRecordsForAccount(ad.name)),0);
-            const elIncome = document.getElementById('totalIncome'); if(elIncome) elIncome.textContent = totalIncome.toLocaleString();
-            const elExpense = document.getElementById('totalExpense'); if(elExpense) elExpense.textContent = totalExpense.toLocaleString();
+            const elIncome = document.getElementById('totalIncome'); if(elIncome) elIncome.textContent = '$'+totalIncome.toLocaleString();
+            const elExpense = document.getElementById('totalExpense'); if(elExpense) elExpense.textContent = '$'+totalExpense.toLocaleString();
             const elAsset = document.getElementById('totalAssets'); if(elAsset) elAsset.textContent = '$'+totalAsset.toLocaleString();
             alert('✅ 已重新計算，帳戶餘額已與新增紀錄連動！');
         }
@@ -4509,11 +4509,11 @@ function loadLocalData() {
                 }
             });
 
-            document.getElementById('totalIncome').innerText = `${incomeSum.toLocaleString()}`;
-            document.getElementById('totalExpense').innerText = `${expenseSum.toLocaleString()}`;
-            document.getElementById('totalAsset').innerText = `${assetSum.toLocaleString()}`;
+            document.getElementById('totalIncome').innerText = `$${incomeSum.toLocaleString()}`;
+            document.getElementById('totalExpense').innerText = `$${expenseSum.toLocaleString()}`;
+            document.getElementById('totalAsset').innerText = `$${assetSum.toLocaleString()}`;
             //document.getElementById('monthBalance').innerText = `$${(incomeSum - expenseSum - assetSum).toLocaleString()}`;
-			document.getElementById('monthBalance').innerText = `${(incomeSum + expenseSum).toLocaleString()}`; // 支出已為負數，改為相加
+			document.getElementById('monthBalance').innerText = `$${(incomeSum + expenseSum).toLocaleString()}`; // 支出已為負數，改為相加
             if (typeof updateTodayPanel === 'function') updateTodayPanel();
 			
             const months = [];
@@ -6634,7 +6634,7 @@ async function saveData() {
 .tp-wrap { width:100%; margin-top:10px; display:flex; flex-direction:column; gap:10px; font-weight:400; }
 .tp-today { display:flex; gap:10px; }
 .tp-box { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 6px; background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; }
-.tp-label { font-size:0.85rem; color:var(--text-secondary); font-weight:600; }
+.tp-label { font-size:0.75rem; color:var(--text-secondary); font-weight:600; }
 .tp-val { font-size:1.05rem; font-weight:700; }
 .tp-tree { background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; padding:8px 10px; }
 .tp-title { font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:6px; }
@@ -7226,7 +7226,7 @@ input[type="checkbox"] {
     }
 }
 
-/* ===== 全部卡片間距 = 10.5px（上下、左右一起）===== */
+/* ===== 全部卡片間距 = 10px（上下、左右一起）===== */
 html body .sticky-header,
 html body .header-top-row,
 html body .header-top-row .stats-bar,
@@ -7238,8 +7238,8 @@ html body .right-panel,
 html body .right-panel .maintenance-panel,
 html body .left-panel.maintenance-panel {
     gap: 10px !important;
-    row-gap: 10px !important;
-    column-gap: 10px !important;
+    row-gap: 9px !important;
+    column-gap: 9px !important;
 }
 html body .top-section { gap: 10px !important; }
 html body .container > .left-panel .card { margin-bottom: 0 !important; }
@@ -7267,11 +7267,11 @@ html body .app-wrapper {
     }
 }
 
-/* ===== 三處上下間距 = 10.5px（最頂端、分頁卡內、最底端）===== */
+/* ===== 三處上下間距 = 10px（最頂端、分頁卡內、最底端）===== */
 html body .sticky-header { padding-bottom: 0 !important; }                          /* 最底：成員維護卡 → 外框底邊 */
-html body .right-panel > .card:first-child { padding-top: 10.5px !important; }          /* 分頁卡上緣 → 分頁標籤（8+1 邊框） */
-html body .right-panel > .card:first-child .tab-menu { margin-bottom: 10.5px !important; } /* 分頁標籤底線 → 表格 */
-html body .app-wrapper { padding-top: 10.5px !important; }
+html body .right-panel > .card:first-child { padding-top: 10px !important; }          /* 分頁卡上緣 → 分頁標籤（8+1 邊框） */
+html body .right-panel > .card:first-child .tab-menu { margin-bottom: 10px !important; } /* 分頁標籤底線 → 表格 */
+html body .app-wrapper { padding-top: 10px !important; }
 
 /* ===== 合併卡片：收入/支出/資產/範圍結餘 + 今日收支 + 刪除選取（放在明細列表標籤與表格之間）===== */
 html body .summary-card {
@@ -7349,7 +7349,7 @@ html body .summary-card .sc-line {
     display: flex;
     flex-direction: column;
     gap: 3px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     line-height: 1.4;
     color: #385a37;
