@@ -121,10 +121,10 @@
 
         .menu-item {
             position: relative;
-            padding: 13px 13px;
+            padding: 20px 20px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
             color: var(--text-primary);
             transition: background 0.2s;
             user-select: none;
@@ -2944,17 +2944,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
 
     <div class="stat-group">
         <div class="row1" style="justify-content:center;gap:10px;flex-wrap:wrap;">
-            <span><div class="nav-title" style="color: #385a37; font-size: 14px;">&nbsp;&nbsp;🪎 收入：<span id="totalIncome" class="text-income">$0</span></span>&nbsp;&nbsp;&nbsp;&nbsp;
-            <span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>&nbsp;&nbsp;
-            <span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;
-            <span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></span>
-        </div>
-
-        <div class="tp-wrap" id="todayPanel">
-            <div class="tp-today">
-                <div class="tp-box"><span class="tp-label">🪎 今日收入</span><span id="todayIncome" class="tp-val text-income">$0</span></div>
-                <div class="tp-box"><span class="tp-label">💸 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
-            </div>
+            <span><div class="tp-wrap" id="todayPanel">
             <div class="tp-tree">
                 <div class="tp-title">📊 一週支出 <small>（點日期可展開類目）</small></div>
                 <div id="weekTree"></div>
@@ -2963,23 +2953,16 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                 <div class="tp-title">💰 本月預算 <button type="button" class="qa-mini" style="float:right;" onclick="openBudgetModal()">✍ 設定</button></div>
                 <div id="budgetBody"></div>
             </div>
+        </div></span>
         </div>
     </div>
-    <div class="actions-group">
-        <button class="btn-danger" style="padding:7px 12px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
-        <button class="btn-danger" style="padding:6px 10px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>
-        <div class="selected-stats" style="padding:4px 10px !important;">
-            已勾選&nbsp; <strong id="selectedCount">0</strong> &nbsp;筆，小計：<strong id="selectedTotal">$0</strong>
-        </div>
-    </div>
-</div>
 
             <div class="top-section" id="top-section">
                 <div class="quick-date-container">
                     <strong>📅 快速篩選：</strong>
                     <select id="quickYear" onchange="handleYearChange()"></select>
                     <span>年</span>
-                   <div class="month-links" id="monthLinks">&nbsp;
+                   <div class="month-links" id="monthLinks">
                         <a href="#" onclick="setMonthFilter(1,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">1月..</a>
                         <a href="#" onclick="setMonthFilter(2,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">2月.</a>
                         <a href="#" onclick="setMonthFilter(3,this,event)" style="padding-top:1px;padding-bottom:2px;font-size:13px;">3月..</a>
@@ -3024,6 +3007,12 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                     <div class="form-group"><label>📍 消費地區</label><select id="filterRegion" onchange="renderData(true)"><option value="">全部</option></select></div>
                     <div class="form-group" style="grid-column:span 2;"><label>🔍 關鍵字串（品名/規格/商家）</label>
                         <input type="text" id="filterItem" placeholder="輸入關鍵字自動過濾..." oninput="renderData(true)">
+                    </div>
+                    <div class="form-group weekday-filter" id="weekdayFilter"><label>🗓️ 星期篩選（可複選）</label>
+                        <div class="wd-links">
+                            <a href="#" class="wd-chip" data-wd="6" onclick="toggleWeekday(6,this,event)">週六</a>
+                            <a href="#" class="wd-chip" data-wd="0" onclick="toggleWeekday(0,this,event)">週日</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3148,6 +3137,20 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         </div>
 
                         <div id="tab-table" class="tab-content active">
+                            <div class="summary-card" id="summaryCard">
+                                <div class="sc-line">&nbsp;&nbsp;🪎 收入：<span id="totalIncome" class="text-income">$0</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>💸 支出：<span id="totalExpense" class="text-expense">$0</span></span>&nbsp;&nbsp;<span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">$0</span></span>&nbsp;&nbsp;<span style="margin-left:6px;">📊 範圍結餘：<strong id="monthBalance">$0</strong></span></div>
+                                <div class="tp-today">
+                <div class="tp-box"><span class="tp-label">🪎 今日收入</span><span id="todayIncome" class="tp-val text-income">$0</span></div>
+                <div class="tp-box"><span class="tp-label">💸 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
+            </div>
+                                <div class="actions-group">
+        <button class="btn-danger" style="padding:7px 12px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
+        <button class="btn-danger" style="padding:6px 10px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.7rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>
+        <div class="selected-stats" style="padding:4px 10px !important;">
+            已勾選&nbsp; <strong id="selectedCount">0</strong> &nbsp;筆，小計：<strong id="selectedTotal">$0</strong>
+        </div>
+    </div>
+                            </div>
                             <div class="table-container">
                                 <table>
                                     <thead>
@@ -4421,6 +4424,15 @@ function loadLocalData() {
 
 
         // ----- 渲染主表格 -----
+        // ----- 週六 / 週日 篩選（可複選；都不選＝不篩）-----
+        const weekdayFilter = new Set();
+        function toggleWeekday(day, el, ev) {
+            if (ev && ev.preventDefault) ev.preventDefault();
+            if (weekdayFilter.has(day)) weekdayFilter.delete(day); else weekdayFilter.add(day);
+            if (el) el.classList.toggle('active', weekdayFilter.has(day));
+            renderData(true);
+        }
+
         function renderData(keepPage = false) {
             if (!keepPage) currentPage = 1;
             const tbody = document.getElementById('dataTableBody');
@@ -4467,6 +4479,10 @@ function loadLocalData() {
                 if (r.region) regSet.add(r.region);
                 if (startDate && r.datetime.split('T')[0] < startDate) return false;
                 if (endDate && r.datetime.split('T')[0] > endDate) return false;
+                if (weekdayFilter.size) {   // 週六/週日篩選
+                    const [wy, wm, wd] = r.datetime.split('T')[0].split('-').map(Number);
+                    if (!weekdayFilter.has(new Date(wy, wm - 1, wd).getDay())) return false;
+                }
                 if (filterType && r.type !== filterType) return false;
                 if (filterAcc && r.account !== filterAcc) return false;
                 if (filterCat && r.category !== filterCat) return false;
@@ -7253,6 +7269,77 @@ html body .sticky-header { padding-bottom: 0 !important; }                      
 html body .right-panel > .card:first-child { padding-top: 8x !important; }          /* 分頁卡上緣 → 分頁標籤（8+1 邊框） */
 html body .right-panel > .card:first-child .tab-menu { margin-bottom: 10.5px !important; } /* 分頁標籤底線 → 表格 */
 html body .app-wrapper { padding-top: 10.5px !important; }
+
+/* ===== 合併卡片：收入/支出/資產/範圍結餘 + 今日收支 + 刪除選取（放在明細列表標籤與表格之間）===== */
+html body .summary-card {
+    background: var(--bg-hover);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 10px !important;
+    margin: 0 0 10px 0 !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+html body .summary-card .sc-line {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #385a37;
+    line-height: 1.55;
+}
+html body .summary-card .tp-today { width: 100%; }
+html body .summary-card .tp-box { background: var(--bg-card); }
+html body .summary-card .actions-group {
+    width: 100% !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 7px !important;
+    padding: 0 !important;
+}
+html body .summary-card .actions-group .selected-stats { margin-left: 0 !important; }
+/* 分頁標籤底線 → 合併卡片 = 10px */
+html body .right-panel > .card:first-child .tab-menu { margin-bottom: 10px !important; }
+
+/* ===== 快速篩選：月份 + 清除 置中 ===== */
+html body .month-links { justify-content: center !important; }
+
+/* ===== 快速篩選：週六、週日（放在 結束日期/類目名稱 與 帳戶名稱 之間）===== */
+html body .filters .weekday-filter { grid-column: 1 / -1; }
+html body .weekday-filter .wd-links { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+html body .weekday-filter .wd-chip {
+    text-decoration: none;
+    color: rgb(122, 95, 75);
+    background: rgb(215, 196, 165);
+    border: 1px solid rgb(212, 184, 150);
+    border-radius: 40px;
+    padding: 6px 18px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: normal;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+html body .weekday-filter .wd-chip.active {
+    background: var(--primary) !important;
+    color: #fff !important;
+    border-color: var(--primary) !important;
+}
+/* 順序：前 5 個欄位（含類目名稱）→ 星期篩選 → 其餘 */
+html body .filters > :nth-child(-n+5) { order: 1; }
+html body .filters > .weekday-filter { order: 2; }
+html body .filters > :nth-child(n+6):not(.weekday-filter) { order: 3; }
+@media (max-width: 900px) {
+    html body .filters .weekday-filter { grid-column: 1 / -1 !important; grid-row: 3 !important; }
+    html body .filters .form-group:nth-child(4) { grid-row: 4 !important; }
+    html body .filters .form-group:nth-child(6) { grid-row: 5 !important; }
+    html body .filters .form-group:nth-child(7) { grid-row: 6 !important; }
+}
+
+/* 上方卡片只剩「一週支出＋本月預算」：撐滿卡片寬度、拿掉多餘上緣 */
+html body .header-top-row .stats-bar .stat-group .row1 > span { flex: 1 1 100%; width: 100%; min-width: 0; }
+html body .header-top-row .stats-bar .stat-group .tp-wrap { margin-top: 0 !important; }
 </style>
 </body>
 </html>
