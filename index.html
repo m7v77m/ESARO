@@ -7374,5 +7374,16 @@ html body .summary-card .actions-group .selected-stats {
     flex-shrink: 1 !important;
 }
 </style>
+<style id="menu-align-v1">
+/* 檔案／檢視／維護：三顆按鈕（含點下去的奶茶色框）左右縮到跟下面卡片的邊線對齊，
+   三顆之間的空隙 = 下面兩張卡片之間的空隙（10px），高度不變 */
+@media (max-width: 768px) {
+    html body .header-top-row .menu-bar {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        column-gap: 10px !important;
+    }
+}
+</style>
 </body>
 </html>
