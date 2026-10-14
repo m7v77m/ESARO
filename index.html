@@ -5339,51 +5339,60 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
             return s + '～' + e;
         }
 
-        function renderRankingAnalysis(records) {
-            const period = rankPeriodLabel();
-            const tAll = document.getElementById('rank-title-all');
-            const tFood = document.getElementById('rank-title-food');
-            if (tAll) tAll.textContent = '🏆 ' + period + '前10名綜合消費支出';
-            if (tFood) tFood.textContent = '🍽️ ' + period + '前10名飲食消費地區';
+       /* =====================================================================
+   👑 世紀大合體完美版：消費排行（金額自動折抵，且消費筆數不被補助灌水！）
+   ===================================================================== */
+    function renderRankingAnalysis(records) {
+    const period = rankPeriodLabel();
+    const tAll = document.getElementById('rank-title-all');
+    const tFood = document.getElementById('rank-title-food');
+    if (tAll) tAll.textContent = '🏆 ' + period + '前10名綜合消費支出';
+    if (tFood) tFood.textContent = '🍽️ ' + period + '前10名飲食消費地區';
 
-            // 依指定欄位（類目 或 消費地區）加總「支出」，取金額最大的前10名
-            const fill = (list, keyFn, bodyId, noteId, emptyMsg, incomeOk) => {
-                const body = document.getElementById(bodyId);
-                const note = document.getElementById(noteId);
-                if (!body) return;
-                const map = {};
-                let blank = 0;
-                (list || []).forEach(r => {
-                    // 支出為負、收入為正，同一項目直接相加＝淨額（例：-435 + 100 = -335）
-                    // 收入只算「飲食」類目（補助餐費等），其他類目維持純支出
-                    if (r.type !== 'expense' && !(r.type === 'income' && incomeOk && incomeOk(r))) return;
-                    const k = (keyFn(r) || '').trim();
-                    if (!k) { blank++; return; }
-                    if (!map[k]) map[k] = { sum: 0, count: 0 };
-                    map[k].sum += parseFloat(r.price) || 0;
-                    map[k].count += 1;
-                });
-                const rows = Object.keys(map).map(k => ({ name: k, sum: map[k].sum, count: map[k].count }))
-                    .sort((a, b) => Math.abs(b.sum) - Math.abs(a.sum) || b.count - a.count).slice(0, 10);
-                if (rows.length === 0) {
-                    body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">' + emptyMsg + '</td></tr>';
-                } else {
-                    const medals = ['🥇', '🥈', '🥉'];
-                    let totalSum = 0, totalCnt = 0;
-                    let html = rows.map((d, i) => {
-                        totalSum += d.sum; totalCnt += d.count;
-                        return `<tr><td>${medals[i] || (i + 1)}</td><td style="font-weight:600;">${d.name}</td><td style="color:${d.sum > 0 ? 'var(--income-color)' : 'var(--expense-color)'};font-weight:700;">$${d.sum.toLocaleString()}</td><td>${d.count}</td></tr>`;
-                    }).join('');
-                    html += `<tr class="total-row"><td colspan="2" style="font-weight:700;">前${rows.length}名合計</td><td style="color:${totalSum > 0 ? 'var(--income-color)' : 'var(--expense-color)'};font-weight:700;">$${totalSum.toLocaleString()}</td><td style="font-weight:700;">${totalCnt}</td></tr>`;
-                    body.innerHTML = html;
-                }
-                if (note) note.textContent = (noteId === 'rank-note-food' && blank > 0) ? `另有 ${blank} 筆飲食收支未填「消費地區」，未列入排行` : '';
-            };
-            const all = records || [];
-            const isFood = r => String(r.category || '').includes('飲食');
-            fill(all, r => r.category, 'stat-rank-all-body', 'rank-note-all', '尚無支出資料', isFood);
-            fill(all.filter(r => String(r.category || '').includes('飲食')), r => r.region, 'stat-rank-food-body', 'rank-note-food', '尚無資料（新增紀錄時請填「消費地區」）', () => true);
+    // 依指定欄位（類目 或 消費地區）加總「支出」，取金額最大的前10名
+    const fill = (list, keyFn, bodyId, noteId, emptyMsg, incomeOk) => {
+        const body = document.getElementById(bodyId);
+        const note = document.getElementById(noteId);
+        if (!body) return;
+        const map = {};
+        let blank = 0;
+        (list || []).forEach(r => {
+            // 💡 沿用大師兄邏輯：只允許支出，以及符合特定類目（飲食）的收入進來相加
+            if (r.type !== 'expense' && !(r.type === 'income' && incomeOk && incomeOk(r))) return;
+            const k = (keyFn(r) || '').trim();
+            if (!k) { if (r.type === 'expense') blank++; return; }
+            if (!map[k]) map[k] = { sum: 0, count: 0 };
+            map[k].sum += parseFloat(r.price) || 0;
+            
+            // 💡 調皮熊貼心大優化：只有真正的「純支出（消費）」才會增加排行筆數！
+            // 收入（餐費補助）只在上面默默扣錢，絕對不給你的 130 筆消費次數灌水！
+            if (r.type === 'expense') {
+                map[k].count += 1;
+            }
+        });
+        const rows = Object.keys(map).map(k => ({ name: k, sum: map[k].sum, count: map[k].count }))
+            .sort((a, b) => Math.abs(b.sum) - Math.abs(a.sum) || b.count - a.count).slice(0, 10);
+        if (rows.length === 0) {
+            body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">' + emptyMsg + '</td></tr>';
+        } else {
+            const medals = ['🥇', '🥈', '🥉'];
+            let totalSum = 0, totalCnt = 0;
+            let html = rows.map((d, i) => {
+                totalSum += d.sum; totalCnt += d.count;
+                // 💡 沿用大師兄的色彩美學：加完變正數顯示抹茶綠，負數顯示焦糖色
+                return `<tr><td>${medals[i] || (i + 1)}</td><td style="font-weight:600;">${d.name}</td><td style="color:${d.sum > 0 ? 'var(--income-color)' : 'var(--expense-color)'};font-weight:700;">$${d.sum.toLocaleString()}</td><td>${d.count}</td></tr>`;
+            }).join('');
+            html += `<tr class="total-row"><td colspan="2" style="font-weight:700;">前${rows.length}名合計</td><td style="color:${totalSum > 0 ? 'var(--income-color)' : 'var(--expense-color)'};font-weight:700;">$${totalSum.toLocaleString()}</td><td style="font-weight:700;">${totalCnt}</td></tr>`;
+            body.innerHTML = html;
         }
+        if (note) note.textContent = (noteId === 'rank-note-food' && blank > 0) ? `另有 ${blank} 筆飲食收支未填「消費地區」，未列入排行` : '';
+    };
+    const all = records || window.lastFilteredRecords || state.records || [];
+    const isFood = r => String(r.category || '').includes('飲食');
+    fill(all, r => r.category, 'stat-rank-all-body', 'rank-note-all', '尚無支出資料', isFood);
+    fill(all.filter(r => String(r.category || '').includes('飲食')), r => r.region, 'stat-rank-food-body', 'rank-note-food', '尚無資料（新增紀錄時請填「消費地區」）', () => true);
+}
+
 
         function renderMemberAnalysis(records) {
             const body = document.getElementById('stat-member-analysis-body');
