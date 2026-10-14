@@ -2889,6 +2889,8 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                     <div class="menu-item">
                       檔案
                         <div class="dropdown">
+                            <a href="#" id="menuCloud" onclick="cloudMenuClick(event)">☁️ 雲端同步：點此登入</a>
+                            <div class="divider"></div>
                             <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importJSON(event)">
                             <a href="#" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-file-import"></i> 匯入全備份 JSON</a>
                             <a href="#" onclick="exportJSON(event)"><i class="fa-solid fa-file-export"></i> 匯出全備份 JSON</a>
@@ -3642,57 +3644,14 @@ async function init() {
     resetFormDateTime();
     initYearSelect();
 
-    // 1. 嘗試從 Supabase 雲端下載最新資料
-    try {
-        const { data, error } = await supabaseClient
-            .from('ledger_backup')
-            .select('content')
-            .eq('id', 1)
-            .single();
-
-        if (error) {
-            console.warn('雲端讀取失敗或無資料，嘗試讀取本機快取:', error.message);
-            loadLocalData();
-        } else if (data && data.content) {
-            const parsed = data.content;
-            let __ls = null;
-            try { __ls = JSON.parse(localStorage.getItem('familyAccountBook') || 'null'); } catch (e) { __ls = null; }
-            if (__ls && (__ls._savedAt || 0) > (parsed._savedAt || 0)) {
-                // 本機的資料比雲端新（例如上次存檔後雲端還沒上傳完）：用本機，並補傳雲端，避免舊資料蓋掉新資料
-                console.warn('本機資料比雲端新，改用本機並重新上傳');
-                loadLocalData();
-                setTimeout(() => { try { saveData(); } catch (e) {} }, 1500);
-            } else {
-            console.log('成功從 Supabase 雲端載入資料！');
-            state.accounts = parsed.accounts || state.accounts;
-            state.categories = parsed.categories || state.categories;
-            state.targets = parsed.targets || state.targets;
-            state.records = parsed.records || [];
-            state.assetRecords = parsed.assetRecords || [];
-            if (parsed.budgets) state.budgets = parsed.budgets;
-            if (Array.isArray(parsed.accountAdjustments)) state.accountAdjustments = parsed.accountAdjustments;
-            if (Array.isArray(parsed.quickItems)) state.quickItems = parsed.quickItems;
-            if (parsed.accountDetails && Array.isArray(parsed.accountDetails)) {
-                state.accountDetails = parsed.accountDetails;
-            }
-            if (Array.isArray(parsed.accountAdjustments)) state.accountAdjustments = parsed.accountAdjustments;
-            // 同步更新本機快取
-            localStorage.setItem('familyAccountBook', JSON.stringify(state));
-            }
-        } else {
-            loadLocalData();
-        }
-    } catch (err) {
-        console.error('雲端連線異常，切換至本機備份:', err);
-        loadLocalData();
-    }
-
-    // 2. 渲染頁面與監聽事件
+    // 先用這台裝置的資料，畫面立刻出來；雲端登入／同步在背景進行
+    loadLocalData();
     refreshDropdownsAndTags();
     renderData();
     renderAccountBalances();
     if (typeof renderAssetData === 'function') renderAssetData();
     window.addEventListener('scroll', handleFloatingToggleScroll);
+    try { if (typeof cloudBoot === 'function') await cloudBoot(); } catch (err) { console.error('雲端同步啟動失敗:', err); }
 }
 
 // 備用：讀取本機 localStorage 的函式
@@ -4070,7 +4029,7 @@ function loadLocalData() {
 
         function deleteAll() {
             if (!state.records.length && !state.assetRecords.length) return alert('無任何紀錄');
-            if (confirm('⚠️ 確定刪除全部帳目與資產紀錄？此操作無法復原！')) {
+            if (confirm('⚠️ 確定刪除全部帳目與資產紀錄？此操作無法復原！\n（若已登入雲端同步，雲端的資料也會一起被清空）')) {
                 state.records = [];
                 state.assetRecords = [];
                 cancelEdit();
@@ -5449,22 +5408,8 @@ async function saveData() {
   state._savedAt = Date.now();
   localStorage.setItem('familyAccountBook', JSON.stringify(state));
   if (typeof renderAccountBalances === "function") { try { renderAccountBalances(); } catch(e){} }
-  // 雲端同步（非同步，不阻塞）
-  (async () => {
-  try {
-    const { data, error } = await supabaseClient
-      .from('ledger_backup')
-      .upsert([{ id: 1, content: state }]);
-
-    if (error) {
-      console.error('Supabase 雲端同步失敗:', error.message);
-    } else {
-      console.log('Supabase 雲端同步成功！');
-    }
-  } catch (err) {
-    console.error('連線異常:', err);
-  }
-  })();
+  // 雲端同步（登入後才會同步；非同步，不阻塞）
+  if (typeof cloudPushSoon === 'function') cloudPushSoon();
 }
         async function exportJSON(event) {
             if (event && typeof event.preventDefault === 'function') event.preventDefault();
@@ -5605,7 +5550,7 @@ async function saveData() {
         }
 
         function createNewFile() {
-            if (confirm('確定開新檔案？將清除目前所有資料。')) {
+            if (confirm('確定開新檔案？將清除目前所有資料。\n（若已登入雲端同步，雲端的資料也會一起被清空！）')) {
                 cancelEdit();
                 state = {
                     accounts: ['郵局', '銀行', '押金', '現金', '錢包', '儲值'],
@@ -6871,7 +6816,7 @@ async function saveData() {
 
     /* 日期框本身設成不接收點擊，改用座標判斷「點到哪一個日期框」，連之後才產生的編輯列日期框也適用 */
     document.addEventListener('click', function(e){
-        if (e.target.closest && e.target.closest('#dpOverlay')) return;
+        if (e.target.closest && e.target.closest('#dpOverlay, #cloudLoginOverlay')) return;
         const list = document.querySelectorAll('input[type="date"]');
         for (const inp of list){
             if (inp.disabled) continue;
@@ -7398,5 +7343,215 @@ html body .summary-card .actions-group .selected-stats {
     }
 }
 </style>
+<script id="cloud-sync">
+/* ☁️ 雲端同步（Supabase 登入版）：登入後手機／電腦自動同步，沒登入就只存在這台裝置 */
+(function cloudSync(){
+  const LS_SYNC = 'ledgerLastSynced';
+  const LS_PREV = 'familyAccountBook_beforeCloudPull';
+  let session = null, cloudReady = false, pushTimer = null, pushing = false, pendingPush = false, reconciling = null;
+  const $ = id => document.getElementById(id);
+
+  document.head.insertAdjacentHTML('beforeend', '<style id="cloud-sync-css">' +
+    '#cloudLoginOverlay{position:fixed;inset:0;z-index:100001;display:none;align-items:center;justify-content:center;background:rgba(74,55,40,.45);backdrop-filter:blur(4px);padding:16px;box-sizing:border-box}' +
+    '#cloudLoginOverlay.open{display:flex}' +
+    '#cloudLoginCard{width:min(360px,100%);background:#FFF8EB;border:1px solid #D4B896;border-radius:24px;box-shadow:0 14px 40px rgba(74,55,40,.28);padding:22px 20px 18px;color:#4A3728;box-sizing:border-box;text-align:center}' +
+    '#cloudLoginCard h3{margin:0 0 4px;font-size:1.1rem;color:#5C4033}' +
+    '#cloudLoginCard .cl-sub{font-size:.8rem;color:#7A5F4B;margin-bottom:14px;line-height:1.5}' +
+    '#cloudLoginCard input{display:block;width:100%;height:42px;margin:0 0 10px;padding:0 14px;border:1.5px solid #E8D5B0;border-radius:21px;background:#FFFEF7;color:#4A3728;font-size:16px;box-sizing:border-box}' +
+    '#cloudLoginCard input:focus{outline:2px solid #8fa382;border-color:transparent}' +
+    '#cloudLoginCard .cl-err{min-height:18px;font-size:.78rem;color:#C17A4E;margin-bottom:6px}' +
+    '#cloudLoginCard .cl-btn{width:100%;height:42px;border:none;border-radius:21px;background:#8fa382;color:#fff;font-size:15px;font-weight:700;cursor:pointer}' +
+    '#cloudLoginCard .cl-btn:disabled{opacity:.6}' +
+    '#cloudLoginCard .cl-skip{margin-top:10px;background:none;border:none;color:#7A5F4B;font-size:.8rem;cursor:pointer;text-decoration:underline}' +
+    '#cloudToast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);z-index:100002;background:#5C4033;color:#FFF8EB;padding:9px 18px;border-radius:20px;font-size:.82rem;opacity:0;pointer-events:none;transition:.25s;max-width:88vw;text-align:center}' +
+    '#cloudToast.show{opacity:.95;transform:translateX(-50%) translateY(0)}' +
+    '</style>');
+  document.body.insertAdjacentHTML('beforeend',
+    '<div id="cloudLoginOverlay"><form id="cloudLoginForm" autocomplete="on"><div id="cloudLoginCard">' +
+    '<h3>☁️ 雲端同步登入</h3>' +
+    '<div class="cl-sub">登入後，手機和電腦的帳本會自動同步 🐻<br>不登入也可以用，資料只會存在這台裝置</div>' +
+    '<input type="email" id="cloudEmail" name="username" autocomplete="username" placeholder="Email" required>' +
+    '<input type="password" id="cloudPass" name="password" autocomplete="current-password" placeholder="密碼" required>' +
+    '<div class="cl-err" id="cloudErr"></div>' +
+    '<button type="submit" class="cl-btn" id="cloudLoginBtn">登入</button>' +
+    '<button type="button" class="cl-skip" id="cloudSkipBtn">先不登入（只存在這台裝置）</button>' +
+    '</div></form></div>');
+
+  function toast(msg, ms){
+    let t = $('cloudToast');
+    if (!t) { document.body.insertAdjacentHTML('beforeend', '<div id="cloudToast"></div>'); t = $('cloudToast'); }
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms || 3500);
+  }
+  const hasData = s => ((s.records || []).length + (s.assetRecords || []).length) > 0;
+  const getLast = () => parseInt(localStorage.getItem(LS_SYNC), 10) || 0;
+  const setLast = v => { try { localStorage.setItem(LS_SYNC, String(v || 0)); } catch (e) {} };
+  const setMenu = txt => { const a = $('menuCloud'); if (a) a.innerHTML = txt; };
+  const OK_LABEL = '☁️ 已連線同步中（點此登出）';
+  function fmt(ts){
+    if (!ts) return '未知時間';
+    const d = new Date(ts), p = n => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  async function fetchStamp(){
+    const { data, error } = await supabaseClient.from('ledger_backup')
+      .select('saved:content->>_savedAt').eq('user_id', session.user.id).maybeSingle();
+    if (error) throw error;
+    return data ? (parseInt(data.saved, 10) || 0) : null;   // null = 雲端還沒有資料
+  }
+  async function fetchContent(){
+    const { data, error } = await supabaseClient.from('ledger_backup')
+      .select('content').eq('user_id', session.user.id).maybeSingle();
+    if (error) throw error;
+    return data ? data.content : null;
+  }
+  async function upload(){
+    if (!state._savedAt) state._savedAt = Date.now();
+    const { error } = await supabaseClient.from('ledger_backup')
+      .upsert({ user_id: session.user.id, content: state, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+    if (error) throw error;
+    try { localStorage.setItem('familyAccountBook', JSON.stringify(state)); } catch (e) {}
+    setLast(state._savedAt);
+  }
+  function applyCloud(c){
+    try { localStorage.setItem(LS_PREV, localStorage.getItem('familyAccountBook') || ''); } catch (e) {}   // 被覆蓋前先留一份舊的在本機
+    state.accounts = c.accounts || state.accounts;
+    state.categories = c.categories || state.categories;
+    state.targets = c.targets || state.targets;
+    state.records = c.records || [];
+    state.assetRecords = c.assetRecords || [];
+    state.budgets = c.budgets || { total: 0, cats: {} };
+    state.accountAdjustments = Array.isArray(c.accountAdjustments) ? c.accountAdjustments : [];
+    state.quickItems = Array.isArray(c.quickItems) ? c.quickItems : [];
+    if (Array.isArray(c.accountDetails)) state.accountDetails = c.accountDetails;
+    state._savedAt = c._savedAt || 0;
+    if (typeof syncAccountsFromDetails === 'function') syncAccountsFromDetails();
+    try { localStorage.setItem('familyAccountBook', JSON.stringify(state)); } catch (e) {}
+    setLast(state._savedAt);
+    refreshDropdownsAndTags();
+    renderData(true);
+    if (typeof renderAssetData === 'function') renderAssetData();
+    renderAccountBalances();
+  }
+
+  async function reconcileInner(){
+    if (!session) return;
+    const stamp = await fetchStamp();
+    const localAt = state._savedAt || 0, last = getLast();
+    if (stamp === null) { await upload(); return; }                       // 雲端是空的：把這台的資料放上去
+    if (stamp === localAt) { setLast(localAt); return; }                  // 兩邊一樣
+    if (stamp > localAt && localAt <= last && (localAt > 0 || !hasData(state))) {   // 這台沒有未同步的修改：直接拿雲端的
+      applyCloud(await fetchContent()); toast('☁️ 已載入雲端最新資料'); return;
+    }
+    if (localAt > stamp && stamp <= last) { await upload(); return; }     // 雲端沒人動過：上傳這台的新資料
+    // 兩邊都有各自的修改 → 讓使用者選
+    const c = await fetchContent();
+    if (!c) { await upload(); return; }
+    if (!hasData(state)) { applyCloud(c); toast('☁️ 已載入雲端資料'); return; }
+    const useCloud = confirm(
+      '雲端和這台裝置的帳本內容不一樣，要用哪一份？\n\n' +
+      '☁️ 雲端：' + (c.records || []).length + ' 筆紀錄（' + fmt(c._savedAt) + '）\n' +
+      '📱 這台：' + (state.records || []).length + ' 筆紀錄（' + fmt(localAt) + '）\n\n' +
+      '按「確定」＝用【雲端】的（這台會被取代）\n按「取消」＝用【這台】的（雲端會被取代）');
+    if (useCloud) { applyCloud(c); toast('☁️ 已改用雲端資料'); }
+    else {
+      state._savedAt = Math.max(Date.now(), stamp + 1);
+      await upload(); toast('☁️ 已用這台的資料更新雲端');
+    }
+  }
+  function reconcile(){
+    if (reconciling) return reconciling;
+    reconciling = (async () => { try { await reconcileInner(); } finally { reconciling = null; } })();
+    return reconciling;
+  }
+
+  async function doPush(){
+    if (!session) return;
+    if (pushing) { pendingPush = true; return; }
+    pushing = true;
+    try {
+      const stamp = await fetchStamp();
+      if (stamp !== null && stamp > getLast() && stamp !== state._savedAt) await reconcile();   // 另一台裝置先改過了
+      else await upload();
+      setMenu(OK_LABEL);
+    } catch (e) {
+      console.error('雲端同步失敗', e);
+      toast('☁️ 雲端同步失敗，資料已先存在這台裝置');
+      setMenu('☁️ 同步失敗（點此登出／重新登入）');
+    } finally {
+      pushing = false;
+      if (pendingPush) { pendingPush = false; window.cloudPushSoon(); }
+    }
+  }
+  window.cloudPushSoon = function(){
+    if (!session || !cloudReady) return;
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(doPush, 800);
+  };
+
+  function showLogin(msg){
+    $('cloudErr').textContent = msg || '';
+    $('cloudLoginOverlay').classList.add('open');
+    try { $('cloudEmail').focus(); } catch (e) {}
+  }
+  function hideLogin(){ $('cloudLoginOverlay').classList.remove('open'); }
+  async function submitLogin(ev){
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const email = ($('cloudEmail').value || '').trim(), password = $('cloudPass').value || '';
+    if (!email || !password) { $('cloudErr').textContent = '請輸入 Email 和密碼'; return; }
+    const btn = $('cloudLoginBtn'); btn.disabled = true; btn.textContent = '登入中…'; $('cloudErr').textContent = '';
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      session = data.session; cloudReady = true;
+      try { sessionStorage.removeItem('ledgerSkipLogin'); } catch (e) {}
+      $('cloudPass').value = '';
+      hideLogin();
+      setMenu('☁️ 同步中…');
+      try { await reconcile(); setMenu(OK_LABEL); toast('☁️ 登入成功，雲端同步已開啟'); }
+      catch (e) { console.error(e); setMenu('☁️ 同步失敗（點此登出／重新登入）'); toast('☁️ 登入成功，但同步失敗，稍後會再試'); }
+    } catch (e) {
+      const m = String((e && e.message) || e);
+      $('cloudErr').textContent = /invalid login/i.test(m) ? 'Email 或密碼不對，再試一次 🐻' : ('登入失敗：' + m);
+    } finally { btn.disabled = false; btn.textContent = '登入'; }
+  }
+  $('cloudLoginForm').addEventListener('submit', submitLogin);
+  $('cloudSkipBtn').addEventListener('click', () => { try { sessionStorage.setItem('ledgerSkipLogin', '1'); } catch (e) {} hideLogin(); });
+
+  window.cloudMenuClick = async function(ev){
+    if (ev && ev.preventDefault) ev.preventDefault();
+    if (session) {
+      if (confirm('要登出雲端同步嗎？\n登出後資料仍保留在這台裝置，只是不會再同步。')) {
+        try { await supabaseClient.auth.signOut(); } catch (e) {}
+        session = null; cloudReady = false;
+        setMenu('☁️ 雲端同步：點此登入');
+        toast('已登出雲端同步');
+      }
+    } else showLogin();
+  };
+
+  window.cloudBoot = async function(){
+    const { data } = await supabaseClient.auth.getSession();
+    session = (data && data.session) || null;
+    supabaseClient.auth.onAuthStateChange((evt, s) => { session = s || null; });
+    if (session) {
+      cloudReady = true; setMenu('☁️ 同步中…');
+      try { await reconcile(); setMenu(OK_LABEL); }
+      catch (e) { console.error(e); setMenu('☁️ 同步失敗（點此登出／重新登入）'); toast('☁️ 雲端同步失敗，先用這台裝置的資料'); }
+    } else {
+      setMenu('☁️ 雲端同步：點此登入');
+      let skip = false; try { skip = !!sessionStorage.getItem('ledgerSkipLogin'); } catch (e) {}
+      if (!skip) showLogin();
+    }
+  };
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && session && cloudReady) {
+      reconcile().then(() => setMenu(OK_LABEL)).catch(e => console.error('回到畫面時同步失敗', e));
+    }
+  });
+})();
+</script>
 </body>
 </html>
