@@ -3665,6 +3665,7 @@ function loadLocalData() {
             state.targets = parsed.targets || state.targets;
             state.records = parsed.records || [];
             state.assetRecords = parsed.assetRecords || [];
+            state._savedAt = parsed._savedAt || 0;   // 補回上次存檔的時間戳，雲端同步靠它判斷誰比較新
             if (parsed.budgets) state.budgets = parsed.budgets;
             if (Array.isArray(parsed.accountAdjustments)) state.accountAdjustments = parsed.accountAdjustments;
             if (Array.isArray(parsed.quickItems)) state.quickItems = parsed.quickItems;
@@ -7359,6 +7360,8 @@ html body .summary-card .actions-group .selected-stats {
     '#cloudLoginCard .cl-sub{font-size:.8rem;color:#7A5F4B;margin-bottom:14px;line-height:1.5}' +
     '#cloudLoginCard input{display:block;width:100%;height:42px;margin:0 0 10px;padding:0 14px;border:1.5px solid #E8D5B0;border-radius:21px;background:#FFFEF7;color:#4A3728;font-size:16px;box-sizing:border-box}' +
     '#cloudLoginCard input:focus{outline:2px solid #8fa382;border-color:transparent}' +
+    '#cloudLoginCard .cl-show{display:flex;align-items:center;justify-content:flex-start;gap:6px;margin:-2px 0 8px 6px;font-size:.8rem;color:#7A5F4B;cursor:pointer;text-align:left}' +
+    '#cloudLoginCard .cl-show input{display:inline-block;width:16px;height:16px;margin:0;padding:0;border-radius:4px;accent-color:#8fa382}' +
     '#cloudLoginCard .cl-err{min-height:18px;font-size:.78rem;color:#C17A4E;margin-bottom:6px}' +
     '#cloudLoginCard .cl-btn{width:100%;height:42px;border:none;border-radius:21px;background:#8fa382;color:#fff;font-size:15px;font-weight:700;cursor:pointer}' +
     '#cloudLoginCard .cl-btn:disabled{opacity:.6}' +
@@ -7372,6 +7375,7 @@ html body .summary-card .actions-group .selected-stats {
     '<div class="cl-sub">登入後，手機和電腦的帳本會自動同步 🐻<br>不登入也可以用，資料只會存在這台裝置</div>' +
     '<input type="email" id="cloudEmail" name="username" autocomplete="username" placeholder="Email" required>' +
     '<input type="password" id="cloudPass" name="password" autocomplete="current-password" placeholder="密碼" required>' +
+    '<label class="cl-show"><input type="checkbox" id="cloudShowPw"> 顯示密碼（確認大小寫）</label>' +
     '<div class="cl-err" id="cloudErr"></div>' +
     '<button type="submit" class="cl-btn" id="cloudLoginBtn">登入</button>' +
     '<button type="button" class="cl-skip" id="cloudSkipBtn">先不登入（只存在這台裝置）</button>' +
@@ -7506,7 +7510,7 @@ html body .summary-card .actions-group .selected-stats {
       if (error) throw error;
       session = data.session; cloudReady = true;
       try { sessionStorage.removeItem('ledgerSkipLogin'); } catch (e) {}
-      $('cloudPass').value = '';
+      $('cloudPass').value = ''; $('cloudPass').type = 'password'; $('cloudShowPw').checked = false;
       hideLogin();
       setMenu('☁️ 同步中…');
       try { await reconcile(); setMenu(OK_LABEL); toast('☁️ 登入成功，雲端同步已開啟'); }
@@ -7517,6 +7521,7 @@ html body .summary-card .actions-group .selected-stats {
     } finally { btn.disabled = false; btn.textContent = '登入'; }
   }
   $('cloudLoginForm').addEventListener('submit', submitLogin);
+  $('cloudShowPw').addEventListener('change', e => { $('cloudPass').type = e.target.checked ? 'text' : 'password'; });
   $('cloudSkipBtn').addEventListener('click', () => { try { sessionStorage.setItem('ledgerSkipLogin', '1'); } catch (e) {} hideLogin(); });
 
   window.cloudMenuClick = async function(ev){
