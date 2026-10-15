@@ -7074,6 +7074,15 @@ async function saveData() {
         if (!Array.isArray(q)) q = [];
         q.push({ syncId: 'exp-' + r.id, name: name, start: date, store: (r.location || '').trim() });
         localStorage.setItem(KEY, JSON.stringify(q));
+        // 同時丟一份到雲端佇列，讓別台裝置上的「綜合紀錄」也收得到（需已登入雲端同步）
+        try {
+            supabaseClient.auth.getSession().then(({ data }) => {
+                const s = data && data.session; if (!s) return;
+                return supabaseClient.from('combined_item_queue').upsert(
+                    { user_id: s.user.id, sync_id: 'exp-' + r.id, name: name, start_date: date, store: (r.location || '').trim() },
+                    { onConflict: 'user_id,sync_id' });
+            }).catch(() => {});
+        } catch (e) {}
     };
 
     // 啟動後補畫一次
