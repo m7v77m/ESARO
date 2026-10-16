@@ -7400,7 +7400,7 @@ html body .summary-card .actions-group .selected-stats {
   const getLast = () => parseInt(localStorage.getItem(LS_SYNC), 10) || 0;
   const setLast = v => { try { localStorage.setItem(LS_SYNC, String(v || 0)); } catch (e) {} };
   const setMenu = txt => { const a = $('menuCloud'); if (a) a.innerHTML = txt; };
-  const OK_LABEL = '☁️ 已連線同步中．．．（ 點此登出 ）';
+  const OK_LABEL = '☁️ 已連線同步 ing ～ &nbsp;&nbsp;（ 點此登出 ）';
   function fmt(ts){
     if (!ts) return '未知時間';
     const d = new Date(ts), p = n => String(n).padStart(2, '0');
