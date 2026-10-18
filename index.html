@@ -6328,8 +6328,9 @@ async function saveData() {
     }
 
     .month-links {
-        width: 100% !important;
-        flex: 1 1 100% !important;
+        @media (max-width: 768px)
+        width: 120% !important;
+        flex: 1 1 120% !important;
         gap: 5px !important;
         overflow: visible !important;
     }
