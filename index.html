@@ -3068,7 +3068,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                 <datalist id="locationHistory"></datalist>
                             </div>
                             <div class="form-group"><label>📍 消費地區</label>
-                                <input type="text" id="region" list="regionHistory" placeholder="北屯區、西屯區、逢甲、.........">
+                                <input type="text" id="region" list="regionHistory" placeholder="北屯區、西屯區、南屯區、.........">
                                 <datalist id="regionHistory"></datalist>
                             </div>
                             <div class="form-group"><label>🔖 品項名稱 <span class="text-muted">(雙擊編輯)</span></label>
@@ -3145,8 +3145,8 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                 <div class="tp-box"><span class="tp-label">💸 今日支出</span><span id="todayExpense" class="tp-val text-expense">$0</span></div>
             </div>
                                 <div class="sc-line">
-                                    <div class="sc-row"><span>🪎 收入：<span id="totalIncome" class="text-income">0</span>&nbsp;&nbsp;</span><span>💸 支出：<span id="totalExpense" class="text-expense">0</span></span></div>
-                                    <div class="sc-row"><span>🏦 資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">0</span></span><span>📊 範圍結餘：<strong id="monthBalance">0</strong></span></div>
+                                    <div class="sc-row"><span>🪎 總計收入：<span id="totalIncome" class="text-income">0</span>&nbsp;</span><span>💸 總計支出：<span id="totalExpense" class="text-expense">0</span></span></div>
+                                    <div class="sc-row"><span>🏦 總計資產：<span id="totalAsset" style="color:var(--asset-color);font-weight:700;">0</span></span><span>📊 範圍結餘：<strong id="monthBalance">0</strong></span></div>
                                 </div>
                                 <div class="actions-group">
         <button class="btn-danger" style="padding:4px 9px !important;border-radius:var(--radius-full);border:none;font-weight:550;font-size:0.64rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
@@ -7567,5 +7567,33 @@ html body .summary-card .actions-group .selected-stats {
   });
 })();
 </script>
+<style id="v-month-grid">
+/* 快速篩選：月份＋清除，手機版左右兩端貼齊下方輸入框（7 欄等寬：第一排 1~7 月，第二排 8~12 月＋清除佔兩格） */
+@media screen and (max-width: 768px) {
+    html body #monthLinks {
+        display: grid !important;
+        grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        justify-content: stretch !important;
+        box-sizing: border-box !important;
+    }
+    html body #monthLinks a {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 4px 0 !important;
+        font-size: 15px !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+    html body #monthLinks a.clear-link {
+        grid-column: span 2 !important;
+        margin-left: 0 !important;
+        font-size: 14px !important;
+    }
+}
+</style>
 </body>
 </html>
