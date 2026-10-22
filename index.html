@@ -6614,7 +6614,7 @@ async function saveData() {
 .tp-empty { font-size:0.72rem; color:var(--text-secondary); text-align:center; padding:4px 0; }
 
 /* ===== 月預算 + 常用項目 ===== */
-.qa-wrap { margin-bottom:12px; padding:8px 10px; background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; }
+.qa-wrap { margin-Top:6px; margin-bottom:12px; padding:8px 10px; background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; }
 .qa-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
 .qa-title { font-size:0.8rem; font-weight:700; color:var(--text-primary); }
 .qa-mini { border:1px solid var(--border-color); background:#8fa382; color:#fff8eb; border-radius:999px; padding:3px 10px; font-size:0.68rem; font-weight:600; cursor:pointer; width:auto; margin:0 0 0 4px; }
@@ -7595,5 +7595,26 @@ html body .summary-card .actions-group .selected-stats {
     }
 }
 </style>
+<!-- 寶貝老公再度發威：讓時來運轉常用項目卡片上下完美對稱、絕不黏黏 -->
+<style>
+/* 🎯 1. 降伏常用項目大外殼：強制把它在手機版上的上方空白狠狠壓扁！ */
+html body .qa-wrap#quickBar {
+    margin-top: -2px !important;      /* 密技：用微小的負邊距，強制把常用項目大卡片往上方吸上去，消滅頂部空白！ */
+    margin-bottom: 10px !important;   /* 關鍵：下方留出 11px，讓卡片底線絕對不跟「發票核對」死死黏在一起！ */
+    padding-top: 6px !important;      /* 微調內襯墊，讓內部的小標籤與外框保持漂亮比例 */
+    padding-bottom: 6px !important;
+}
+
+/* 🎯 2. 確保常用項目這四個字跟按鈕之間維持最秀氣的間距 */
+html body .qa-wrap#quickBar .qa-head {
+    margin-bottom: 4px !important;
+}
+
+/* 🎯 3. 貼心雙重鎖死：確保下方的「發票核對」文字自帶舒服的行高，絕對不亂跑位 */
+html body #recordForm div style*="display:flex;align-items:center" {
+    margin-top: 4px !important;
+}
+</style>
+
 </body>
 </html>
