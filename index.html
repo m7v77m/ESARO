@@ -226,7 +226,7 @@
         }
         .stats-bar .actions-group .selected-stats {
             background: var(--bg-hover);
-            padding: 4px 13px;
+            padding: 5px 13px;
             border-radius: var(--radius-full);
             font-size: 0.78rem;
             border: 1px solid var(--border-color);
@@ -2724,7 +2724,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; box-sizin
             white-space: nowrap;
         }
 
-        /* 🐻 調皮熊終極大絕招：直接把 v12 版的最高特權踩扁！ 🐻 */
+        /* 🐻 終極大絕招：直接把 v12 版的最高特權踩扁！ 🐻 */
 div.account-balance-item.v12 {
     min-height: 58px !important;    /* 強制把高度限制從 97px 砍到 45px */
     padding: 3px 13px !important;   /* 強制把上下的空白 13px 壓扁成 3px */
@@ -2741,7 +2741,7 @@ div.account-balance-item.v12 .ab-balance-row {
     margin-top: 1px !important;
     margin-bottom: 1px !important;
 }
-/* 🐻 調皮熊大絕招：強行把「新增紀錄」按鈕踩扁扁！ 🐻 */
+/* 🐻 大絕招：強行把「新增紀錄」按鈕踩扁扁！ 🐻 */
 button#submitBtn.btn-primary {
     /* 💡 強制把上下的內邊距從 13px 壓縮到 4px，左右維持不變 */
     padding: 5px 20px !important;
@@ -2922,7 +2922,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                 </script>
 
                 <div class="stats-bar">
-    <!-- 💡 幫無尾熊把「今日收支框」縮扁扁的專屬控制樣式 -->
+    <!-- 💡 幫把「今日收支框」縮扁扁的專屬控制樣式 -->
     <style>
         .tp-today {
             gap: 10px !important;       /* 👈 縮小左邊跟右邊格子之間的間距 */
@@ -3151,7 +3151,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                 <div class="actions-group">
         <button class="btn-danger" style="padding:5px 9px !important;border-radius:var(--radius-full);border:1.5px dashed #D4B896;font-weight:550;font-size:0.64rem;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="deleteSelected()">刪除選取</button>
         <button class="btn-danger" style="padding:5px 9px !important;border-radius:var(--radius-full);border:1.5px dashed #D4B896;font-weight:550;font-size:0.64rem;background:#A05A3C;color:#fff;cursor:pointer;" onclick="deleteAll()">全部刪除</button>
-        <div class="selected-stats" style="padding:5px 9px !important;align-items: center;border:1.5px dashed #D4B896 !important;">
+        <div class="selected-stats" style="padding:5.8px 9px !important;align-items: center;border:1.5px dashed #D4B896 !important;">
             已勾選&nbsp; <strong id="selectedCount">0</strong> &nbsp;筆，小計：<strong id="selectedTotal">$0</strong>
         </div>
     </div>
@@ -3214,7 +3214,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         <div id="tab-assets" class="tab-content">
                             <div class="stat-section" style="margin-bottom:13px;">
                                
-                                                                <!-- 🐻 無尾熊的第三個 SHEET「資產管理」一鍵升級文青膠囊全功能表單（完美手機適應版） 🐻 -->
+                                                                <!-- 🐻 的第三個 SHEET「資產管理」一鍵升級文青膠囊全功能表單（完美手機適應版） 🐻 -->
                                 <form id="assetForm" onsubmit="handleAssetSubmit(event)" style="display: grid !important; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important; gap: 12px !important; align-items: end !important; padding: 13px !important; background: var(--bg-hover) !important; border-radius: 13px !important; width: 100% !important; box-sizing: border-box !important;">
                                     
                                     <!-- 📅 紀錄日期（文青白色框＋莫蘭迪綠今天按鈕組合） -->
@@ -3444,7 +3444,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
     </div>
 
  <div id="budgetModal" class="text-edit-modal-overlay">
-    <!-- 💡 幫調皮熊和無尾熊微調了高度與圓角 -->
+    <!-- 💡 微調了高度與圓角 -->
     <style>
     
         .bd-set-row input[type="number"] {
@@ -4328,7 +4328,7 @@ function loadLocalData() {
             for (let i = 6; i >= 0; i--) {
                 const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
                 
-                // 🐻 調皮熊法術：在這裡幫月份、日期自動補零，並在週幾前面補上小空格！ 🐻
+                // 🐻 法術：在這裡幫月份、日期自動補零，並在週幾前面補上小空格！ 🐻
                 const mStr = String(d.getMonth() + 1).padStart(2, '0');
                 const dStr = String(d.getDate()).padStart(2, '0');
                 const customLabel = mStr + '/' + dStr + ' (' + wk[d.getDay()] + ')';
@@ -5324,7 +5324,7 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
             if (!map[k]) map[k] = { sum: 0, count: 0 };
             map[k].sum += parseFloat(r.price) || 0;
             
-            // 💡 調皮熊貼心大優化：只有真正的「純支出（消費）」才會增加排行筆數！
+            // 💡 貼心大優化：只有真正的「純支出（消費）」才會增加排行筆數！
             // 收入（餐費補助）只在上面默默扣錢，絕對不給你的 130 筆消費次數灌水！
             if (r.type === 'expense') {
                 map[k].count += 1;
@@ -5915,7 +5915,7 @@ async function saveData() {
 <!-- 🐻 拉拉熊浪漫飄落特效開始 🐻 -->
 <style>
 /* ========================================================
-   🧸 調皮熊特製：起始日期、結束日期框框高度完美對齊術
+   🧸 特製：起始日期、結束日期框框高度完美對齊術
    ======================================================== */
 /* 1. 鎖定起始與結束日期輸入框，強制把高度和內襯墊縮小，與右邊對齊 */
 #filterStartDate, 
@@ -7149,7 +7149,7 @@ async function saveData() {
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
 }
-/* 🐻 調皮熊特製：強行把「新增紀錄」的日期框框壓得跟下面一樣精緻扁扁術 🐻 */
+/* 🐻 強行把「新增紀錄」的日期框框壓得跟下面一樣精緻扁扁術 🐻 */
 /* 1. 鎖定新增紀錄的白色日期輸入框，強制把高度壓縮到 34px，內襯墊縮小，與下方格子齊平 */
 .left-panel .date-form-group .date-with-today input[type="date"] {
     height: 26px !important;       /* 強制減肥，如果想要更扁可以改 32px 喔！ */
@@ -7177,14 +7177,14 @@ async function saveData() {
     box-sizing: border-box !important;
 }
 
-/* 🐻 調皮熊特製：把明細列表的藍色勾勾強制變身莫蘭迪綠底（#8fa382）法術 🐻 */
-/* 1. 鎖定網頁裡所有的核取方塊，強制把原生的藍色底換成無尾熊最愛的綠色 */
+/* 🐻 特製：把明細列表的藍色勾勾強制變身莫蘭迪綠底（#8fa382）法術 🐻 */
+/* 1. 鎖定網頁裡所有的核取方塊，強制把原生的藍色底換成綠色 */
 input[type="checkbox"] {
     accent-color: #8fa382 !important; /* 核心魔法：一鍵將蘋果藍色底強制改成莫蘭迪綠底！ */
     cursor: pointer !important;
 }
 
-/* 2. 如果無尾熊希望這些勾勾在手機上稍微加大一點點、更好點選，可以順便啟用這兩行喔 */
+/* 2. 如果希望這些勾勾在手機上稍微加大一點點、更好點選，可以順便啟用這兩行喔 */
 @media (max-width: 900px) {
     input[type="checkbox"] {
         width: 16px !important;
@@ -7595,7 +7595,7 @@ html body .summary-card .actions-group .selected-stats {
     }
 }
 </style>
-<!-- 寶貝老公再度發威：讓時來運轉常用項目卡片上下完美對稱、絕不黏黏 -->
+<!-- 讓時來運轉常用項目卡片上下完美對稱、絕不黏黏 -->
 <style>
 /* 🎯 1. 降伏常用項目大外殼：強制把它在手機版上的上方空白狠狠壓扁！ */
 html body .qa-wrap#quickBar {
