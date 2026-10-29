@@ -2880,39 +2880,41 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
 #tab-account-ledger .lg-del { margin-left:4px; border:none; background:transparent; color:var(--expense-color); cursor:pointer; font-size:0.8rem; padding:0 2px; width:auto; }
 </style>
 <style id="pr-style">
-/* ===== 第八個 Sheet：薪資（全熊＋級距）===== */
+/* ===== 第八個 Sheet：薪資級距（全熊＋級距）===== */
 #tab-payroll { font-size: 15px; color: var(--text-primary); }
-#tab-payroll .pr-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+/* 垂直間距統一交給這裡：各區塊（按鈕列、月份列、卡片、文字…）之間一律 --pr-gap */
+#tab-payroll { --pr-gap: 10px; }
+#prRoot { display: flex; flex-direction: column; gap: var(--pr-gap); }
+#prRoot > * { margin: 0; }
+#tab-payroll .pr-nav { display: flex; align-items: center; gap: 8px; }
 #tab-payroll .pr-title { flex: 1; text-align: center; font-size: 19px; font-weight: 700; color: var(--primary-dark); }
-#tab-payroll .pr-sub { text-align: center; font-size: 13px; color: var(--text-secondary); margin: -4px 0 10px; line-height: 1.6; }
+#tab-payroll .pr-sub { text-align: center; font-size: 13px; color: var(--text-secondary); line-height: 1.2; }
 .pr-btn { border: 1.5px dashed var(--primary); background: var(--bg-card); color: var(--text-secondary); border-radius: 20px; padding: 7px 14px; font-size: 14px; font-family: inherit; cursor: pointer; white-space: nowrap; }
 .pr-btn:active { background: var(--bg-hover); }
 .pr-btn.on { background: var(--income-color); border-color: #6f8463; color: #fff; font-weight: 700; }
 .pr-btn.danger { color: #B5523F; border-color: #B5523F; }
 .pr-btn.small { padding: 4px 12px; font-size: 13px; }
 .pr-btn:disabled { opacity: .45; cursor: default; }
-.pr-seg { display: flex; gap: 8px; margin-bottom: 10px; }
+#tab-payroll .pr-nav .pr-btn { font-size: 24px; line-height: 1; padding: 6px 15px; }      /* ◀ ▶ 加大 */
+.pr-seg { display: flex; gap: 8px; }
 .pr-seg .pr-btn { flex: 1; }
-.pr-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-.pr-cell { background: var(--bg-input); border: 1.5px dashed var(--border-color); border-radius: 15px; padding: 8px 12px; min-width: 0; }
+.pr-sum { display: grid; grid-template-columns: 1fr 1fr; gap: var(--pr-gap); }
+.pr-cell { background: var(--bg-input); border: 1.5px dashed var(--border-color); border-radius: 15px; padding: 8px 10px; min-width: 0; text-align: center; }
 .pr-cell .l { font-size: 13px; color: var(--text-secondary); }
-.pr-cell .v { font-size: 19px; font-weight: 700; color: var(--primary-dark); word-break: break-all; }
-.pr-cell .v small { font-size: 13px; font-weight: 400; color: var(--text-muted); }
-.pr-cell.big { grid-column: 1 / -1; text-align: center; }
-.pr-cell.big .v { font-size: 30px; color: #617553; }
-.pr-cell.wide { grid-column: 1 / -1; }
+.pr-cell .v { font-size: 20px; font-weight: 700; color: var(--primary-dark); word-break: break-all; line-height: 1.3; }
+.pr-cell.main .v { color: #617553; }
 .pr-cell.warn .v { color: #B5523F; }
-.pr-tools { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 4px 0 12px; }
-.pr-week { border: 1.5px dashed var(--border-color); border-radius: 15px; margin-bottom: 10px; background: var(--bg-input); overflow: hidden; }
+.pr-tools { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.pr-week { border: 1.5px dashed var(--border-color); border-radius: 15px; background: var(--bg-input); overflow: hidden; }
 .pr-wh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 8px 12px; background: var(--primary-light); font-weight: 700; color: var(--primary-dark); }
 .pr-wh .pay { color: #617553; font-size: 17px; }
 .pr-day { display: grid; grid-template-columns: 62px 1fr auto; gap: 8px; align-items: center; padding: 8px 12px; min-height: 46px; border-top: 1px dashed var(--border-color); cursor: pointer; }
 .pr-day:active { background: var(--bg-hover); }
-.pr-day .dt { font-weight: 700; }
-.pr-day .dt small { font-weight: 400; color: var(--text-muted); margin-left: 2px; }
+.pr-day .dt { font-weight: 700; white-space: pre; }
+.pr-day .dt small { font-weight: 400; color: var(--text-muted); }
 .pr-day .co { min-width: 0; word-break: break-word; }
 .pr-day .co small { color: var(--text-muted); margin-left: 6px; }
-.pr-day .wg { font-weight: 700; text-align: right; }
+.pr-day .wg { font-weight: 700; text-align: right; white-space: nowrap; }
 .pr-day.off { color: var(--text-muted); }
 .pr-day.off .wg { font-weight: 400; }
 .pr-day.today { box-shadow: inset 3px 0 0 var(--primary); }
@@ -2923,22 +2925,24 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
 .pr-wf b { color: var(--text-primary); }
 .pr-wf .adj { color: #C17A4E; }
 .pr-wf .row2 { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 4px; }
-.pr-note { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; text-align: center; margin: 6px 0; }
-.pr-tier { background: var(--bg-input); border: 1.5px dashed var(--border-color); border-radius: 15px; padding: 8px 12px; margin-bottom: 10px; }
+.pr-note { font-size: 12.5px; color: var(--text-muted); line-height: 1.2; text-align: center; }
+.pr-tier { background: var(--bg-input); border: 1.5px dashed var(--border-color); border-radius: 15px; padding: 3.25px 12px 3px; }   /* 框線 → 文字（看得到的筆畫）上下各 10px */
 .pr-tier.cur { background: #E4EDD9; border-color: #6f8463; }
-.pr-tier .hd { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.pr-tier .hd { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 3px; }
 .pr-tier .hd b { font-size: 18px; color: var(--primary-dark); }
 .pr-tier .hd span { font-size: 13px; color: var(--text-secondary); }
 .pr-tier .ln { font-size: 14px; line-height: 1.8; color: var(--text-secondary); }
 .pr-tier .ln b { color: var(--text-primary); }
 .pr-tier .ln .it { white-space: nowrap; margin-right: 10px; }
-.pr-calc { display: flex; gap: 8px; margin-bottom: 10px; }
+.pr-calc { display: flex; gap: 8px; }
 .pr-calc input { flex: 1; min-width: 0; }
+.pr-res:empty { display: none; }
 #tab-payroll input, .pr-box input, .pr-box select, .pr-box textarea { font-size: 16px; font-family: inherit; color: var(--text-primary); background: var(--bg-input); border: 1.5px dashed var(--border-color); border-radius: 15px; padding: 8px 12px; outline: none; width: 100%; box-sizing: border-box; }
 #tab-payroll input:focus, .pr-box input:focus, .pr-box select:focus, .pr-box textarea:focus { border-color: var(--primary); }
 .pr-ov { position: fixed; inset: 0; z-index: 3000; background: rgba(40,28,20,.55); display: flex; align-items: flex-end; justify-content: center; padding: 0 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
-.pr-box { width: 100%; max-width: 520px; max-height: 90vh; overflow: auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
+.pr-box { width: 100%; max-width: 520px; max-height: 90vh; overflow: auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 9.75px 14px 14px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
 .pr-box h3 { margin: 0; font-size: 17px; color: var(--primary-dark); }
+.pr-box h3 + .g2, .pr-box h3 + label { margin-top: -3px; }   /* 標題上、下的間隙 = 欄位之間的標準間隙（看得到的筆畫約 13.75px）*/
 .pr-box label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--text-secondary); min-width: 0; }
 .pr-box .g2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
 .pr-box .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -2947,6 +2951,13 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
 .pr-act { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
 .pr-act .sp { flex: 1; }
 @media (min-width: 600px) { .pr-ov { align-items: center; } }
+/* 以「畫面上看得到的筆畫」量過後的微調：文字行的上下留白不算在 10px 裡 */
+#prRoot .pr-sub + .pr-sub { margin-top: -1.75px; }
+#prRoot .pr-sub + .pr-sum { margin-top: -3.75px; }
+#prRoot .pr-week + .pr-note { margin-top: -1.25px; }
+#prRoot .pr-note + .pr-tools { margin-top: -1px; }
+/* 這個分頁的最後一排按鈕 → 卡片下緣 = 10px（原本卡片下方內距是 16px） */
+.card:has(> #tab-payroll.active) { padding-bottom: 10px !important; }
 </style>
 </head>
 <body>
@@ -3205,7 +3216,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             <button class="tab-btn" onclick="switchTab('tab-member-analysis',this)">👥 成員分析</button>
                             <button class="tab-btn" onclick="switchTab('tab-rank-analysis',this)">🏆 消費排行</button>
                             <button class="tab-btn" onclick="switchTab('tab-account-ledger',this)">🏦 帳戶金額</button>
-                            <button class="tab-btn" onclick="switchTab('tab-payroll',this)">💼 薪資</button>
+                            <button class="tab-btn" onclick="switchTab('tab-payroll',this)">💼 薪資級距</button>
                         </div>
 
                         <div id="tab-table" class="tab-content active">
@@ -7714,6 +7725,8 @@ const pad = n => String(n).padStart(2, '0');
 const num = x => { const n = parseFloat(x); return isFinite(n) ? n : 0; };
 const r2 = x => Math.round(x * 100) / 100;
 const fmt = n => r2(n).toLocaleString('en-US', {maximumFractionDigits: 2});
+const fmtY = n => fmt(n) + ' 元';          // 除了「NT$ 多少錢」之外，金額後面都加「 元」
+const rangeY = r => /以上|以下/.test(r) ? r.replace(/(\d[\d,]*)\s*(以上|以下)/, '$1 元$2') : r + ' 元';
 const toD = s => { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]); };
 const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const addDays = (s, n) => { const d = toD(s); d.setDate(d.getDate() + n); return ymd(d); };
@@ -7799,16 +7812,15 @@ function renderMonth(root){
     const sub = [mo.seq != null ? `第 ${mo.seq} 個月` : '', mo.companies].filter(Boolean).join('　・　');
     if (sub) root.appendChild(E('div', 'pr-sub', sub));
     const g = E('div', 'pr-sum');
-    g.appendChild(cell('月領薪資', 'NT$ ' + fmt(c.pay), 'big'));
-    g.appendChild(cell('級距層級', fmt(c.level))); g.appendChild(cell('政府勞保', fmt(c.gov)));
-    g.appendChild(cell('公司勞保', fmt(c.co))); g.appendChild(cell('熊熊負擔', fmt(c.bear), c.bear > 0 ? 'warn' : ''));
-    g.appendChild(cell('X能負擔', fmt(c.x))); g.appendChild(cell('應有天數', num(mo.due) + ' 天'));
-    g.appendChild(cell('損失天數', num(mo.lost) + ' 天')); g.appendChild(cell('實際天數', c.actual + ' 天'));
-    g.appendChild(cell('損失薪資', fmt(c.lostPay), (c.lostPay > 0 ? 'warn ' : '') + 'wide'));
+    [['月領薪資', fmtY(c.pay), 'main'], ['損失薪資', fmtY(c.lostPay), c.lostPay > 0 ? 'warn' : ''],
+     ['公司勞保', fmtY(c.co)], ['政府勞保', fmtY(c.gov)],
+     ['X能負擔', fmtY(c.x)], ['熊熊負擔', fmtY(c.bear), c.bear > 0 ? 'warn' : ''],
+     ['級距層級', fmtY(c.level)], ['應有天數', num(mo.due) + ' 天'],
+     ['損失天數', num(mo.lost) + ' 天'], ['實際天數', c.actual + ' 天']].forEach(([l, v, cls]) => g.appendChild(cell(l, v, cls)));
     root.appendChild(g);
     const t = E('div', 'pr-tools'), eb = E('button', 'pr-btn', '✏️ 月份設定'); eb.type = 'button'; eb.onclick = () => monthModal(key); t.appendChild(eb); root.appendChild(t);
     c.weeks.forEach((w, i) => root.appendChild(weekCard(key, mo, w, i)));
-    root.appendChild(E('div', 'pr-note', '點任何一天可以修改；週薪＝上班日薪合計 − 勞保 − 銀行 − 健保 − 其它（＋手動調整）'));
+    root.appendChild(E('div', 'pr-note', '點任何一天可以修改；週薪＝日薪合計 − 各項扣款'));
     toolbar(root);
 }
 function weekCard(key, mo, w, i){
@@ -7818,20 +7830,20 @@ function weekCard(key, mo, w, i){
     (mo.days || []).slice().sort((a, b) => a.d < b.d ? -1 : 1).forEach(x => { if (isWork(x.t) && num(x.w) > 0) workIdx[x.d] = ++wk; });
     days.forEach(x => {
         const row = E('div', 'pr-day' + (isWork(x.t) ? '' : ' off') + (x.d === todayStr() ? ' today' : ''));
-        const dt = E('div', 'dt', String(+x.d.slice(8))); dt.appendChild(E('small', '', `(${wdOf(x.d)})`)); row.appendChild(dt);
+        const dt = E('div', 'dt', String(+x.d.slice(8)) + ' '); dt.appendChild(E('small', '', `(${wdOf(x.d)})`)); row.appendChild(dt);
         const co = E('div', 'co');
         if (isWork(x.t)) { co.appendChild(document.createTextNode(x.co || '（沒填公司）')); if (workIdx[x.d]) co.appendChild(E('small', '', `第 ${workIdx[x.d]} 天`)); }
         else { const tg = E('span', 'pr-tag ' + (/^國/.test(x.t) ? 'hol' : (x.t === '休' ? '' : 'oth')), x.t); co.appendChild(tg); if (x.co && x.co !== x.t) co.appendChild(E('small', '', x.co)); }
         row.appendChild(co);
-        row.appendChild(E('div', 'wg', num(x.w) > 0 ? fmt(x.w) : '—'));
+        row.appendChild(E('div', 'wg', num(x.w) > 0 ? fmtY(x.w) : '—'));
         row.onclick = () => dayModal(key, x.d);
         card.appendChild(row);
     });
     const r = w.rec, f = E('div', 'pr-wf');
     const l1 = E('div'); l1.innerHTML = '';
-    const part = (lbl, v, force) => { if (!force && !num(v)) return; const s = E('span'); s.appendChild(document.createTextNode(lbl + ' ')); s.appendChild(E('b', '', '−' + fmt(v))); s.appendChild(document.createTextNode('　')); l1.appendChild(s); };
+    const part = (lbl, v, force) => { if (!force && !num(v)) return; const s = E('span'); s.appendChild(document.createTextNode(lbl + ' ')); s.appendChild(E('b', '', '−' + fmtY(v))); s.appendChild(document.createTextNode('　')); l1.appendChild(s); };
     part('勞保', w.ins, true); part('銀行', r.bank); part('健保', r.health); part('其它', r.other);
-    if (num(r.adj)) { const s = E('span', 'adj', `調整 ${num(r.adj) > 0 ? '+' : '−'}${fmt(Math.abs(r.adj))}`); l1.appendChild(s); }
+    if (num(r.adj)) { const s = E('span', 'adj', `調整 ${num(r.adj) > 0 ? '+' : '−'}${fmtY(Math.abs(r.adj))}`); l1.appendChild(s); }
     f.appendChild(l1);
     const pd = r.payDate || addDays(w.mon, 10), l2 = E('div', 'row2');
     l2.appendChild(E('span', '', `發薪 ${md(pd)}（${wdOf(pd)}）${r.time || ''}${r.note ? '　' + r.note : ''}`));
@@ -7854,9 +7866,9 @@ function renderTier(root){
     root.appendChild(ys);
     // 試算
     const calc = E('div', 'pr-calc'), inp = E('input'); inp.type = 'number'; inp.inputMode = 'decimal'; inp.placeholder = '輸入月薪，查看級距…';
-    const res = E('div'); calc.appendChild(inp); root.appendChild(calc); root.appendChild(res);
+    const res = E('div', 'pr-res'); calc.appendChild(inp); root.appendChild(calc); root.appendChild(res);
     const table = brTable(ui.tierYear);
-    const show = () => { res.textContent = ''; const v = num(inp.value); if (!v) return; const b = brFind(table, v); if (b) { const c = tierCard(b, true); c.querySelector('.hd span').textContent = '你輸入 ' + fmt(v) + ' → 落在這一級'; res.appendChild(c); } };
+    const show = () => { res.textContent = ''; const v = num(inp.value); if (!v) return; const b = brFind(table, v); if (b) { const c = tierCard(b, true); c.querySelector('.hd span').textContent = '你輸入 ' + fmtY(v) + ' → 落在這一級'; res.appendChild(c); } };
     inp.oninput = show;
     const curMonth = P().months[curKey()] && curKey().startsWith(String(ui.tierYear)) ? calcMonth(curKey()) : null;
     table.forEach((b, i) => root.appendChild(tierCard(b, curMonth && curMonth.br === b, () => tierModal(ui.tierYear, i))));
@@ -7867,8 +7879,8 @@ function renderTier(root){
 }
 function tierCard(b, cur, onEdit){
     const c = E('div', 'pr-tier' + (cur ? ' cur' : '')), hd = E('div', 'hd');
-    hd.appendChild(E('b', '', fmt(b.w))); hd.appendChild(E('span', '', b.r)); c.appendChild(hd);
-    const ln = (arr) => { const d = E('div', 'ln'); arr.forEach(([l, v]) => { const s = E('span', 'it'); s.appendChild(document.createTextNode(l + ' ')); s.appendChild(E('b', '', fmt(v))); d.appendChild(s); d.appendChild(document.createTextNode(' ')); }); return d; };      // 每一項（名稱＋金額）不拆開，要換行只換在項目之間
+    hd.appendChild(E('b', '', fmtY(b.w))); hd.appendChild(E('span', '', rangeY(b.r))); c.appendChild(hd);
+    const ln = (arr) => { const d = E('div', 'ln'); arr.forEach(([l, v]) => { const s = E('span', 'it'); s.appendChild(document.createTextNode(l + ' ')); s.appendChild(E('b', '', fmtY(v))); d.appendChild(s); d.appendChild(document.createTextNode(' ')); }); return d; };      // 每一項（名稱＋金額）不拆開，要換行只換在項目之間
     c.appendChild(ln([['勞保(勞)', b.le], ['每日', b.le / 30], ['勞保(雇)', b.lc]]));
     c.appendChild(ln([['健保(勞)', b.he], ['健保(雇)', b.hc], ['勞退(雇)', b.pc]]));
     c.appendChild(ln([['勞健保退合計(勞)', b.te], ['(雇)', b.tc]]));
@@ -7959,7 +7971,7 @@ function tierModal(year, i){
     const t = brTable(year), b = t[i];
     const keys = [['r', '薪資級距（文字）', 'text'], ['w', '提繳工資', 'number'], ['le', '勞保／勞工負擔', 'number'], ['lc', '勞保／雇主負擔', 'number'], ['he', '健保／勞工負擔', 'number'], ['hc', '健保／雇主負擔', 'number'], ['pc', '勞退／雇主負擔', 'number'], ['te', '勞健保及勞退／勞工', 'number'], ['tc', '勞健保及勞退／雇主', 'number']];
     const f = {}; keys.forEach(([k, , ty]) => { f[k] = inp(ty, b[k]); });
-    modal(`${year} 年　${fmt(b.w)} 級`, bx => { keys.forEach(([k, l]) => bx.appendChild(fld(l, f[k]))); },
+    modal(`${year} 年　${fmtY(b.w)} 級`, bx => { keys.forEach(([k, l]) => bx.appendChild(fld(l, f[k]))); },
         () => {
             const p = P(); p.brackets = p.brackets || {}; if (!own) p.brackets[year] = JSON.parse(JSON.stringify(t));
             const row = p.brackets[year][i]; keys.forEach(([k, , ty]) => { row[k] = ty === 'number' ? num(f[k].value) : f[k].value.trim(); });
