@@ -138,6 +138,7 @@
             display: none;
             position: absolute;
             top: 100%;
+            margin-top:16.5px;
             left: 0;
             background: var(--bg-card);
             min-width: 200px;
@@ -6212,6 +6213,7 @@ async function saveData() {
         padding: 10px 8px !important;
         gap: 6px !important;
         line-height: 1.5 !important;
+        padding-bottom:-9px;
     }
 
     .header-top-row .stats-bar .stat-group .row1,
@@ -6589,12 +6591,12 @@ async function saveData() {
 
 
 /* ===== 今日收支 + 近7天支出條狀樹狀圖 ===== */
-.tp-wrap { width:100%; margin-top:10px; display:flex; flex-direction:column; gap:10px; font-weight:400; }
+.tp-wrap { width:100%; margin-top:10px; display:flex; flex-direction:column; gap:10px; font-weight:400;}
 .tp-today { display:flex; gap:10px; }
 .tp-box { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 6px; background:var(--bg-hover); border: 1.5px dashed #D4B896 !important; border-radius:14px; }
 .tp-label { font-size:0.75rem; color:var(--text-secondary); font-weight:600; }
 .tp-val { font-size:1.05rem; font-weight:700; }
-.tp-tree { background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; padding:8px 10px; }
+.tp-tree { background:var(--bg-hover); border:1px solid var(--border-color); border-radius:14px; padding:8px 10px; margin-top:2.5px;}
 .tp-title { font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:6px; }
 .tp-title small { font-weight:600; color:var(--text-secondary); font-size:0.68rem; }
 .tp-day { cursor:pointer; padding:3px 0; }
