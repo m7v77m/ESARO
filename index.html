@@ -7617,6 +7617,36 @@ html body #recordForm div style*="display:flex;align-items:center" {
     margin-top: 4px !important;
 }
 </style>
+<!-- 📐 時來運轉下巴終極歸零鎖死：打破硬性高度，徹底抹平底部紅框空間 📐 -->
+<style id="app-wrapper-bottom-flatten-ultimate">
+/* 1. 徹底擊碎頂排大骨架的 74px 最低高度硬性限制，讓它自由縮扁 */
+html body .header-top-row,
+body .header-top-row {
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+/* 2. 同步解放左菜單卡、中統計卡、右操作卡，把多餘的屁股空間全面收緊 */
+html body .header-top-row .menu-bar,
+html body .header-top-row .stats-bar .stat-group,
+html body .header-top-row .stats-bar .actions-group {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-bottom: 8px !important; /* 讓內部底邊保持跟左右一樣精緻等距 */
+}
+
+/* 3. 徹底進行底座抽脂！推翻原本寫死的 24px padding，強制外框往上吸 */
+html body .app-wrapper,
+body .app-wrapper {
+    padding-bottom: 8px !important; /* 強制四週全部鎖死 11px，達成完美等距，絕不留贅肉 */
+}
+
+/* 4. 順便把分頁卡大卡片和明細表格內部的底邊也一起壓扁對齊 */
+html body .right-panel .card,
+body .right-panel .card {
+    padding-bottom: 8px !important;
+}
+</style>
 
 </body>
 </html>
