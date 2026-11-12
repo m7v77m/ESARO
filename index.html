@@ -7777,5 +7777,31 @@ body .right-panel .card {
 })();
 </script>
 
+<style id="unify-capsule-height">
+/* 新增紀錄 + 快速篩選：白底膠囊框框統一高度 34px（常用項目卡片不動）
+   含日期框、下拉選單、文字框、數字框，旁邊的「今天」按鈕也一起對齊 */
+html body #recordForm .form-group > :is(select, input[type="text"], input[type="number"]),
+html body #recordForm .date-with-today input[type="date"],
+html body .filters :is(select, input[type="text"], input[type="date"]) {
+    height: 34px !important;
+    min-height: 34px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    box-sizing: border-box !important;
+    line-height: normal !important;
+}
+html body #recordForm .date-with-today,
+html body .filters .date-with-today {
+    height: 34px !important;
+    align-items: center !important;
+}
+html body #recordForm .date-with-today .today-btn,
+html body .filters .date-with-today .today-btn {
+    height: 34px !important;
+    line-height: 34px !important;
+    box-sizing: border-box !important;
+}
+</style>
+
 </body>
 </html>
