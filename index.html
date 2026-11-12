@@ -7855,6 +7855,16 @@ html body #accountBalanceCard .text-muted {
 }
 </style>
 
+<style id="ledger-current-balance-highlight">
+/* 放大並突顯「目前 $X,XXX」的字體與配色 */
+html body #ledgerSummary b:last-of-type {
+    font-size: 0.95rem !important;   /* 字體放大（原本約 0.74rem） */
+    color: #5f6e58 !important;       /* 質感抹茶深綠，跟上面帳戶卡片金額同色系 */
+    font-weight: 800 !important;     /* 加粗更顯眼 */
+    margin-left: 2px !important;
+}
+</style>
+
 
 </body>
 </html>
