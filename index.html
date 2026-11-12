@@ -7648,50 +7648,8 @@ body .right-panel .card {
 }
 </style>
 
-<!-- 🐻 手機＋電腦通用：自製歷史紀錄下拉選單 🐻 -->
-<style>
-.custom-ac-list {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(100% + 4px);
-    background: #FFF8EB;
-    border: 1.5px solid #D4B896;
-    border-radius: 14px;
-    max-height: 185px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    z-index: 99999;
-    box-shadow: 0 8px 24px rgba(74, 55, 40, 0.22);
-    display: none;
-    padding: 4px 0;
-}
-.custom-ac-list.open {
-    display: block;
-}
-.custom-ac-item {
-    padding: 9px 14px;
-    font-size: 0.85rem;
-    color: #4A3728;
-    cursor: pointer;
-    border-bottom: 1px dashed #E8D5B0;
-    text-align: left;
-    word-break: break-word;
-    line-height: 1.35;
-}
-.custom-ac-item:last-child {
-    border-bottom: none;
-}
-.custom-ac-item:hover,
-.custom-ac-item:active {
-    background: #E8D5B0;
-    font-weight: 600;
-}
-</style>
-
 <script>
 (function initCustomAutocomplete() {
-    // 對應原本的 5 個歷史紀錄欄位
     const fields = [
         { inputId: 'location', listId: 'locationHistory' },
         { inputId: 'region',   listId: 'regionHistory' },
@@ -7711,10 +7669,8 @@ body .right-panel .card {
         const datalist = document.getElementById(listId);
         if (!input || !datalist) return;
 
-        // 移除原生 list 屬性，避免電腦版同時跳出兩個選單
         input.removeAttribute('list');
 
-        // 讓父層成為定位基準
         const parent = input.parentElement;
         if (getComputedStyle(parent).position === 'static') {
             parent.style.position = 'relative';
@@ -7724,50 +7680,90 @@ body .right-panel .card {
         dropdown.className = 'custom-ac-list';
         parent.appendChild(dropdown);
 
+        let currentMatched = [];
+
+        function selectValue(val) {
+            input.value = val;
+            dropdown.classList.remove('open');
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
         function renderOptions() {
             const keyword = input.value.trim().toLowerCase();
-            // 直接讀取原本程式更新進 datalist 的歷史紀錄
             const allValues = Array.from(datalist.options).map(opt => opt.value).filter(Boolean);
-            const matched = keyword
+            currentMatched = keyword
                 ? allValues.filter(v => v.toLowerCase().includes(keyword))
                 : allValues;
 
-            if (matched.length === 0) {
+            if (currentMatched.length === 0) {
                 dropdown.classList.remove('open');
                 return;
             }
 
-            // 最多顯示前 40 筆避免清單過長
-            dropdown.innerHTML = matched.slice(0, 40).map(val => {
+            // 最多顯示 50 筆，並加上 data-idx 方便事件委派
+            dropdown.innerHTML = currentMatched.slice(0, 50).map((val, idx) => {
                 const safeText = val.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                return `<div class="custom-ac-item">${safeText}</div>`;
+                return `<div class="custom-ac-item" data-idx="${idx}">${safeText}</div>`;
             }).join('');
-
-            // 綁定點擊帶入數值
-            dropdown.querySelectorAll('.custom-ac-item').forEach((item, idx) => {
-                const pick = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    input.value = matched[idx];
-                    dropdown.classList.remove('open');
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                    input.dispatchEvent(new Event('change', { bubbles: true }));
-                };
-                item.addEventListener('mousedown', pick);
-                item.addEventListener('touchstart', pick, { passive: false });
-            });
 
             closeAllDropdowns(dropdown);
             dropdown.classList.add('open');
         }
 
-        // 點擊或輸入文字時觸發顯示
+        // 1. 手機觸控邏輯：記錄按下的座標，若滑動超過 8px 就視為捲動，不觸發選取
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isMoved = false;
+
+        dropdown.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isMoved = false;
+            }
+        }, { passive: true });
+
+        dropdown.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1) {
+                const dx = Math.abs(e.touches[0].clientX - touchStartX);
+                const dy = Math.abs(e.touches[0].clientY - touchStartY);
+                if (dx > 8 || dy > 8) {
+                    isMoved = true;
+                }
+            }
+        }, { passive: true });
+
+        dropdown.addEventListener('touchend', (e) => {
+            if (isMoved) return; // 手指有滑動，不選取
+            const item = e.target.closest('.custom-ac-item');
+            if (!item) return;
+            e.preventDefault(); // 防止穿透點擊到下方的輸入框
+            e.stopPropagation();
+            const idx = parseInt(item.dataset.idx, 10);
+            if (!isNaN(idx) && currentMatched[idx] !== undefined) {
+                selectValue(currentMatched[idx]);
+            }
+        });
+
+        // 2. 電腦滑鼠點擊邏輯
+        dropdown.addEventListener('mousedown', (e) => {
+            const item = e.target.closest('.custom-ac-item');
+            if (!item) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const idx = parseInt(item.dataset.idx, 10);
+            if (!isNaN(idx) && currentMatched[idx] !== undefined) {
+                selectValue(currentMatched[idx]);
+            }
+        });
+
         input.addEventListener('focus', renderOptions);
         input.addEventListener('click', renderOptions);
         input.addEventListener('input', renderOptions);
     });
 
-    // 點擊畫面其他空白處時自動關閉選單
+    // 點擊或觸控畫面其他地方時關閉選單
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.custom-ac-list') && !fields.some(f => e.target.id === f.inputId)) {
             closeAllDropdowns();
