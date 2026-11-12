@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2280%22>🐻</text></svg>">    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>&nbsp;&nbsp;時來運轉&nbsp;&nbsp;₍ ^. .^ ₎ ⟆&nbsp;&nbsp;記帳理財</title>
 
     <!-- 1. Font Awesome 圖示 -->
@@ -7659,15 +7659,19 @@ body .right-panel .card {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     background: var(--bg-input, #FFFEF7);
-    border: 1.5px solid var(--primary, #A67C52);
-    border-radius: 12px;
+    border: 3px solid var(--primary, #A67C52);
+    border-radius: 26px;
+    box-sizing: border-box;
     box-shadow: 0 6px 18px rgba(92, 64, 51, 0.25);
     display: none;
 }
+@media (pointer: coarse) {
+    input, select, textarea { font-size: 16px !important; }   /* iPhone 輸入框字小於 16px 就會自動放大，所以固定 16px */
+}
 .hist-panel.show { display: block; }
 .hist-panel .hist-item {
-    padding: 11px 14px;
-    font-size: 15px;
+    padding: 11px 20px;
+    font-size: 16px;
     color: var(--primary-dark, #5C4033);
     border-bottom: 1px solid var(--border-color, #D4B896);
     white-space: nowrap;
