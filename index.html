@@ -7792,15 +7792,25 @@ html body .filters :is(select, input[type="text"], input[type="date"]) {
 }
 html body #recordForm .date-with-today,
 html body .filters .date-with-today {
-    height: 34px !important;
+    height: 38px !important;
     align-items: center !important;
 }
-/* 「今天」按鈕比左邊的日期框（30px）再高一點：37.5px */
+/* 「今天」按鈕比左邊的日期框（30px）再高一點：38px */
 html body #recordForm .date-with-today .today-btn,
 html body .filters .date-with-today .today-btn {
-    height: 37.5px !important;
-    line-height: 37.5px !important;
+    height: 38px !important;
+    line-height: 38px !important;
     box-sizing: border-box !important;
+}
+/* 新增紀錄的「今天」按鈕：原本比欄位寬了一點又多了左邊距，整顆往右凸出去；
+   拿掉多餘的左邊距、寬度對齊欄位，讓右邊切齊下面的下拉框 */
+html body #recordForm .date-with-today .today-btn {
+    margin-left: 0 !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    right: 0 !important;
+    justify-self: end !important;
 }
 </style>
 
