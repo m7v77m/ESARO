@@ -5861,7 +5861,7 @@ async function saveData() {
             footer.className = 'account-card-footer';
             // 💡 這裡加了 margin-top: -2px!important; 強制把整個按鈕往上吸，消滅按鈕上方的大空白！
             // 💡 padding: 0px 0; 和 margin-bottom: -3px; 則是消滅兩排按鈕中間的厚空白！
-            footer.style.cssText = "display:flex; gap:6px; margin-top:-2px !important; margin-bottom:-2px !important; padding:-2px -2 !important; align-items:center; line-height:-2;";
+            footer.style.cssText = "display:flex; gap:6px; margin:0; padding:0; align-items:center;";
             footer.innerHTML = `
                 <button class="btn-secondary" style="background:#C08A55; color:#FFFFFF; border-radius:13px; padding:6px 8px; font-size:15px;" onclick="addNewAccount()"><i class="fa-solid fa-plus"></i> 新增帳戶</button>
                 
@@ -5876,7 +5876,7 @@ async function saveData() {
             footer2.style.cssText = "display:flex; gap:6px; margin-top:-7px !important; margin-bottom:-7px !important; padding:-7px 0 !important; align-items:center; line-height:-7;";
             footer2.innerHTML = `
             `;
-            container.appendChild(footer2);
+            // （空的第二排不再加入，避免多出額外間距）
         }    
         </script>
 
@@ -7812,6 +7812,23 @@ html body #recordForm .date-with-today .today-btn {
     right: 0 !important;
     justify-self: end !important;
 }
+</style>
+
+<style id="account-page-gap-13">
+/* 🏦 帳戶金額頁：所有間隙統一成 13px（跟「帳戶金額」標題下方的標準間隙一樣） */
+/* 1 帳戶卡片與卡片之間；2 最後一張帳戶卡與「新增帳戶」之間 */
+html body #accountBalanceList { gap: 13px !important; }
+/* 兩顆大按鈕自己多帶的上邊距拿掉，間隙才會剛好是 13px */
+html body #accountBalanceCard .account-card-footer .btn-secondary,
+html body #accountBalanceCard .account-card-footer button { margin-top: 0 !important; margin-bottom: 0 !important; }
+/* 3 「新增帳戶」與「重新計算」之間 */
+html body #accountBalanceCard > .account-card-footer { margin-top: 13px !important; }
+/* 4 說明文字與「金流歷史明細」之間 */
+html body #tab-account-ledger #accountBalanceCard { margin: 0 0 13px 0 !important; }
+/* 5 篩選膠囊與摘要框之間 */
+html body #tab-account-ledger .ledger-controls { margin-bottom: 13px !important; }
+/* 6 摘要框與表格之間 */
+html body #tab-account-ledger .ledger-summary { margin-bottom: 13px !important; }
 </style>
 
 </body>
