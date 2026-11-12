@@ -7648,174 +7648,130 @@ body .right-panel .card {
 }
 </style>
 
-<script id="rilakkuma-autocomplete-fix">
-(function initCustomAutocomplete() {
-    // 1. 直接由程式注入 CSS，確保手機與電腦 100% 套用外觀與捲動框
-    const style = document.createElement('style');
-    style.textContent = `
-        .custom-ac-list {
-            position: absolute !important;
-            left: 0 !important;
-            right: 0 !important;
-            top: calc(100% + 4px) !important;
-            background-color: #FFF8EB !important;
-            border: 1.5px solid #A67C52 !important;
-            border-radius: 14px !important;
-            max-height: 180px !important;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-            z-index: 99999 !important;
-            box-shadow: 0 8px 24px rgba(74, 55, 40, 0.28) !important;
-            display: none !important;
-            padding: 4px 0 !important;
-        }
-        .custom-ac-list.open {
-            display: block !important;
-        }
-        .custom-ac-item {
-            padding: 9px 14px !important;
-            font-size: 0.85rem !important;
-            color: #4A3728 !important;
-            background-color: #FFF8EB !important;
-            cursor: pointer !important;
-            border-bottom: 1px dashed #E8D5B0 !important;
-            text-align: left !important;
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            line-height: 1.4 !important;
-        }
-        .custom-ac-item:last-child {
-            border-bottom: none !important;
-        }
-        .custom-ac-item:hover,
-        .custom-ac-item:active {
-            background-color: #E8D5B0 !important;
-            font-weight: 700 !important;
-        }
-    `;
-    document.head.appendChild(style);
 
-    const fields = [
-        { inputId: 'location', listId: 'locationHistory' },
-        { inputId: 'region',   listId: 'regionHistory' },
-        { inputId: 'itemName', listId: 'itemHistory' },
-        { inputId: 'spec',     listId: 'specHistory' },
-        { inputId: 'quantity', listId: 'quantityHistory' }
-    ];
+<!-- ===== 📱 手機版歷史紀錄下拉：iPhone/手機的瀏覽器不會顯示原生 datalist，改用自製選單（電腦版維持原樣） ===== -->
+<style>
+.hist-panel {
+    position: absolute;
+    left: 0; right: 0;
+    z-index: 99999;
+    max-height: 38vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg-input, #FFFEF7);
+    border: 1.5px solid var(--primary, #A67C52);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(92, 64, 51, 0.25);
+    display: none;
+}
+.hist-panel.show { display: block; }
+.hist-panel .hist-item {
+    padding: 11px 14px;
+    font-size: 15px;
+    color: var(--primary-dark, #5C4033);
+    border-bottom: 1px solid var(--border-color, #D4B896);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hist-panel .hist-item:last-child { border-bottom: none; }
+.hist-panel .hist-item:active { background: var(--primary-light, #F0DFC0); }
+</style>
+<script>
+(function () {
+    // 只在手機／觸控裝置啟用；電腦版繼續用原本的 datalist
+    var isTouch = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
+    if (!isTouch) return;
 
-    function closeAllDropdowns(except) {
-        document.querySelectorAll('.custom-ac-list.open').forEach(el => {
-            if (el !== except) el.classList.remove('open');
+    var FIELDS = {
+        location:  'locationHistory',
+        region:    'regionHistory',
+        itemName:  'itemHistory',
+        spec:      'specHistory',
+        quantity:  'quantityHistory'
+    };
+    var MAX_SHOW = 40;
+
+    Object.keys(FIELDS).forEach(function (inputId) {
+        var input = document.getElementById(inputId);
+        var dl = document.getElementById(FIELDS[inputId]);
+        if (!input || !dl) return;
+
+        input.removeAttribute('list');                 // 關掉原生（手機上看不到的）選單
+        input.setAttribute('autocomplete', 'off');
+
+        var group = input.parentElement;
+        if (getComputedStyle(group).position === 'static') group.style.position = 'relative';
+
+        var panel = document.createElement('div');
+        panel.className = 'hist-panel';
+        group.appendChild(panel);
+
+        var hideTimer = null;
+        var suppress = false;
+
+        function getOptions() {
+            return Array.prototype.map.call(dl.options, function (o) { return o.value; });
+        }
+
+        function render() {
+            var typed = input.value.trim().toLowerCase();
+            var list = getOptions().filter(function (v) {
+                return v && v.toLowerCase() !== typed && (!typed || v.toLowerCase().indexOf(typed) !== -1);
+            });
+            // 開頭符合的排前面
+            if (typed) {
+                list.sort(function (a, b) {
+                    var sa = a.toLowerCase().indexOf(typed) === 0 ? 0 : 1;
+                    var sb = b.toLowerCase().indexOf(typed) === 0 ? 0 : 1;
+                    return sa - sb;
+                });
+            }
+            list = list.slice(0, MAX_SHOW);
+            panel.innerHTML = '';
+            if (!list.length) { panel.classList.remove('show'); return; }
+            list.forEach(function (v) {
+                var d = document.createElement('div');
+                d.className = 'hist-item';
+                d.textContent = v;
+                d.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    suppress = true;
+                    input.value = v;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                    suppress = false;
+                    panel.classList.remove('show');
+                });
+                panel.appendChild(d);
+            });
+            // 下方空間不夠（鍵盤擋住）就改往上開
+            var vv = window.visualViewport;
+            var viewH = vv ? vv.height : window.innerHeight;
+            var rect = input.getBoundingClientRect();
+            var spaceBelow = viewH - rect.bottom;
+            if (spaceBelow < 200 && rect.top > spaceBelow) {
+                panel.style.top = 'auto';
+                panel.style.bottom = '100%';
+                panel.style.marginBottom = '4px';
+                panel.style.marginTop = '0';
+            } else {
+                panel.style.bottom = 'auto';
+                panel.style.top = '100%';
+                panel.style.marginTop = '4px';
+                panel.style.marginBottom = '0';
+            }
+            panel.classList.add('show');
+        }
+
+        input.addEventListener('focus', function () { clearTimeout(hideTimer); render(); });
+        input.addEventListener('input', function () { if (!suppress) render(); });
+        input.addEventListener('blur', function () {
+            hideTimer = setTimeout(function () { panel.classList.remove('show'); }, 250);
         });
-    }
-
-    fields.forEach(({ inputId, listId }) => {
-        const input = document.getElementById(inputId);
-        const datalist = document.getElementById(listId);
-        if (!input || !datalist) return;
-
-        input.removeAttribute('list');
-
-        const parent = input.parentElement;
-        if (getComputedStyle(parent).position === 'static') {
-            parent.style.position = 'relative';
-        }
-
-        const dropdown = document.createElement('div');
-        dropdown.className = 'custom-ac-list';
-        parent.appendChild(dropdown);
-
-        let currentMatched = [];
-
-        function selectValue(val) {
-            input.value = val;
-            dropdown.classList.remove('open');
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            input.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-
-        function renderOptions() {
-            const keyword = input.value.trim().toLowerCase();
-            const allValues = Array.from(datalist.options).map(opt => opt.value).filter(Boolean);
-            currentMatched = keyword
-                ? allValues.filter(v => v.toLowerCase().includes(keyword))
-                : allValues;
-
-            if (currentMatched.length === 0) {
-                dropdown.classList.remove('open');
-                return;
-            }
-
-            dropdown.innerHTML = currentMatched.slice(0, 60).map((val, idx) => {
-                const safeText = val.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                return `<div class="custom-ac-item" data-idx="${idx}">${safeText}</div>`;
-            }).join('');
-
-            closeAllDropdowns(dropdown);
-            dropdown.classList.add('open');
-        }
-
-        // 手機觸控：區分「滑動捲動」與「輕點選取」
-        let startX = 0;
-        let startY = 0;
-        let moved = false;
-
-        dropdown.addEventListener('touchstart', (e) => {
-            if (e.touches && e.touches.length === 1) {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-                moved = false;
-            }
-        }, { passive: true });
-
-        dropdown.addEventListener('touchmove', (e) => {
-            if (e.touches && e.touches.length === 1) {
-                const dx = Math.abs(e.touches[0].clientX - startX);
-                const dy = Math.abs(e.touches[0].clientY - startY);
-                if (dx > 6 || dy > 6) {
-                    moved = true;
-                }
-            }
-        }, { passive: true });
-
-        dropdown.addEventListener('touchend', (e) => {
-            if (moved) return;
-            const item = e.target.closest('.custom-ac-item');
-            if (!item) return;
-            e.preventDefault();
-            e.stopPropagation();
-            const idx = parseInt(item.dataset.idx, 10);
-            if (!isNaN(idx) && currentMatched[idx] !== undefined) {
-                selectValue(currentMatched[idx]);
-            }
-        });
-
-        // 電腦滑鼠點擊
-        dropdown.addEventListener('mousedown', (e) => {
-            const item = e.target.closest('.custom-ac-item');
-            if (!item) return;
-            e.preventDefault();
-            e.stopPropagation();
-            const idx = parseInt(item.dataset.idx, 10);
-            if (!isNaN(idx) && currentMatched[idx] !== undefined) {
-                selectValue(currentMatched[idx]);
-            }
-        });
-
-        input.addEventListener('focus', renderOptions);
-        input.addEventListener('click', renderOptions);
-        input.addEventListener('input', renderOptions);
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.custom-ac-list') && !fields.some(f => e.target.id === f.inputId)) {
-            closeAllDropdowns();
-        }
     });
 })();
 </script>
-
 
 </body>
 </html>
