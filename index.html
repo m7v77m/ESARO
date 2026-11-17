@@ -7869,20 +7869,25 @@ html body #ledgerSummary b:last-of-type {
 <style id="card-edge-gaps">
 /* =====================================================================
    📏 卡片「最上面／最下面」間隙：全部統一在這一個區塊調整
-   ▶ 想要高一點或扁一點，只要改下面這兩個數字就好（單位 px）
+   ▶ 想要高一點或扁一點，只要改下面這三個數字就好（單位 px，不能填負數，要更小就填 5、3、0 這樣）
    ===================================================================== */
 :root {
-    --maint-card-gap: 11.5px;     /* 帳戶／類目／成員維護：卡片上緣→標題、最後一排標籤→卡片下緣 */
+    --maint-card-top-gap: 6px;    /* 帳戶／類目／成員維護：卡片上緣→標題（標題文字自己上方有約 5px 的行距，所以這個數字比下面小） */
+    --maint-card-gap: 11.5px;     /* 帳戶／類目／成員維護：最後一排標籤→卡片下緣 */
     --tab-card-end-gap: 11.5px;   /* 統計分析、項目分析、成員分析、消費排行、帳戶金額：表格或說明文字→大卡片下緣 */
 }
 
 /* ① 帳戶維護／類目維護／成員維護（圖 1 的六條） */
 html body .right-panel .maintenance-panel .card.sync-settings-card {
-    padding-top: var(--maint-card-gap) !important;
+    padding-top: var(--maint-card-top-gap) !important;
     padding-bottom: var(--maint-card-gap) !important;
 }
-html body .right-panel .maintenance-panel .card.sync-settings-card .cat-tag-container {
-    padding-bottom: 0 !important;   /* 標籤區自己多帶的下方空白拿掉，不然會疊在卡片下緣的間隙上 */
+/* 標籤區自己多帶的下方空白拿掉（這三個標籤區原本各自有 8px，會疊在卡片下緣的間隙上；
+   它們是用 id 設定的，所以這裡也要用 id 才蓋得過） */
+html body #accountList,
+html body #categoryList,
+html body #targetList {
+    padding-bottom: 0 !important;
 }
 
 /* ② 分頁大卡片的底部（圖 2～6 的五條） */
