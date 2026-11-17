@@ -7866,5 +7866,37 @@ html body #ledgerSummary b:last-of-type {
 </style>
 
 
+<style id="card-edge-gaps">
+/* =====================================================================
+   📏 卡片「最上面／最下面」間隙：全部統一在這一個區塊調整
+   ▶ 想要高一點或扁一點，只要改下面這兩個數字就好（單位 px）
+   ===================================================================== */
+:root {
+    --maint-card-gap: 11.5px;     /* 帳戶／類目／成員維護：卡片上緣→標題、最後一排標籤→卡片下緣 */
+    --tab-card-end-gap: 11.5px;   /* 統計分析、項目分析、成員分析、消費排行、帳戶金額：表格或說明文字→大卡片下緣 */
+}
+
+/* ① 帳戶維護／類目維護／成員維護（圖 1 的六條） */
+html body .right-panel .maintenance-panel .card.sync-settings-card {
+    padding-top: var(--maint-card-gap) !important;
+    padding-bottom: var(--maint-card-gap) !important;
+}
+html body .right-panel .maintenance-panel .card.sync-settings-card .cat-tag-container {
+    padding-bottom: 0 !important;   /* 標籤區自己多帶的下方空白拿掉，不然會疊在卡片下緣的間隙上 */
+}
+
+/* ② 分頁大卡片的底部（圖 2～6 的五條） */
+html body .right-panel > .card:first-child {
+    padding-bottom: var(--tab-card-end-gap) !important;
+}
+/* 最後一個區塊自己帶的 24px 下方空白拿掉，只留上面設定的卡片底部間隙 */
+html body .right-panel > .card:first-child :is(#tab-statistics, #tab-item-analysis, #tab-member-analysis, #tab-rank-analysis, #tab-account-ledger) > :last-child {
+    margin-bottom: 0 !important;
+}
+html body .right-panel > .card:first-child :is(#tab-statistics, #tab-item-analysis, #tab-member-analysis, #tab-rank-analysis, #tab-account-ledger) > :last-child > :last-child {
+    margin-bottom: 0 !important;
+}
+</style>
+
 </body>
 </html>
