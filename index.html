@@ -4810,9 +4810,12 @@ function loadLocalData() {
                 return;
             }
 
+            // 最新日期排最上面
+            rows.reverse();
+
             body.innerHTML = rows.map((r, i) => {
-                const isLast = i === rows.length - 1;
-                const rowStyle = isLast ? ' style="font-weight:700;background:rgba(192,138,85,0.12);"' : '';
+                const isLatest = i === 0;
+                const rowStyle = isLatest ? ' style="font-weight:700;background:rgba(192,138,85,0.12);"' : '';
                 return `<tr${rowStyle}>
                     <td style="text-align:center;">${r.label}${r.days === 1 ? '' : '<span style="color:var(--text-muted);font-size:0.75em;"> (' + r.days + '天)</span>'}</td>
                     <td style="text-align:right;">$${fmtNum(r.todayAmt)}</td>
