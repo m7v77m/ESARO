@@ -138,7 +138,7 @@
             display: none;
             position: absolute;
             top: 100%;
-            margin-top:15px;
+            margin-top:14px;
             left: 0;
             background: var(--bg-card);
             min-width: 200px;
@@ -3282,7 +3282,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                             <th style="text-align:center;">統計區間</th>
                                             <th style="text-align:center;">當日金額</th>
                                             <th style="text-align:center;">累計金額</th>
-                                            <th style="text-align:center;">平均值</th>
+                                            <th style="text-align:center;">類目均值</th>
                                         </tr>
                                     </thead>
                                     <tbody id="stat-item-analysis-body"></tbody>
@@ -5865,7 +5865,7 @@ async function saveData() {
     font-size: 0.8rem !important;  /* 按鈕字體稍微精簡 */
     line-height: 30px !important;  /* 讓「今天」兩個字垂直居中不歪斜 */
     box-sizing: border-box !important;
-    margin-left: 4px !important;   /* 讓按鈕跟輸入框之間保持一個漂亮的小空隙 */
+    margin-left: -4px !important;   /* 讓按鈕跟輸入框之間保持一個漂亮的小空隙 */
 }
 
 /* 3. 確保包裹它們的外殼容器不會自己長肉增高 */
@@ -6396,9 +6396,9 @@ async function saveData() {
 }
 .date-with-today .today-btn {
     display: inline-flex !important;
-    width: 60px !important;
-    min-width: 60px !important;
-    max-width: 60px !important;
+    width: 66px !important;
+    min-width: 66px !important;
+    max-width: 66px !important;
     height: 36px !important;
     margin: 0 !important;
     padding: 0 6px !important;
