@@ -3274,25 +3274,15 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         <!-- 新增：項目分析分頁區塊 -->
                         <div id="tab-item-analysis" class="tab-content">
                            <div class="stat-section">
-							    <h4 style="display: flex; align-items: center; gap: 8px;">
-							        🔍 每月類目日均
-							        <select id="stat-category-select" onchange="renderStatistics()" style="padding: 2px 8px; border-radius: var(--radius-full); border: 1px solid var(--border-color); font-size: 0.85rem; background: var(--bg-input); color: var(--text-primary); cursor: pointer;">
-							            <!-- 選項會由 JS 動態生成 -->
-							        </select>
-							    </h4>
-							    <table>
-							        <thead><tr><th>紀錄月份</th><th>類目總額</th><th>計算天數</th><th>每日平均</th></tr></thead>
-							        <tbody id="stat-category-average-body"></tbody>
-							    </table>
-							</div>
-                            <div class="stat-section">
-                                <h4>🔍 每日項目統計（依目前篩選結果）</h4>
+                                <h4>🔍 項目分析：累計日均（依目前篩選結果）</h4>
+                                <div id="item-analysis-hint" style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;"></div>
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th style="text-align:center;">類目日期</th>
-                                            <th style="text-align:center;">每日總計</th>
-                                            <th style="text-align:center;">明細筆數</th>
+                                            <th style="text-align:center;">統計區間</th>
+                                            <th style="text-align:center;">當日金額</th>
+                                            <th style="text-align:center;">累計金額</th>
+                                            <th style="text-align:center;">平均值</th>
                                         </tr>
                                     </thead>
                                     <tbody id="stat-item-analysis-body"></tbody>
@@ -4724,83 +4714,6 @@ function loadLocalData() {
                 balanceBody.innerHTML = html;
             }
 
-            // 3. 更新動態下拉選單並讀取目前選擇的類目
-            const catSelect = document.getElementById('stat-category-select');
-            let selectedCat = '';
-
-            if (catSelect) {
-                const currentVal = catSelect.value;
-
-                // 收集所有紀錄中的類目 + 系統設定的類目
-                // income 也要納入，避免「只有收入沒有支出」的類目消失
-                const allCats = new Set([...(state.categories || [])]);
-                data.forEach(r => {
-                    if (r.category) allCats.add(r.category);
-                });
-
-                catSelect.innerHTML = Array.from(allCats)
-                    .map(c => `<option value="${c}">${c}</option>`)
-                    .join('');
-
-                // 優先保留目前選取的類目
-                if (currentVal && allCats.has(currentVal)) {
-                    catSelect.value = currentVal;
-                } else if (allCats.has('飲食')) {
-                    catSelect.value = '飲食';
-                } else if (allCats.size > 0) {
-                    catSelect.value = Array.from(allCats)[0];
-                }
-
-                selectedCat = catSelect.value;
-            }
-
-            // 4. 更新每月「各類目」日平均表格
-            const catAvgBody = document.getElementById('stat-category-average-body');
-
-            if (catAvgBody) {
-                if (!sorted.length || !selectedCat) {
-                    catAvgBody.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
-                } else {
-                    // 讀取目前畫面上的日期篩選
-                    const startDateInput = document.getElementById('filterStartDate');
-                    const endDateInput = document.getElementById('filterEndDate');
-                    const startDate = startDateInput ? startDateInput.value : '';
-                    const endDate = endDateInput ? endDateInput.value : '';
-
-                    const rows = sorted.map(m => {
-                        const d = monthly[m];
-                        const [y, mon] = m.split('-').map(Number);
-
-                        // ★ 類目總額使用「淨額」：支出 + 同類目的收入
-                        const catTotal = d.categoryNet[selectedCat] || 0;
-
-                        // ★ 天數完全跟著日期篩選範圍走
-                        const days = getStatisticsDays(y, mon, startDate, endDate);
-
-                        // 該月份不在日期範圍內
-                        if (days <= 0) return '';
-
-                        const avg = catTotal / days;
-                        let label;
-
-                        if (startDate && endDate) {
-                            label = `${days} 天`;
-                        } else {
-                            const now = new Date();
-                            if (y === now.getFullYear() && mon === now.getMonth() + 1) {
-                                label = `${days} 天 (至今)`;
-                            } else {
-                                label = `${days} 天`;
-                            }
-                        }
-
-                        return `<tr><td>${m}</td><td>${catTotal.toLocaleString()}</td><td>${label}</td><td style="font-weight:700;color:#2980b9;">$${avg.toFixed(1)}</td></tr>`;
-                    }).join('');
-
-                    catAvgBody.innerHTML = rows || '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
-                }
-            }
-
             // 5. 更新各類目支出佔比
             const ratioC = document.getElementById('stat-category-ratio-container');
             if (ratioC) {
@@ -4841,57 +4754,72 @@ function loadLocalData() {
             }
         }
 
-        // ----- 新增：項目分析 (每日總計) -----
+        // ----- 項目分析：累計日均 (1日~N日) -----
+        // 沒有設定日期篩選 → 本月 1 日到今天
+        // 有設定日期篩選   → 篩選的起日到迄日（只填一邊則另一邊用本月 1 日 / 今天）
         function renderItemAnalysis(records) {
             const body = document.getElementById('stat-item-analysis-body');
             if (!body) return;
-            
-            if (!records || records.length === 0) {
-                body.innerHTML = '<tr><td colspan="3" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
+            const hint = document.getElementById('item-analysis-hint');
+
+            const pad = n => String(n).padStart(2, '0');
+            const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+            const parse = str => { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); };
+            const fmtNum = n => Number(n.toFixed(1)).toLocaleString();
+            const md = d => `${pad(d.getMonth() + 1)}月${pad(d.getDate())}日`;
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const sVal = document.getElementById('filterStartDate')?.value || '';
+            const eVal = document.getElementById('filterEndDate')?.value || '';
+
+            const start = sVal ? parse(sVal) : new Date(today.getFullYear(), today.getMonth(), 1);
+            const end = eVal ? parse(eVal) : today;
+
+            if (start > end) {
+                body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">日期範圍不正確</td></tr>';
+                if (hint) hint.textContent = '';
                 return;
             }
 
+            // 每日合計（支出為負數，這裡反轉成正數顯示；若該日淨收入則會是負數）
             const daily = {};
-            let totalAmount = 0;
-            let totalCount = 0;
-
-            records.forEach(r => {
+            (records || []).forEach(r => {
                 if (!r.datetime) return;
                 const date = r.datetime.split('T')[0];
-                if (!daily[date]) {
-                    daily[date] = { sum: 0, count: 0 };
-                }
-                const amt = parseFloat(r.price) || 0;
-                
-                daily[date].sum += amt;
-                daily[date].count += 1;
-                totalAmount += amt;
-                totalCount += 1;
+                daily[date] = (daily[date] || 0) - (parseFloat(r.price) || 0);
             });
 
-            // 依日期從新到舊排序
-            const sortedDates = Object.keys(daily).sort((a, b) => b.localeCompare(a));
-
-            const itemWeekdays = ['(日)', '(一)', '(二)', '(三)', '(四)', '(五)', '(六)'];
-            let html = sortedDates.map(date => {
-                const [yy, mm, dd] = date.split('-').map(Number);
-                const wd = itemWeekdays[new Date(yy, mm - 1, dd).getDay()] || '';
-                return `<tr>
-                    <td style="text-align:center;">${date} ${wd}</td>
-                    <td style="text-align:right; font-weight:700;">$${daily[date].sum.toLocaleString()}</td>
-                    <td style="text-align:center;">${daily[date].count}</td>
-                </tr>`;
-            }).join('');
-
-            if (sortedDates.length > 0) {
-                html += `<tr class="total-row">
-                    <td style="text-align:center;">🪷月總.</td>
-                    <td style="text-align:right; font-weight:700; color:var(--expense-color);">$${totalAmount.toLocaleString()}</td>
-                    <td style="text-align:center;">${totalCount}</td>
-                </tr>`;
+            const rows = [];
+            let cum = 0;
+            let day = 0;
+            for (let d = new Date(start); d <= end && day < 400; d.setDate(d.getDate() + 1)) {
+                day++;
+                const todayAmt = daily[ymd(d)] || 0;
+                cum += todayAmt;
+                const label = day === 1 ? `${md(start)}` : `${md(start)}～${md(d)}`;
+                rows.push({ label, todayAmt, cum, avg: cum / day, days: day });
             }
 
-            body.innerHTML = html;
+            if (hint) {
+                hint.textContent = `💡 平均值 = 累計金額 ÷ 天數（沒有消費的日子也算 0 元）｜範圍：${ymd(start)} ～ ${ymd(end)}，共 ${rows.length} 天`;
+            }
+
+            if (!rows.length || Object.keys(daily).length === 0) {
+                body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
+                return;
+            }
+
+            body.innerHTML = rows.map((r, i) => {
+                const isLast = i === rows.length - 1;
+                const rowStyle = isLast ? ' style="font-weight:700;background:rgba(192,138,85,0.12);"' : '';
+                return `<tr${rowStyle}>
+                    <td style="text-align:center;">${r.label}${r.days === 1 ? '' : '<span style="color:var(--text-muted);font-size:0.75em;"> (' + r.days + '天)</span>'}</td>
+                    <td style="text-align:right;">$${fmtNum(r.todayAmt)}</td>
+                    <td style="text-align:right;">$${fmtNum(r.cum)}</td>
+                    <td style="text-align:right;font-weight:700;color:#2980b9;">$${fmtNum(r.avg)}</td>
+                </tr>`;
+            }).join('');
         }
 
         // ----- 資產管理 CRUD -----
