@@ -3164,19 +3164,19 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                             <th style="width:30px;text-align:center;" title="拖曳排序"><i class="fa-solid fa-arrows-up-down"></i></th>
                                             <th style="width:36px;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th>
                                             <th>𖤐</th>
-                                            <th style="width:80px;text-align:center;">日期</th>
-                                            <th>收支</th>
-                                            <th>帳戶</th>
-                                            <th>類目</th>
-                                            <th>成員</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">消費品名</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">登記日期</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">收支類型</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">固流帳戶</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">所屬類目</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">所屬成員</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">品項名稱</th>
                                             <th class="col-fixed-equal" style="text-align:center;">規格備註</th>
-                                            <th style="width:70px;text-align:center;">單價</th>
-                                            <th>數量</th>
-                                            <th style="width:70px;text-align:center;">金額</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">單價金額</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">總計數量</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">總計金額</th>
                                             <th class="col-fixed-equal" style="text-align:center;">商家名稱</th>
-                                            <th style="min-width:80px;text-align:center;">消費地區</th>
-                                            <th style="width:65px;text-align:center;">操作</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">消費地區</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">編輯刪除</th>
                                         </tr>
                                     </thead>
                                     <tbody id="dataTableBody"></tbody>
@@ -7873,8 +7873,8 @@ html body #ledgerSummary b:last-of-type {
    ===================================================================== */
 :root {
     --maint-card-top-gap: 7px;    /* 帳戶／類目／成員維護：卡片上緣→標題（標題文字自己上方有約 5px 的行距，所以這個數字比下面小） */
-    --maint-card-gap: 12.0px;     /* 帳戶／類目／成員維護：最後一排標籤→卡片下緣 */
-    --tab-card-end-gap: 12.0px;   /* 統計分析、項目分析、成員分析、消費排行、帳戶金額：表格或說明文字→大卡片下緣 */
+    --maint-card-gap: 12.5px;     /* 帳戶／類目／成員維護：最後一排標籤→卡片下緣 */
+    --tab-card-end-gap: 12.5px;   /* 統計分析、項目分析、成員分析、消費排行、帳戶金額：表格或說明文字→大卡片下緣 */
 }
 
 /* ① 帳戶維護／類目維護／成員維護（圖 1 的六條） */
