@@ -3087,7 +3087,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             <div class="form-group"><label>💰 品項單價</label>
                                 <input type="number" id="unitPrice" step="any" placeholder="100">
                             </div>
-<div class="form-group"><label>💸 總價合計</label>
+<div class="form-group"><label>💸 總計金額</label>
                                 <div class="calc-wrapper">
                                     <input type="number" id="price" step="any" required placeholder="0">
                                     <button type="button" class="btn-secondary" style="padding:0 13px;font-size:1.1rem;line-height:1;width:auto;margin-top:0;" onclick="toggleCalculator()" title="計算機"><i class="fa-solid fa-calculator"></i></button>
@@ -3165,17 +3165,17 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                             <th style="width:36px;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th>
                                             <th>𖤐</th>
                                             <th class="col-fixed-equal" style="text-align:center;">登記日期</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">收支類型</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">固流帳戶</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">所屬類目</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">所屬成員</th>
                                             <th class="col-fixed-equal" style="text-align:center;">品項名稱</th>
                                             <th class="col-fixed-equal" style="text-align:center;">規格備註</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">單價金額</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">品項單價</th>
                                             <th class="col-fixed-equal" style="text-align:center;">總計數量</th>
                                             <th class="col-fixed-equal" style="text-align:center;">總計金額</th>
                                             <th class="col-fixed-equal" style="text-align:center;">商家名稱</th>
                                             <th class="col-fixed-equal" style="text-align:center;">消費地區</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">收支類型</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">固流帳戶</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">所屬類目</th>
+                                            <th class="col-fixed-equal" style="text-align:center;">所屬成員</th>
                                             <th class="col-fixed-equal" style="text-align:center;">編輯刪除</th>
                                         </tr>
                                     </thead>
@@ -4538,10 +4538,6 @@ function loadLocalData() {
                     <td><input type="checkbox" class="row-checkbox" value="${r.price}" data-type="${r.type}" data-id="${r.id}" onchange="calculateSelected()" onclick="event.stopPropagation()"></td>
                     <td style="text-align:center;color:#c99a6b;font-weight:700;font-size:13px;">${star}</td>
                     <td>${display}</td>
-                    <td class="${r.type === 'income' ? 'text-income' : (r.type === 'Asset' ? 'text-asset' : 'text-expense')}">${r.type === 'income' ? '收入' : (r.type === 'Asset' ? '資產' : '支出')}</td>
-                    <td style="color:var(--text-muted);">${r.account || '-'}</td>
-                    <td>${r.category}</td>
-                    <td style="text-align:center;">${r.target || ''}</td>
                     <td class="col-fixed-equal"><strong>${r.itemName}</strong></td>
                     <td class="col-fixed-equal" style="color:var(--text-muted);">${r.spec || ''}</td>
                     <td>${r.unitPrice !== undefined && r.unitPrice !== '' ? '$' + parseFloat(r.unitPrice).toLocaleString() : ''}</td>
@@ -4549,6 +4545,10 @@ function loadLocalData() {
                     <td>$${r.price.toLocaleString()}</td>
                     <td class="col-fixed-equal">${r.location || ''}</td>
                     <td style="min-width:80px;">${r.region || ''}</td>
+                    <td class="${r.type === 'income' ? 'text-income' : (r.type === 'Asset' ? 'text-asset' : 'text-expense')}">${r.type === 'income' ? '收入' : (r.type === 'Asset' ? '資產' : '支出')}</td>
+                    <td style="color:var(--text-muted);">${r.account || '-'}</td>
+                    <td>${r.category}</td>
+                    <td style="text-align:center;">${r.target || ''}</td>
                     <td>
                         <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;cursor:pointer;margin-right:4px;" onclick="event.stopPropagation();editRecord('${r.id}')">編輯</button>
                         <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="event.stopPropagation();deleteRecord('${r.id}')">刪除</button>
