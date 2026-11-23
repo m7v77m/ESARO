@@ -4534,11 +4534,11 @@ function loadLocalData() {
                     <td>${r.quantity || ''}</td>
                     <td>$${r.price.toLocaleString()}</td>
                     <td class="col-fixed-equal">${r.location || ''}</td>
-                    <td style="min-width:25px;">${r.region || ''}</td>
-                    <td class="${r.type === 'income' ? 'text-income' : (r.type === 'Asset' ? 'text-asset' : 'text-expense')}">${r.type === 'income' ? '收入' : (r.type === 'Asset' ? '資產' : '支出')}</td>
-                    <td style="<td class="min-width:25px; color:var(--text-muted);">${r.account || '-'}</td>
-                    <td>${r.category}</td>
-                    <td style="<td class="min-width:25px; text-align:center;">${r.target || ''}</td>
+                    <td style="min-width:30px;">${r.region || ''}</td>
+                    <td class="min-width:30px;"${r.type === 'income' ? 'text-income' : (r.type === 'Asset' ? 'text-asset' : 'text-expense')}">${r.type === 'income' ? '收入' : (r.type === 'Asset' ? '資產' : '支出')}</td>
+                    <td style="min-width:30px;"<td class="min-width:30px; color:var(--text-muted);">${r.account || '-'}</td>
+                    <td style="min-width:30px;">${r.category}</td>
+                    <td style="<td class="min-width:30px; text-align:center;">${r.target || ''}</td>
                     <td>
                         <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;cursor:pointer;margin-right:4px;" onclick="event.stopPropagation();editRecord('${r.id}')">編輯</button>
                         <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="event.stopPropagation();deleteRecord('${r.id}')">刪除</button>
