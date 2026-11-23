@@ -3170,13 +3170,13 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                             <th class="col-fixed-equal" style="text-align:center;">單價</th>
                                             <th>數量</th>
                                             <th class="col-fixed-equal" style="text-align:center;">總額</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">商家</th>
+                                            <th>商家</th>
                                             <th>地區</th>
                                             <th>收支</th>
                                             <th>帳戶</th>
                                             <th>類目</th>
                                             <th>成員</th>
-                                            <th class="col-fixed-equal" style="text-align:center;">操作</th>
+                                            <th>操作</th>
                                         </tr>
                                     </thead>
                                     <tbody id="dataTableBody"></tbody>
@@ -4533,12 +4533,12 @@ function loadLocalData() {
                     <td>${r.unitPrice !== undefined && r.unitPrice !== '' ? '$' + parseFloat(r.unitPrice).toLocaleString() : ''}</td>
                     <td>${r.quantity || ''}</td>
                     <td>$${r.price.toLocaleString()}</td>
-                    <td class="min-width:30px;">${r.location || ''}</td>
-                    <td style="min-width:30px;">${r.region || ''}</td>
-                    <td style="min-width:30px; color:var(--text-muted);">${r.account || '-'}</td>
+                    <td class="col-fixed-equal">${r.location || ''}</td>
+                    <td style="min-width:25px;">${r.region || ''}</td>
                     <td class="${r.type === 'income' ? 'text-income' : (r.type === 'Asset' ? 'text-asset' : 'text-expense')}">${r.type === 'income' ? '收入' : (r.type === 'Asset' ? '資產' : '支出')}</td>
+                    <td style="<td class="min-width:25px; color:var(--text-muted);">${r.account || '-'}</td>
                     <td>${r.category}</td>
-                    <td style="text-align:center;">${r.target || ''}</td>
+                    <td style="<td class="min-width:25px; text-align:center;">${r.target || ''}</td>
                     <td>
                         <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--primary);color:#fff;cursor:pointer;margin-right:4px;" onclick="event.stopPropagation();editRecord('${r.id}')">編輯</button>
                         <button style="padding:2px 13px;font-size:0.7rem;border-radius:var(--radius-full);border:none;background:var(--expense-color);color:#fff;cursor:pointer;" onclick="event.stopPropagation();deleteRecord('${r.id}')">刪除</button>
