@@ -4246,10 +4246,34 @@ function loadLocalData() {
                 box.innerHTML = '<span class="qa-empty">尚無常用項目：填好下方表單後，按「＋ 存為常用」</span>';
                 return;
             }
+            if (qaManage) {
+                box.innerHTML = '<div class="qa-hint">◀ ▶ 調整順序　✕ 刪除　<button type="button" class="qa-mini" onclick="reverseQuickItems()">⇅ 反轉順序</button></div>' +
+                    list.map((q, i) =>
+                    '<span class="qa-chip qa-group">' +
+                    '<button type="button" class="qa-mv' + (i === 0 ? ' off' : '') + '" onclick="moveQuickItem(' + i + ',-1)">◀</button>' +
+                    '<span class="qa-gname">' + bdEsc(q.name) + '</span>' +
+                    '<button type="button" class="qa-mv' + (i === list.length - 1 ? ' off' : '') + '" onclick="moveQuickItem(' + i + ',1)">▶</button>' +
+                    '<button type="button" class="qa-mv qa-x" onclick="deleteQuickItem(' + i + ')">✕</button>' +
+                    '</span>').join('');
+                return;
+            }
             box.innerHTML = list.map((q, i) =>
-                '<button type="button" class="qa-chip' + (qaManage ? ' del' : '') + '" onclick="' +
-                (qaManage ? 'deleteQuickItem(' + i + ')' : 'applyQuickItem(' + i + ')') + '">' +
-                bdEsc(q.name) + (qaManage ? ' ✕' : '') + '</button>').join('');
+                '<button type="button" class="qa-chip" onclick="applyQuickItem(' + i + ')">' +
+                bdEsc(q.name) + '</button>').join('');
+        }
+        function moveQuickItem(i, d) {
+            const l = state.quickItems || [];
+            const j = i + d;
+            if (j < 0 || j >= l.length) return;
+            const t = l[i]; l[i] = l[j]; l[j] = t;
+            saveData();
+            renderQuickItems();
+        }
+        function reverseQuickItems() {
+            if (!Array.isArray(state.quickItems)) return;
+            state.quickItems.reverse();
+            saveData();
+            renderQuickItems();
         }
         function toggleQuickManage() { qaManage = !qaManage; renderQuickItems(); }
         function saveQuickItem() {
@@ -4269,7 +4293,7 @@ function loadLocalData() {
                 if (!confirm('已有同名常用項目「' + nm + '」，要覆蓋嗎？')) return;
                 state.quickItems[idx] = item;
             } else {
-                state.quickItems.push(item);
+                state.quickItems.unshift(item);   // 最新存的排最前面
             }
             saveData();
             renderQuickItems();
@@ -7834,5 +7858,44 @@ html body .right-panel > .card:first-child :is(#tab-statistics, #tab-item-analys
 }
 </style>
 
+<!-- ============================================================
+     ✏️ 常用項目｜間隙與按鈕大小（自由修改區）
+     ============================================================ -->
+<style id="qa-chips-compact">
+:root {
+    --qa-row-gap:   2px;     /* ← 項目「上下」之間的間隙（越小越扁） */
+    --qa-col-gap:   6px;     /* ← 項目「左右」之間的間隙 */
+    --qa-pad-y:     3px;     /* ← 每顆項目的上下內距 */
+    --qa-pad-x:     12px;    /* ← 每顆項目的左右內距 */
+    --qa-max-h:     96px;    /* ← 項目區最高高度，超過會出現捲動 */
+}
+html body .qa-wrap#quickBar .qa-chips {
+    gap: var(--qa-row-gap) var(--qa-col-gap) !important;
+    max-height: var(--qa-max-h) !important;
+    align-items: center !important;
+}
+html body .qa-wrap#quickBar .qa-chip {
+    margin: 0 !important;
+    padding: var(--qa-pad-y) var(--qa-pad-x) !important;
+    line-height: 1.35 !important;
+}
+/* 管理模式：◀ 名稱 ▶ ✕ */
+html body .qa-wrap#quickBar .qa-hint {
+    flex: 0 0 100%; font-size: 0.68rem; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 4px; margin-bottom: 2px;
+}
+html body .qa-wrap#quickBar .qa-hint .qa-mini { margin: 0 0 0 auto !important; }
+html body .qa-wrap#quickBar .qa-chip.qa-group {
+    display: inline-flex; align-items: center; gap: 2px; padding: var(--qa-pad-y) 6px !important; cursor: default;
+}
+html body .qa-wrap#quickBar .qa-gname { padding: 0 4px; }
+html body .qa-wrap#quickBar .qa-mv {
+    width: auto !important; margin: 0 !important; padding: 2px 6px !important;
+    border: none; background: rgba(255,255,255,0.22); color: #fff;
+    border-radius: 999px; font-size: 0.7rem; line-height: 1.2; cursor: pointer;
+}
+html body .qa-wrap#quickBar .qa-mv.off { opacity: 0.3; pointer-events: none; }
+html body .qa-wrap#quickBar .qa-mv.qa-x { background: var(--expense-color); }
+</style>
 </body>
 </html>
