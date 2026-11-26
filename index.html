@@ -8055,5 +8055,28 @@ html body #textEditModal .text-edit-modal-buttons button {
     font-size: var(--edit-modal-btn-size) !important;
 }
 </style>
+<!-- ============================================================
+     ✏️ 週支出｜版面微調（自由修改區）
+     ============================================================ -->
+<style id="weekly-layout-tweak">
+:root {
+    --weekly-bottom-gap: 10.5px;   /* ← 表格最底下到大框底邊的上下間隙（10 / 10.5 / 11 自己換） */
+    --weekly-font-size:  11.5px;   /* ← 週支出表格的字體大小（想更大改 12px，更小改 11px） */
+    --weekly-pad-x:      3px;      /* ← 每個格子的左右內距（越小越不容易換行） */
+}
+/* 1. 表格底部 → 大框底邊的間隙 */
+html body #tab-weekly .stat-section {
+    margin-bottom: calc(var(--weekly-bottom-gap) - 13.5px) !important;
+}
+/* 2. 日期區間、金額一律同一橫排，不換行（蓋過全域「自動換行」的規則） */
+html body #tab-weekly .stat-section table th,
+html body #tab-weekly .stat-section table td {
+    font-size: var(--weekly-font-size) !important;
+    padding-left:  var(--weekly-pad-x) !important;
+    padding-right: var(--weekly-pad-x) !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+}
+</style>
 </body>
 </html>
