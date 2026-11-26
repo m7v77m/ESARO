@@ -3374,10 +3374,10 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             </div>
                         </div>
 
-                        <!-- 第八個 Sheet：週支出（每週從哪天開始可自己調） -->
+                        <!-- 第八個 Sheet：每週支出（每週從哪天開始可自己調） -->
                         <div id="tab-weekly" class="tab-content">
                             <div class="stat-section">
-                                <h4>📅 週支出（依目前篩選結果）</h4>
+                                <h4>📅 每週支出（依目前篩選結果）</h4>
                                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
                                     <label for="weekStartSelect" style="font-size:0.8rem;font-weight:700;color:var(--text-primary);">每週從</label>
                                     <select id="weekStartSelect" onchange="setWeekStartDay(this.value)" style="padding:4px 10px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:var(--text-primary);font-size:0.8rem;font-weight:700;">
@@ -5391,7 +5391,7 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
         }
 
         // ===================================================================
-        // 📅 週支出（第八個 Sheet）
+        // 📅 每週支出（第八個 Sheet）
         // ✏️ 自由修改區：預設每週從哪一天開始（0=日 1=一 2=二 3=三 4=四 5=五 6=六）
         //    也可以直接在畫面上用下拉選單改，選的會記在這台裝置上，這個數字只是「還沒選過」時的預設。
         // ===================================================================
@@ -8056,12 +8056,12 @@ html body #textEditModal .text-edit-modal-buttons button {
 }
 </style>
 <!-- ============================================================
-     ✏️ 週支出｜版面微調（自由修改區）
+     ✏️ 每週支出｜版面微調（自由修改區）
      ============================================================ -->
 <style id="weekly-layout-tweak">
 :root {
-    --weekly-bottom-gap: 10.5px;   /* ← 表格最底下到大框底邊的上下間隙（10 / 10.5 / 11 自己換） */
-    --weekly-font-size:  11.5px;   /* ← 週支出表格的字體大小（想更大改 12px，更小改 11px） */
+    --weekly-bottom-gap: 11.5px;   /* ← 表格最底下到大框底邊的上下間隙（10 / 10.5 / 11 / 11.5 / 12 自己換） */
+    --weekly-font-size:  11.5px;   /* ← 每週支出表格的字體大小（想更大改 12px，更小改 11px） */
     --weekly-pad-x:      3px;      /* ← 每個格子的左右內距（越小越不容易換行） */
 }
 /* 1. 表格底部 → 大框底邊的間隙 */
