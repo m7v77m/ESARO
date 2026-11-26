@@ -5479,7 +5479,7 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
 
             if (rangeText) rangeText.textContent = `共 ${rows.length} 週`;
             if (hint) {
-                hint.textContent = `💡 每週從${'週' + wdName[W]}算到${'週' + wdName[(W + 6) % 7]}｜日均 = 該週支出 ÷ 已過天數｜範圍：${ymd(rangeStart)} ～ ${ymd(rangeEnd)}｜頭尾被日期篩選切到的週，只計入範圍內的金額`;
+                hint.textContent = `💡 每週從${'週' + wdName[W]}算到${'週' + wdName[(W + 6) % 7]}｜日均 = 該週支出 ÷ 已過天數｜範圍：${ymd(rangeStart)} ～ ${ymd(rangeEnd)}｜頭尾被日期篩選切到的週，只計入範圍內的金額。`;
             }
 
             rows.reverse();   // 最新的週排最上面
