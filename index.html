@@ -3137,6 +3137,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             <button class="tab-btn" onclick="switchTab('tab-member-analysis',this)">👥 成員分析</button>
                             <button class="tab-btn" onclick="switchTab('tab-rank-analysis',this)">🏆 消費排行</button>
                             <button class="tab-btn" onclick="switchTab('tab-account-ledger',this)">🏦 帳戶金額</button>
+                            <button class="tab-btn" onclick="switchTab('tab-weekly',this)">📅 週支出</button>
                         </div>
 
                         <div id="tab-table" class="tab-content active">
@@ -3369,6 +3370,33 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                         </tr>
                                     </thead>
                                     <tbody id="stat-member-monthly-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 第八個 Sheet：週支出（每週從哪天開始可自己調） -->
+                        <div id="tab-weekly" class="tab-content">
+                            <div class="stat-section">
+                                <h4>📅 週支出（依目前篩選結果）</h4>
+                                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                                    <label for="weekStartSelect" style="font-size:0.8rem;font-weight:700;color:var(--text-primary);">每週從</label>
+                                    <select id="weekStartSelect" onchange="setWeekStartDay(this.value)" style="padding:4px 10px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:var(--text-primary);font-size:0.8rem;font-weight:700;">
+                                        <option value="0">週日</option><option value="1">週一</option><option value="2">週二</option><option value="3">週三</option>
+                                        <option value="4">週四</option><option value="5">週五</option><option value="6">週六</option>
+                                    </select>
+                                    <span id="weekly-range-text" style="font-size:0.8rem;color:var(--text-secondary);"></span>
+                                </div>
+                                <div id="weekly-hint" style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;"></div>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>週區間</th>
+                                            <th>支出</th>
+                                            <th>筆數</th>
+                                            <th>日均</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stat-weekly-body"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -4587,6 +4615,7 @@ function loadLocalData() {
             renderItemAnalysis(filtered);
             renderMemberAnalysis(filtered);
             renderRankingAnalysis(filtered);
+            renderWeeklyAnalysis(filtered);
         }
 
         function toggleSelectAll(cb) {
@@ -5234,6 +5263,8 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
                 renderRankingAnalysis(window.lastFilteredRecords || state.records);
             } else if (tabId === 'tab-account-ledger') {
                 if (typeof renderAccountBalances === 'function') renderAccountBalances();
+            } else if (tabId === 'tab-weekly') {
+                renderWeeklyAnalysis(window.lastFilteredRecords || state.records);
             }
         }
 
@@ -5357,6 +5388,116 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
                 return `<tr><td>${d.month}</td><td style="text-align:center;">${d.member}</td><td style="text-align:right;color:var(--expense-color);">$${d.expense.toLocaleString()}</td><td style="text-align:right;color:var(--income-color);">$${d.income.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${bal>=0?'var(--income-color)':'var(--expense-color)'};">$${bal.toLocaleString()}</td></tr>`;
             }).join('');
             monthlyBody.innerHTML = mHtml || '<tr><td colspan="5" style="text-align:center;">無資料</td></tr>';
+        }
+
+        // ===================================================================
+        // 📅 週支出（第八個 Sheet）
+        // ✏️ 自由修改區：預設每週從哪一天開始（0=日 1=一 2=二 3=三 4=四 5=五 6=六）
+        //    也可以直接在畫面上用下拉選單改，選的會記在這台裝置上，這個數字只是「還沒選過」時的預設。
+        // ===================================================================
+        const WEEK_START_DEFAULT = 4;   // ← 預設週四
+
+        function getWeekStartDay() {
+            try {
+                const v = parseInt(localStorage.getItem('weekStartDay'), 10);
+                if (v >= 0 && v <= 6) return v;
+            } catch (e) {}
+            return WEEK_START_DEFAULT;
+        }
+        function setWeekStartDay(v) {
+            try { localStorage.setItem('weekStartDay', String(parseInt(v, 10))); } catch (e) {}
+            renderWeeklyAnalysis(window.lastFilteredRecords || state.records);
+        }
+
+        function renderWeeklyAnalysis(records) {
+            const body = document.getElementById('stat-weekly-body');
+            if (!body) return;
+            const hint = document.getElementById('weekly-hint');
+            const rangeText = document.getElementById('weekly-range-text');
+            const sel = document.getElementById('weekStartSelect');
+            const W = getWeekStartDay();
+            if (sel) sel.value = String(W);
+
+            const pad = n => String(n).padStart(2, '0');
+            const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+            const parse = str => { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); };
+            const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+            const wdName = ['日', '一', '二', '三', '四', '五', '六'];
+            const md = d => `${d.getMonth() + 1}/${d.getDate()}(${wdName[d.getDay()]})`;
+            const fmt = n => Number(n.toFixed(1)).toLocaleString();
+            const weekStartOf = d => addDays(d, -((d.getDay() - W + 7) % 7));
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const sVal = document.getElementById('filterStartDate')?.value || '';
+            const eVal = document.getElementById('filterEndDate')?.value || '';
+
+            // 只算支出（跟「總計支出」一樣，支出在系統裡是負數）
+            const exp = (records || []).filter(r => r.type === 'expense' && r.datetime);
+            if (!exp.length) {
+                body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
+                if (hint) hint.textContent = '';
+                if (rangeText) rangeText.textContent = '';
+                return;
+            }
+
+            const dates = exp.map(r => r.datetime.split('T')[0]).sort();
+            const minRec = parse(dates[0]);
+            const maxRec = parse(dates[dates.length - 1]);
+            const rangeStart = sVal ? parse(sVal) : minRec;
+            const rangeEnd = eVal ? parse(eVal) : (maxRec > today ? maxRec : today);
+            if (rangeStart > rangeEnd) {
+                body.innerHTML = '<tr><td colspan="4" style="padding:13px;color:var(--text-muted);text-align:center;">日期範圍不正確</td></tr>';
+                if (hint) hint.textContent = '';
+                return;
+            }
+            // 日均的分母：算到「今天」為止（沒過完的那一週只算已經過的天數）
+            const avgEnd = rangeEnd < today ? rangeEnd : (maxRec > today ? (rangeEnd < maxRec ? rangeEnd : maxRec) : today);
+
+            const byWeek = {};
+            exp.forEach(r => {
+                const d = parse(r.datetime.split('T')[0]);
+                const key = ymd(weekStartOf(d));
+                if (!byWeek[key]) byWeek[key] = { sum: 0, count: 0 };
+                byWeek[key].sum += parseFloat(r.price) || 0;
+                byWeek[key].count += 1;
+            });
+
+            const rows = [];
+            let totalSum = 0, totalCount = 0, totalDays = 0;
+            for (let ws = weekStartOf(rangeStart), guard = 0; ws <= rangeEnd && guard < 600; ws = addDays(ws, 7), guard++) {
+                const we = addDays(ws, 6);
+                const from = ws < rangeStart ? rangeStart : ws;           // 被日期篩選切到的頭尾週
+                const to = we > avgEnd ? avgEnd : we;
+                const days = Math.max(0, Math.round((to - from) / 86400000) + 1);
+                const data = byWeek[ymd(ws)] || { sum: 0, count: 0 };
+                const isCurrent = today >= ws && today <= we;
+                const cut = from > ws || (we > rangeEnd);
+                rows.push({ ws, we, days, sum: data.sum, count: data.count, isCurrent, cut });
+                totalSum += data.sum; totalCount += data.count; totalDays += days;
+            }
+
+            if (rangeText) rangeText.textContent = `共 ${rows.length} 週`;
+            if (hint) {
+                hint.textContent = `💡 每週從${'週' + wdName[W]}算到${'週' + wdName[(W + 6) % 7]}｜日均 = 該週支出 ÷ 已過天數｜範圍：${ymd(rangeStart)} ～ ${ymd(rangeEnd)}｜頭尾被日期篩選切到的週，只計入範圍內的金額`;
+            }
+
+            rows.reverse();   // 最新的週排最上面
+            let html = rows.map(r => {
+                const style = r.isCurrent ? ' style="font-weight:700;background:rgba(192,138,85,0.12);"' : '';
+                const sub = r.isCurrent ? `本週・已過${r.days}天` : (r.cut ? `${r.days}天（範圍內）` : `${r.days}天`);
+                const avg = r.days ? r.sum / r.days : 0;
+                const color = r.sum < 0 ? 'var(--expense-color)' : 'var(--text-muted)';
+                return `<tr${style}>
+                    <td style="text-align:center;">${md(r.ws)}～${md(r.we)}<div style="color:var(--text-muted);font-size:0.75em;font-weight:400;">${r.ws.getFullYear()}・${sub}</div></td>
+                    <td style="text-align:right;font-weight:700;color:${color};">$${fmt(r.sum)}</td>
+                    <td style="text-align:center;">${r.count}</td>
+                    <td style="text-align:right;">$${fmt(avg)}</td>
+                </tr>`;
+            }).join('');
+            const totalAvg = totalDays ? totalSum / totalDays : 0;
+            html += `<tr class="total-row"><td style="text-align:center;font-weight:700;">合計</td><td style="text-align:right;font-weight:700;color:var(--expense-color);">$${fmt(totalSum)}</td><td style="text-align:center;font-weight:700;">${totalCount}</td><td style="text-align:right;font-weight:700;">$${fmt(totalAvg)}</td></tr>`;
+            body.innerHTML = html;
         }
 
         // ----- 儲存 / 匯入 / 匯出 -----
