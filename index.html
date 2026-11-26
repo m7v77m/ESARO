@@ -789,7 +789,7 @@
             margin-top: 13px;
             background: var(--bg-hover);
             padding: 8px 13px;
-            border-radius: var(--radius-full);
+            border-radius: 16.5px;
             border: 1px solid var(--border-color);
             flex-wrap: wrap;
         }
@@ -7896,6 +7896,23 @@ html body .qa-wrap#quickBar .qa-mv {
 }
 html body .qa-wrap#quickBar .qa-mv.off { opacity: 0.3; pointer-events: none; }
 html body .qa-wrap#quickBar .qa-mv.qa-x { background: var(--expense-color); }
+</style>
+<!-- ============================================================
+     ✏️ 這次調整｜自由修改區
+     ============================================================ -->
+<style id="tweak-subtotal-modal-btn">
+:root {
+    --selected-total-color: #5C1A7C;   /* ← 「已勾選 N 筆，小計：$金額」的金額顏色（取自你畫的紫框） */
+    --edit-modal-btn-size:  15px;      /* ← 品項名稱／規格備註編輯框的「取消」「確認更新」字體大小 */
+}
+/* 1. 小計金額固定用紫色（正數、負數都一樣） */
+html body #selectedTotal {
+    color: var(--selected-total-color) !important;
+}
+/* 2. 多列編輯框（品項名稱、規格備註）的取消／確認更新按鈕 */
+html body #textEditModal .text-edit-modal-buttons button {
+    font-size: var(--edit-modal-btn-size) !important;
+}
 </style>
 </body>
 </html>
