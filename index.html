@@ -3201,9 +3201,9 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         <div id="tab-statistics" class="tab-content">
                             <div class="stat-section">
                                 <h4>📆 區間每月總支出平均（歷年資料）</h4>
-                                <div id="avgRangeBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10.5px;font-size:0.8rem;font-weight:700;color:var(--text-primary);">
-                                    <span style="white-space:nowrap;">從 <input type="month" id="avgFromMonth" onchange="setAvgRange()" style="padding:4px 8px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:var(--text-primary);font-size:0.8rem;font-weight:700;"></span>
-                                    <span style="white-space:nowrap;">到 <input type="month" id="avgToMonth" onchange="setAvgRange()" style="padding:4px 8px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:var(--text-primary);font-size:0.8rem;font-weight:700;"></span>
+                                <div id="avgRangeBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;font-size:0.8rem;font-weight:700;color:var(--text-primary);">
+                                    <span style="white-space:nowrap;">從 <input type="month" id="avgFromMonth" onchange="setAvgRange()" style="padding:4px 8px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:#7A5F4B;font-size:0.8rem;font-weight:700;"></span>
+                                    <span style="white-space:nowrap;">到 <input type="month" id="avgToMonth" onchange="setAvgRange()" style="padding:4px 8px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:#7A5F4B;font-size:0.8rem;font-weight:700;"></span>
                                     <button type="button" class="qa-mini" onclick="resetAvgRange()">↺ 重設</button>
                                 </div>
                                 <table>
@@ -4883,7 +4883,7 @@ function loadLocalData() {
             }
             const curM = tpDateStr(new Date()).slice(0, 7);
             const defTo = keys[keys.length - 1] > curM ? keys[keys.length - 1] : curM;   // 預設到「目前這個月」
-            const defFrom = keys[0];                                                       // 預設從有資料的第一個月
+            const defFrom = keys[0];                                                     // 預設從有資料的第一個月
             const okM = v => /^\d{4}-\d{2}$/.test(v || '');
             let from, to;
             try { from = localStorage.getItem('avgExpFrom'); to = localStorage.getItem('avgExpTo'); } catch (e) {}
@@ -4923,8 +4923,8 @@ function loadLocalData() {
                 html += row('　不含本月（只算完整月份）', fmt(sum(full) / full.length), false);
             }
             html += row('區間總支出合計', fmt(total), false);
-            html += row('花最多的月份', `${maxM}　${fmt(map[maxM] || 0)}`, false);
-            html += row('花最少的月份', `${minM}　${fmt(map[minM] || 0)}`, false);
+            html += row('支出最多的月份', `${maxM}　${fmt(map[maxM] || 0)}`, false);
+            html += row('支出最少的月份', `${minM}　${fmt(map[minM] || 0)}`, false);
             body.innerHTML = html;
             if (note) note.textContent = '💡 用全部歷年資料計算（不受上方篩選影響），總支出同樣已扣掉飲食收入；區間內沒有紀錄的月份以 $0 計入平均。';
         }
@@ -8182,7 +8182,7 @@ html body #textEditModal .text-edit-modal-buttons button {
      ============================================================ -->
 <style id="weekly-layout-tweak">
 :root {
-    --weekly-bottom-gap: 12px;   /* ← 表格最底下到大框底邊的上下間隙（10 / 10.5 / 11 / 11.5 / 12 自己換） */
+    --weekly-bottom-gap: 12px;     /* ← 表格最底下到大框底邊的上下間隙（10 / 10.5 / 11 / 11.5 / 12 自己換） */
     --weekly-font-size:  11.5px;   /* ← 每週支出表格的字體大小（想更大改 12px，更小改 11px） */
     --weekly-pad-x:      3px;      /* ← 每個格子的左右內距（越小越不容易換行） */
 }
