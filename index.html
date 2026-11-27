@@ -3131,13 +3131,13 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         <div class="tab-menu">
                             <button class="tab-btn active" onclick="switchTab('tab-table',this)">📋 明細列表</button>
                             <button class="tab-btn" onclick="switchTab('tab-statistics',this)">📈 統計分析</button>
-                            <button class="tab-btn" onclick="switchTab('tab-assets',this)">🏦 資產管理</button>
                             <!-- 新增項目分析分頁按鈕 -->
                             <button class="tab-btn" onclick="switchTab('tab-item-analysis',this)">🔍 項目分析</button>
+                            <button class="tab-btn" onclick="switchTab('tab-weekly',this)">📅 每週支出</button>
                             <button class="tab-btn" onclick="switchTab('tab-member-analysis',this)">👥 成員分析</button>
                             <button class="tab-btn" onclick="switchTab('tab-rank-analysis',this)">🏆 消費排行</button>
+                            <button class="tab-btn" onclick="switchTab('tab-assets',this)">🏦 資產管理</button>
                             <button class="tab-btn" onclick="switchTab('tab-account-ledger',this)">🏦 帳戶金額</button>
-                            <button class="tab-btn" onclick="switchTab('tab-weekly',this)">📅 每週支出</button>
                         </div>
 
                         <div id="tab-table" class="tab-content active">
@@ -3200,6 +3200,19 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
 
                         <div id="tab-statistics" class="tab-content">
                             <div class="stat-section">
+                                <h4>📆 區間每月總支出平均（歷年資料）</h4>
+                                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;font-size:0.8rem;font-weight:700;color:var(--text-primary);">
+                                    <span style="white-space:nowrap;">從 <input type="month" id="avgFromMonth" onchange="setAvgRange()" style="padding:4px 8px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:var(--text-primary);font-size:0.8rem;font-weight:700;"></span>
+                                    <span style="white-space:nowrap;">到 <input type="month" id="avgToMonth" onchange="setAvgRange()" style="padding:4px 8px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:var(--text-primary);font-size:0.8rem;font-weight:700;"></span>
+                                    <button type="button" class="qa-mini" onclick="resetAvgRange()">↺ 重設</button>
+                                </div>
+                                <table>
+                                    <thead><tr><th>項目</th><th>金額</th></tr></thead>
+                                    <tbody id="stat-avg-expense-body"></tbody>
+                                </table>
+                                <div id="stat-avg-expense-note" style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;"></div>
+                            </div>
+                            <div class="stat-section">
                                 <h4>📈 每月類目支出佔比</h4>
                                 <div id="stat-category-ratio-container"></div>
                             </div>
@@ -3209,6 +3222,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                     <thead><tr><th>各月份</th><th>總收入</th><th>總支出</th><th>結餘值</th></tr></thead>
                                     <tbody id="stat-monthly-balance-body"></tbody>
                                 </table>
+                                <div style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">💡 總支出 = 純支出 + 飲食收入（飲食收入視為退款抵銷支出），跟上方「本月預算」同算法；總收入已扣掉這部分，結餘值不變。</div>
                             </div>
                             
                         </div>
@@ -4691,6 +4705,7 @@ function loadLocalData() {
                     monthly[m] = {
                         income: 0,
                         expense: 0,
+                        offset: 0,          // 抵銷支出的收入（預設＝飲食收入）
                         categories: {},
                         categoryNet: {}
                     };
@@ -4706,6 +4721,8 @@ function loadLocalData() {
                 if (r.type === 'income') {
                     // 總收入維持原本邏輯
                     monthly[m].income += amt;
+                    // 飲食收入視為退款：記下來，等一下從「總收入」移到「總支出」抵銷
+                    if (isStatOffsetIncome(r)) monthly[m].offset += amt;
 
                     // 收入若有類目，加入該類目的「淨額」
                     // 例如：飲食支出 -11,930 + 飲食收入 1,400 = -10,530
@@ -4716,7 +4733,7 @@ function loadLocalData() {
                         monthly[m].categoryNet[r.category] += amt;
                     }
                 } else if (r.type === 'expense') {
-                    // 總支出維持純支出，不把收入抵銷進來
+                    // 先累計純支出，飲食收入抵銷在迴圈結束後處理
                     monthly[m].expense += amt;
 
                     if (r.category) {
@@ -4733,6 +4750,12 @@ function loadLocalData() {
                         monthly[m].categoryNet[r.category] += amt;
                     }
                 }
+            });
+
+            // ★ 總支出 = 純支出 + 飲食收入；同一筆從總收入扣掉，所以「收入 + 支出 = 結餘」不變
+            Object.keys(monthly).forEach(m => {
+                monthly[m].income -= monthly[m].offset;
+                monthly[m].expense += monthly[m].offset;
             });
 
             const sorted = Object.keys(monthly).sort((a, b) => b.localeCompare(a));
@@ -4766,6 +4789,9 @@ function loadLocalData() {
 
                 balanceBody.innerHTML = html;
             }
+
+            // 3. 更新「區間每月總支出平均」
+            if (typeof renderMonthlyAvgExpense === 'function') renderMonthlyAvgExpense();
 
             // 5. 更新各類目支出佔比
             const ratioC = document.getElementById('stat-category-ratio-container');
@@ -4805,6 +4831,102 @@ function loadLocalData() {
                 html += '</tbody></table>';
                 ratioC.innerHTML = html;
             }
+        }
+
+        // ===================================================================
+        // 📆 統計分析｜總支出的算法 ＋ 區間每月總支出平均
+        // ✏️ 自由修改區：哪些「收入類目」要拿來抵銷總支出（類目名稱包含這些字就算）
+        //    預設只有「飲食」。想加別的就寫成 ['飲食', '洗烘'] 這樣。
+        // ===================================================================
+        const STAT_OFFSET_INCOME_CATEGORIES = ['飲食'];
+        function isStatOffsetIncome(r) {
+            return r && r.type === 'income' &&
+                STAT_OFFSET_INCOME_CATEGORIES.some(k => String(r.category || '').includes(k));
+        }
+
+        // 歷年每月總支出（純支出 + 飲食收入），不受目前篩選影響
+        function getAllMonthlyNetExpense() {
+            const map = {};
+            ((state && state.records) || []).forEach(r => {
+                if (!r.datetime) return;
+                const amt = parseFloat(r.price) || 0;
+                if (r.type === 'expense' || isStatOffsetIncome(r)) {
+                    const m = r.datetime.substring(0, 7);
+                    map[m] = (map[m] || 0) + amt;
+                }
+            });
+            return map;
+        }
+        function setAvgRange() {
+            try {
+                localStorage.setItem('avgExpFrom', document.getElementById('avgFromMonth').value || '');
+                localStorage.setItem('avgExpTo', document.getElementById('avgToMonth').value || '');
+            } catch (e) {}
+            renderMonthlyAvgExpense();
+        }
+        function resetAvgRange() {
+            try { localStorage.removeItem('avgExpFrom'); localStorage.removeItem('avgExpTo'); } catch (e) {}
+            renderMonthlyAvgExpense();
+        }
+        function renderMonthlyAvgExpense() {
+            const body = document.getElementById('stat-avg-expense-body');
+            if (!body) return;
+            const note = document.getElementById('stat-avg-expense-note');
+            const fromEl = document.getElementById('avgFromMonth');
+            const toEl = document.getElementById('avgToMonth');
+            const map = getAllMonthlyNetExpense();
+            const keys = Object.keys(map).sort();
+            if (!keys.length) {
+                body.innerHTML = '<tr><td colspan="2" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
+                if (note) note.textContent = '';
+                return;
+            }
+            const curM = tpDateStr(new Date()).slice(0, 7);
+            const defTo = keys[keys.length - 1] > curM ? keys[keys.length - 1] : curM;   // 預設到「目前這個月」
+            const defFrom = keys[0];                                                       // 預設從有資料的第一個月
+            const okM = v => /^\d{4}-\d{2}$/.test(v || '');
+            let from, to;
+            try { from = localStorage.getItem('avgExpFrom'); to = localStorage.getItem('avgExpTo'); } catch (e) {}
+            if (!okM(from)) from = defFrom;
+            if (!okM(to)) to = defTo;
+            if (from > to) { const t = from; from = to; to = t; }
+            if (fromEl) fromEl.value = from;
+            if (toEl) toEl.value = to;
+
+            const monthsBetween = (a, b) => {
+                const out = []; let [y, m] = a.split('-').map(Number); const [ey, em] = b.split('-').map(Number);
+                while ((y < ey || (y === ey && m <= em)) && out.length < 1200) {
+                    out.push(y + '-' + String(m).padStart(2, '0'));
+                    m++; if (m > 12) { m = 1; y++; }
+                }
+                return out;
+            };
+            const list = monthsBetween(from, to);
+            const fmt = n => '$' + Number(n.toFixed(1)).toLocaleString();
+            const sum = a => a.reduce((t, m) => t + (map[m] || 0), 0);
+            const total = sum(list);
+            const avg = list.length ? total / list.length : 0;
+
+            let maxM = list[0], minM = list[0];     // 支出為負：最小的數字＝花最多
+            list.forEach(m => {
+                if ((map[m] || 0) < (map[maxM] || 0)) maxM = m;
+                if ((map[m] || 0) > (map[minM] || 0)) minM = m;
+            });
+
+            const row = (label, val, strong) =>
+                `<tr><td>${label}</td><td style="color:var(--expense-color);font-weight:${strong ? 800 : 700};">${val}</td></tr>`;
+            let html = '';
+            html += `<tr><td>統計區間</td><td style="font-weight:700;">${from} ～ ${to}<div style="color:var(--text-muted);font-size:0.75em;font-weight:400;">共 ${list.length} 個月</div></td></tr>`;
+            html += row('🎯 平均每月總支出', fmt(avg), true);
+            if (to === curM && list.length > 1) {
+                const full = list.slice(0, -1);
+                html += row('　不含本月（只算完整月份）', fmt(sum(full) / full.length), false);
+            }
+            html += row('區間總支出合計', fmt(total), false);
+            html += row('花最多的月份', `${maxM}　${fmt(map[maxM] || 0)}`, false);
+            html += row('花最少的月份', `${minM}　${fmt(map[minM] || 0)}`, false);
+            body.innerHTML = html;
+            if (note) note.textContent = '💡 用全部歷年資料計算（不受上方篩選影響），總支出同樣已扣掉飲食收入；區間內沒有紀錄的月份以 $0 計入平均。';
         }
 
         // ----- 項目分析：累計日均 (1日~N日) -----
