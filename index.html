@@ -3201,7 +3201,7 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                         <div id="tab-statistics" class="tab-content">
                             <div class="stat-section">
                                 <h4>📆 區間每月總支出平均（歷年資料）</h4>
-                                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;font-size:0.8rem;font-weight:700;color:var(--text-primary);">
+                                <div id="avgRangeBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;font-size:0.8rem;font-weight:700;color:var(--text-primary);">
                                     <span style="white-space:nowrap;">從 <input type="month" id="avgFromMonth" onchange="setAvgRange()" style="padding:4px 8px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:var(--text-primary);font-size:0.8rem;font-weight:700;"></span>
                                     <span style="white-space:nowrap;">到 <input type="month" id="avgToMonth" onchange="setAvgRange()" style="padding:4px 8px;border-radius:var(--radius-full);border:1px solid var(--border-color);background:var(--bg-hover);color:var(--text-primary);font-size:0.8rem;font-weight:700;"></span>
                                     <button type="button" class="qa-mini" onclick="resetAvgRange()">↺ 重設</button>
@@ -8198,6 +8198,66 @@ html body #tab-weekly .stat-section table td {
     padding-right: var(--weekly-pad-x) !important;
     white-space: nowrap !important;
     word-break: keep-all !important;
+}
+</style>
+<!-- ============================================================
+     ✏️ 統計分析｜起訖月份按鈕（自由修改區）
+     ============================================================ -->
+<style id="avg-range-bar-tweak">
+:root {
+    --stat-ctrl-height: 30px;   /* ← 「從 ▢ 到 ▢」兩個月份按鈕、重設鈕，以及每週支出「每週從」按鈕的高度（想更扁改 28px） */
+}
+/* 三顆按鈕同高 */
+html body #weekStartSelect,
+html body #avgFromMonth,
+html body #avgToMonth {
+    height: var(--stat-ctrl-height) !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 1.2 !important;
+}
+/* 整排固定同一橫排：從 [月份] 到 [月份] ↺重設 */
+html body #avgRangeBar {
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+}
+html body #avgRangeBar > span {
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+}
+html body #avgRangeBar > .qa-mini {
+    flex: 0 0 auto;
+    margin: 0 !important;
+    height: var(--stat-ctrl-height);
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    white-space: nowrap;
+}
+/* 月份按鈕：關掉手機原生的高大外觀，文字置中、能跟著剩餘寬度縮放 */
+html body #avgFromMonth,
+html body #avgToMonth {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0 !important;
+    margin: 0;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    text-align: center;
+}
+html body #avgFromMonth::-webkit-date-and-time-value,
+html body #avgToMonth::-webkit-date-and-time-value {
+    text-align: center;
+    min-height: 0;
+    margin: 0;
 }
 </style>
 </body>
