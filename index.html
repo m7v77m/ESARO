@@ -1928,7 +1928,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; }
     text-align: center !important;
 }
 
-/* 3. 統計分析那張 (二.jpg) */
+/* 3. 月收支餘那張 (二.jpg) */
 #stat-category-ratio-container table th,
 #stat-category-ratio-container table td,
 #stat-monthly-balance-body td,
@@ -1944,7 +1944,7 @@ body { padding: 13px !important; background-color: #D7C4A5 !important; }
     text-align: center !important;
 }
 
-/* 5. 項目分析 & 成員分析 (三.jpg & 五) */
+/* 5. 類目均值 & 成員分析 (三.jpg & 五) */
 #tab-item-analysis table th,
 #tab-item-analysis table td,
 #tab-member-analysis table th,
@@ -3130,9 +3130,9 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                     <div class="card">
                         <div class="tab-menu">
                             <button class="tab-btn active" onclick="switchTab('tab-table',this)">📋 明細列表</button>
-                            <button class="tab-btn" onclick="switchTab('tab-statistics',this)">📈 統計分析</button>
-                            <!-- 新增項目分析分頁按鈕 -->
-                            <button class="tab-btn" onclick="switchTab('tab-item-analysis',this)">🔍 項目分析</button>
+                            <button class="tab-btn" onclick="switchTab('tab-statistics',this)">📈 月收支餘</button>
+                            <!-- 新增類目均值分頁按鈕 -->
+                            <button class="tab-btn" onclick="switchTab('tab-item-analysis',this)">🔍 類目均值</button>
                             <button class="tab-btn" onclick="switchTab('tab-weekly',this)">📅 每週支出</button>
                             <button class="tab-btn" onclick="switchTab('tab-member-analysis',this)">👥 成員分析</button>
                             <button class="tab-btn" onclick="switchTab('tab-rank-analysis',this)">🏆 消費排行</button>
@@ -3286,10 +3286,10 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                             </div>
                         </div>
 
-                        <!-- 新增：項目分析分頁區塊 -->
+                        <!-- 新增：類目均值分頁區塊 -->
                         <div id="tab-item-analysis" class="tab-content">
                            <div class="stat-section">
-                                <h4>🔍 項目分析：累計日均（依目前篩選結果）</h4>
+                                <h4>🔍 類目均值：累計日均（依目前篩選結果）</h4>
                                 <div id="item-analysis-hint" style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;"></div>
                                 <table>
                                     <thead>
@@ -3369,21 +3369,6 @@ input[type="date"] { pointer-events: none !important; }   /* 不再叫出系統�
                                         </tr>
                                     </thead>
                                     <tbody id="stat-member-analysis-body"></tbody>
-                                </table>
-                            </div>
-                            <div class="stat-section">
-                                <h4>📅 每月成員收支</h4>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>月份</th>
-                                            <th>成員</th>
-                                            <th>支出</th>
-                                            <th>收入</th>
-                                            <th>結餘</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="stat-member-monthly-body"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -4650,7 +4635,7 @@ function loadLocalData() {
             label.style.color = sum >= 0 ? 'var(--income-color)' : 'var(--expense-color)';
         }
 
-        // ----- 統計分析 -----
+        // ----- 月收支餘 -----
         // ==========================================
         // 統計用天數計算
         // 有自訂日期範圍 → 計算該範圍與月份的實際重疊天數
@@ -4834,7 +4819,7 @@ function loadLocalData() {
         }
 
         // ===================================================================
-        // 📆 統計分析｜總支出的算法 ＋ 區間每月總支出平均
+        // 📆 月收支餘｜總支出的算法 ＋ 區間每月總支出平均
         // ✏️ 自由修改區：哪些「收入類目」要拿來抵銷總支出（類目名稱包含這些字就算）
         //    預設只有「飲食」。想加別的就寫成 ['飲食', '洗烘'] 這樣。
         // ===================================================================
@@ -4929,7 +4914,7 @@ function loadLocalData() {
             if (note) note.textContent = '💡 用全部歷年資料計算（不受上方篩選影響），總支出同樣已扣掉飲食收入；區間內沒有紀錄的月份以 $0 計入平均。';
         }
 
-        // ----- 項目分析：累計日均 (1日~N日) -----
+        // ----- 類目均值：累計日均 (1日~N日) -----
         // 沒有設定日期篩選 → 本月 1 日到今天
         // 有設定日期篩選   → 篩選的起日到迄日（只填一邊則另一邊用本月 1 日 / 今天）
         function renderItemAnalysis(records) {
@@ -5465,15 +5450,12 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
 
         function renderMemberAnalysis(records) {
             const body = document.getElementById('stat-member-analysis-body');
-            const monthlyBody = document.getElementById('stat-member-monthly-body');
-            if (!body || !monthlyBody) return;
+            if (!body) return;
             if (!records || records.length === 0) {
                 body.innerHTML = '<tr><td colspan="6" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
-                monthlyBody.innerHTML = '<tr><td colspan="5" style="padding:13px;color:var(--text-muted);text-align:center;">無資料</td></tr>';
                 return;
             }
             const memberMap = {};
-            const monthlyMap = {};
             records.forEach(r => {
                 const mem = r.target || '未分組';
                 if (!memberMap[mem]) memberMap[mem] = { income:0, expense:0, count:0 };
@@ -5481,12 +5463,6 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
                 if (r.type === 'income') memberMap[mem].income += amt;
                 else if (r.type === 'expense') memberMap[mem].expense += amt;
                 memberMap[mem].count += 1;
-
-                const m = (r.datetime||'').substring(0,7);
-                const key = m + '||' + mem;
-                if (!monthlyMap[key]) monthlyMap[key] = { month:m, member:mem, income:0, expense:0 };
-                if (r.type === 'income') monthlyMap[key].income += amt;
-                else if (r.type === 'expense') monthlyMap[key].expense += amt;
             });
 
             let totalInc=0, totalExp=0, totalCnt=0;
@@ -5503,13 +5479,6 @@ function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&qu
                 html += `<tr class="total-row"><td style="text-align:center;font-weight:700;">🪷總支.</td><td style="text-align:right;color:var(--income-color);font-weight:700;">$${totalInc.toLocaleString()}</td><td style="text-align:right;color:var(--expense-color);font-weight:700;">$${totalExp.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${totalBal>=0?'var(--income-color)':'var(--expense-color)'};">$${totalBal.toLocaleString()}</td><td style="text-align:center;font-weight:700;">${totalCnt}</td><td></td></tr>`;
             }
             body.innerHTML = html || '<tr><td colspan="6" style="padding:13px;text-align:center;">無資料</td></tr>';
-
-            const sortedMonthly = Object.values(monthlyMap).sort((a,b)=> b.month.localeCompare(a.month) || a.member.localeCompare(b.member));
-            let mHtml = sortedMonthly.map(d=>{
-                const bal = d.income + d.expense; // 支出為負
-                return `<tr><td>${d.month}</td><td style="text-align:center;">${d.member}</td><td style="text-align:right;color:var(--expense-color);">$${d.expense.toLocaleString()}</td><td style="text-align:right;color:var(--income-color);">$${d.income.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${bal>=0?'var(--income-color)':'var(--expense-color)'};">$${bal.toLocaleString()}</td></tr>`;
-            }).join('');
-            monthlyBody.innerHTML = mHtml || '<tr><td colspan="5" style="text-align:center;">無資料</td></tr>';
         }
 
         // ===================================================================
@@ -6484,7 +6453,7 @@ async function saveData() {
         min-width: 620px;
     }
 
-    /* 統計分析表格通常欄位更多，允許自然橫滑 */
+    /* 月收支餘表格通常欄位更多，允許自然橫滑 */
     #tab-statistics .table-container table,
     #tab-item-analysis .table-container table,
     #tab-member-analysis .table-container table {
@@ -8092,7 +8061,7 @@ html body #ledgerSummary b:last-of-type {
 :root {
     --maint-card-top-gap: 7px;    /* 帳戶／類目／成員維護：卡片上緣→標題（標題文字自己上方有約 5px 的行距，所以這個數字比下面小） */
     --maint-card-gap: 12.5px;     /* 帳戶／類目／成員維護：最後一排標籤→卡片下緣 */
-    --tab-card-end-gap: 12.5px;   /* 統計分析、項目分析、成員分析、消費排行、帳戶金額：表格或說明文字→大卡片下緣 */
+    --tab-card-end-gap: 12.5px;   /* 月收支餘、類目均值、成員分析、消費排行、帳戶金額：表格或說明文字→大卡片下緣 */
 }
 
 /* ① 帳戶維護／類目維護／成員維護（圖 1 的六條） */
@@ -8201,7 +8170,7 @@ html body #tab-weekly .stat-section table td {
 }
 </style>
 <!-- ============================================================
-     ✏️ 統計分析｜起訖月份按鈕（自由修改區）
+     ✏️ 月收支餘｜起訖月份按鈕（自由修改區）
      ============================================================ -->
 <style id="avg-range-bar-tweak">
 :root {
